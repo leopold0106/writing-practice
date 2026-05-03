@@ -98,4 +98,7 @@ dependencies {
     // Core
     implementation(libs.core.ktx)
     implementation(libs.coroutines.android)
+
+    // Startup (needed for WorkManager tools:node="remove" in manifest)
+    implementation("androidx.startup:startup-runtime:1.1.1")
 }
