@@ -23,7 +23,7 @@ import com.example.writingpractice.data.local.db.entity.UserAnswerEntity
         DailyProgressEntity::class
     ],
     version = 1,
-    exportSchema = true
+    exportSchema = false
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {

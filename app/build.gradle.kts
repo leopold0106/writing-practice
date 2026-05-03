@@ -44,10 +44,6 @@ android {
         compose = true
         buildConfig = true
     }
-
-    room {
-        schemaDirectory("$projectDir/schemas")
-    }
 }
 
 dependencies {
