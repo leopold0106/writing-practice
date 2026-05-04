@@ -5,10 +5,17 @@ import com.example.writingpractice.data.model.Correction
 import com.example.writingpractice.data.model.GradingResult
 import com.example.writingpractice.data.remote.dto.ClaudeMessage
 import com.example.writingpractice.data.remote.dto.ClaudeRequest
+import com.example.writingpractice.data.remote.dto.GeneratedProblemDto
 import com.example.writingpractice.data.remote.dto.GradingResultDto
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import javax.inject.Singleton
+
+data class GeneratedProblem(
+    val koreanText: String,
+    val referenceAnswer: String,
+    val topicTag: String
+)
 
 @Singleton
 class ClaudeApiClient @Inject constructor(
@@ -36,6 +43,17 @@ If the answer is perfect, return an empty corrections array and a score of 100.
 Only report genuine errors. Do not invent corrections for acceptable variations in phrasing.
 """.trimIndent()
 
+    private val generateSystemPrompt = """
+You are a Korean language teacher creating English translation practice exercises.
+Generate a Korean text for English translation practice at the requested level.
+Return ONLY valid JSON (no markdown, no extra text):
+{
+  "korean_text": "<the Korean text to translate>",
+  "reference_answer": "<a natural English translation>",
+  "topic_tag": "<one of: 일상생활, 여행, 비즈니스, 환경, 기술, 감정, 음식, 문화>"
+}
+""".trimIndent()
+
     suspend fun gradeAnswer(
         koreanText: String,
         englishAnswer: String
@@ -47,10 +65,48 @@ Only report genuine errors. Do not invent corrections for acceptable variations 
                 messages = listOf(ClaudeMessage("user", userContent))
             )
         )
-        val raw = response.content.first().text.trim()
+        val raw = extractJson(response.content.first().text)
         val dto = json.decodeFromString<GradingResultDto>(raw)
         dto.toDomain()
     }
+
+    suspend fun generateProblem(level: Int): Result<GeneratedProblem> = runCatching {
+        val levelDesc = when (level) {
+            1 -> "a single simple Korean sentence"
+            2 -> "two related Korean sentences on the same topic"
+            3 -> "three related Korean sentences forming a short paragraph"
+            else -> "a short Korean paragraph of 4-6 sentences"
+        }
+        val response = service.complete(
+            ClaudeRequest(
+                system = generateSystemPrompt,
+                messages = listOf(
+                    ClaudeMessage(
+                        "user",
+                        "Generate $levelDesc for English translation practice. Make it natural, practical, and from a varied topic."
+                    )
+                )
+            )
+        )
+        val raw = extractJson(response.content.first().text)
+        val dto = json.decodeFromString<GeneratedProblemDto>(raw)
+        GeneratedProblem(dto.koreanText, dto.referenceAnswer, dto.topicTag)
+    }
+
+    suspend fun ping(): Result<Unit> = runCatching {
+        service.complete(
+            ClaudeRequest(
+                maxTokens = 1,
+                messages = listOf(ClaudeMessage("user", "Hi"))
+            )
+        )
+        Unit
+    }
+
+    private fun extractJson(text: String): String =
+        text.trim()
+            .removePrefix("```json").removePrefix("```")
+            .removeSuffix("```").trim()
 
     private fun GradingResultDto.toDomain() = GradingResult(
         score = score,
@@ -65,14 +121,4 @@ Only report genuine errors. Do not invent corrections for acceptable variations 
         },
         finalCorrectedVersion = finalCorrectedVersion
     )
-
-    suspend fun ping(): Result<Unit> = runCatching {
-        service.complete(
-            ClaudeRequest(
-                maxTokens = 1,
-                messages = listOf(ClaudeMessage("user", "Hi"))
-            )
-        )
-        Unit
-    }
 }

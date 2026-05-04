@@ -37,3 +37,10 @@ data class CorrectionDto(
     val explanation: String,
     @SerialName("error_type") val errorType: String
 )
+
+@Serializable
+data class GeneratedProblemDto(
+    @SerialName("korean_text") val koreanText: String,
+    @SerialName("reference_answer") val referenceAnswer: String,
+    @SerialName("topic_tag") val topicTag: String = ""
+)

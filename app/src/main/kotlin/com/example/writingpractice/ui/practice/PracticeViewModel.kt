@@ -24,6 +24,7 @@ sealed class PracticeUiState {
     data class Writing(val problem: Problem, val answer: String = "") : PracticeUiState()
     data class Submitting(val problem: Problem) : PracticeUiState()
     data class Grading(val problem: Problem, val answerId: Long) : PracticeUiState()
+    data class Pending(val problem: Problem, val answerId: Long) : PracticeUiState()
     data class Error(val message: String) : PracticeUiState()
 }
 
@@ -69,8 +70,13 @@ class PracticeViewModel @Inject constructor(
             _uiState.value = PracticeUiState.Submitting(current.problem)
             val answerId = practiceRepository.submitAnswer(current.problem.id, current.answer)
             practiceRepository.clearDraft(current.problem.id)
-            _uiState.value = PracticeUiState.Grading(current.problem, answerId)
-            observeGrading(answerId)
+            val status = practiceRepository.getGradingStatus(answerId)
+            if (status == GradingStatus.GRADED) {
+                _navigateToResult.send(answerId)
+            } else {
+                _uiState.value = PracticeUiState.Pending(current.problem, answerId)
+                observeGrading(answerId)
+            }
         }
     }
 

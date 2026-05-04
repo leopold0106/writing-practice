@@ -2,9 +2,11 @@ package com.example.writingpractice.data.repository
 
 import com.example.writingpractice.data.local.asset.AssetProblemLoader
 import com.example.writingpractice.data.local.db.dao.ProblemDao
+import com.example.writingpractice.data.local.db.entity.ProblemEntity
 import com.example.writingpractice.data.model.Problem
 import com.example.writingpractice.data.model.toDomain
 import com.example.writingpractice.data.model.toEntity
+import com.example.writingpractice.data.remote.ClaudeApiClient
 import com.example.writingpractice.util.DateTimeUtil
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -15,7 +17,8 @@ import javax.inject.Singleton
 class ProblemRepository @Inject constructor(
     private val problemDao: ProblemDao,
     private val assetLoader: AssetProblemLoader,
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val claudeApiClient: ClaudeApiClient
 ) {
     suspend fun seedIfNeeded() {
         if (!settingsRepository.isDbSeeded()) {
@@ -43,4 +46,18 @@ class ProblemRepository @Inject constructor(
 
     suspend fun insertGeneratedProblem(problem: Problem): Long =
         problemDao.insert(problem.toEntity().copy(isPrebundled = false))
+
+    suspend fun generateAndInsert(level: Int): Result<Problem> =
+        claudeApiClient.generateProblem(level).map { generated ->
+            val entity = ProblemEntity(
+                uuid = "ai-${System.currentTimeMillis()}-$level",
+                level = level,
+                koreanText = generated.koreanText,
+                referenceAnswer = generated.referenceAnswer,
+                topicTag = generated.topicTag,
+                isPrebundled = false
+            )
+            val id = problemDao.insert(entity)
+            entity.copy(id = id).toDomain()
+        }
 }

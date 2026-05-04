@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Settings
@@ -20,11 +22,14 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -49,6 +54,7 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val generateState by viewModel.generateState.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
@@ -77,6 +83,7 @@ fun HomeScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
+                .verticalScroll(rememberScrollState())
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
@@ -105,6 +112,14 @@ fun HomeScreen(
                     onClick = { onLevelClick(level) }
                 )
             }
+
+            HorizontalDivider()
+
+            GenerateSection(
+                generateState = generateState,
+                onGenerate = viewModel::generateProblem,
+                onReset = viewModel::resetGenerateState
+            )
         }
     }
 }
@@ -188,6 +203,99 @@ private fun LevelButton(
         ) {
             Text("레벨 $level", fontWeight = FontWeight.Bold)
             Text(description, style = MaterialTheme.typography.bodyMedium)
+        }
+    }
+}
+
+@Composable
+private fun GenerateSection(
+    generateState: GenerateState,
+    onGenerate: (Int) -> Unit,
+    onReset: () -> Unit
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Text(
+            "AI 문제 생성",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.SemiBold
+        )
+        Text(
+            "Claude API를 사용해 새 문제를 만듭니다.",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+
+        val loadingLevel = (generateState as? GenerateState.Loading)?.level
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            (1..4).forEach { level ->
+                OutlinedButton(
+                    onClick = { onGenerate(level) },
+                    enabled = generateState !is GenerateState.Loading,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    if (loadingLevel == level) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(16.dp),
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Text("Lv$level")
+                    }
+                }
+            }
+        }
+
+        when (generateState) {
+            is GenerateState.Success -> {
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(8.dp),
+                    color = Color(0xFFE8F5E9)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            "레벨 ${generateState.level} 문제가 추가되었습니다!",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color(0xFF1B5E20)
+                        )
+                        OutlinedButton(onClick = onReset, modifier = Modifier.height(32.dp)) {
+                            Text("닫기", style = MaterialTheme.typography.labelSmall)
+                        }
+                    }
+                }
+            }
+            is GenerateState.Error -> {
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(8.dp),
+                    color = Color(0xFFFFEBEE)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            "오류: ${generateState.message}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.weight(1f)
+                        )
+                        OutlinedButton(onClick = onReset, modifier = Modifier.height(32.dp)) {
+                            Text("닫기", style = MaterialTheme.typography.labelSmall)
+                        }
+                    }
+                }
+            }
+            else -> Unit
         }
     }
 }

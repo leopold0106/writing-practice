@@ -122,6 +122,9 @@ class PracticeRepository @Inject constructor(
         )
     }
 
+    suspend fun getGradingStatus(answerId: Long): GradingStatus? =
+        userAnswerDao.getById(answerId)?.gradingStatus
+
     fun observeGradingStatus(answerId: Long): Flow<GradingStatus?> =
         userAnswerDao.observeById(answerId).map { it?.gradingStatus }
 

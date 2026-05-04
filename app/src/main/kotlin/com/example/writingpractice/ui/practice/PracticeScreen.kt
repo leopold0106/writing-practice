@@ -95,6 +95,12 @@ fun PracticeScreen(
                 }
                 GradingContent(koreanText = koreanText, modifier = Modifier.padding(padding))
             }
+
+            is PracticeUiState.Pending -> PendingContent(
+                koreanText = s.problem.koreanText,
+                onBack = onBack,
+                modifier = Modifier.padding(padding)
+            )
         }
     }
 }
@@ -147,6 +153,51 @@ private fun WritingContent(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("제출하기")
+        }
+    }
+}
+
+@Composable
+private fun PendingContent(koreanText: String, onBack: () -> Unit, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier.fillMaxSize().padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Card(elevation = CardDefaults.cardElevation(2.dp)) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text("한국어 문제", style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.primary)
+                Spacer(Modifier.height(8.dp))
+                Text(koreanText, style = MaterialTheme.typography.bodyLarge)
+            }
+        }
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            elevation = CardDefaults.cardElevation(2.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    "답변이 저장되었습니다",
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    "인터넷에 연결되면 자동으로 채점됩니다. 채점 결과는 오답노트에서 확인하실 수 있습니다.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                )
+            }
+        }
+
+        Spacer(Modifier.height(8.dp))
+
+        Button(onClick = onBack, modifier = Modifier.fillMaxWidth()) {
+            Text("홈으로 돌아가기")
         }
     }
 }
