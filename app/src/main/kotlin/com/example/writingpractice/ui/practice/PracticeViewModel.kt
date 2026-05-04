@@ -50,13 +50,15 @@ class PracticeViewModel @Inject constructor(
             if (problem == null) {
                 _uiState.value = PracticeUiState.Error("문제를 불러올 수 없습니다.")
             } else {
-                _uiState.value = PracticeUiState.Writing(problem)
+                val draft = practiceRepository.getDraft(problem.id)
+                _uiState.value = PracticeUiState.Writing(problem, draft)
             }
         }
     }
 
     fun onAnswerChange(text: String) {
         val current = _uiState.value as? PracticeUiState.Writing ?: return
+        practiceRepository.saveDraft(current.problem.id, text)
         _uiState.update { PracticeUiState.Writing(current.problem, text) }
     }
 
@@ -66,6 +68,7 @@ class PracticeViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = PracticeUiState.Submitting(current.problem)
             val answerId = practiceRepository.submitAnswer(current.problem.id, current.answer)
+            practiceRepository.clearDraft(current.problem.id)
             _uiState.value = PracticeUiState.Grading(current.problem, answerId)
             observeGrading(answerId)
         }

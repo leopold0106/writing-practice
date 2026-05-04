@@ -4,10 +4,95 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
+
+    <!-- Paper (white sheet sticking up) -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M54,20 C54,20 36,38 36,54 C36,63.94 44.06,72 54,72 C63.94,72 72,63.94 72,54 C72,38 54,20 54,20 Z" />
+        android:pathData="M38,11 L70,11 L70,35 L38,35 Z" />
+    <!-- Paper lines -->
     <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M40,65 L68,65 L68,88 L40,88 Z" />
+        android:strokeColor="#DDDDDD"
+        android:strokeWidth="1.5"
+        android:pathData="M44,19 L64,19" />
+    <path
+        android:strokeColor="#DDDDDD"
+        android:strokeWidth="1.5"
+        android:pathData="M44,24 L60,24" />
+    <path
+        android:strokeColor="#DDDDDD"
+        android:strokeWidth="1.5"
+        android:pathData="M44,29 L57,29" />
+
+    <!-- Platen (roller bar) -->
+    <path
+        android:fillColor="#2C2C2C"
+        android:pathData="M22,26 C22,23 24.2,21 27,21 L81,21 C83.8,21 86,23 86,26 L86,36 L22,36 Z" />
+    <!-- Platen highlight -->
+    <path
+        android:fillColor="#3D3D3D"
+        android:pathData="M26,21 L82,21 L82,24 C82,24 54,26 26,24 Z" />
+
+    <!-- Carriage lever (right side) -->
+    <path
+        android:fillColor="#3A3A3A"
+        android:pathData="M88,28 L94,28 C95.1,28 96,28.9 96,30 L96,33 C96,34.1 95.1,35 94,35 L88,35 Z" />
+
+    <!-- Main body -->
+    <path
+        android:fillColor="#D4B870"
+        android:pathData="M14,36 L94,36 L94,91 C94,93.2 92.2,95 90,95 L18,95 C15.8,95 14,93.2 14,91 Z" />
+
+    <!-- Body top panel (darker stripe) -->
+    <path
+        android:fillColor="#C4A455"
+        android:pathData="M14,36 L94,36 L94,47 L14,47 Z" />
+
+    <!-- Key deck (recessed area) -->
+    <path
+        android:fillColor="#B8903E"
+        android:pathData="M20,51 C20,49.3 21.3,48 23,48 L85,48 C86.7,48 88,49.3 88,51 L88,91 L20,91 Z" />
+
+    <!-- Key deck inner surface -->
+    <path
+        android:fillColor="#C49A48"
+        android:pathData="M23,51 L85,51 L85,88 L23,88 Z" />
+
+    <!-- Keys Row 1 (6 keys) y=61 -->
+    <path android:fillColor="#F0F0F0" android:pathData="M27,61 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0 Z" />
+    <path android:fillColor="#F0F0F0" android:pathData="M37,61 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0 Z" />
+    <path android:fillColor="#F0F0F0" android:pathData="M47,61 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0 Z" />
+    <path android:fillColor="#F0F0F0" android:pathData="M57,61 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0 Z" />
+    <path android:fillColor="#F0F0F0" android:pathData="M67,61 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0 Z" />
+    <path android:fillColor="#F0F0F0" android:pathData="M77,61 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0 Z" />
+    <!-- Row 1 key shadows -->
+    <path android:fillColor="#C8C8C8" android:pathData="M23,63 a4,4 0 0,0 8,0 Z" />
+    <path android:fillColor="#C8C8C8" android:pathData="M33,63 a4,4 0 0,0 8,0 Z" />
+    <path android:fillColor="#C8C8C8" android:pathData="M43,63 a4,4 0 0,0 8,0 Z" />
+    <path android:fillColor="#C8C8C8" android:pathData="M53,63 a4,4 0 0,0 8,0 Z" />
+    <path android:fillColor="#C8C8C8" android:pathData="M63,63 a4,4 0 0,0 8,0 Z" />
+    <path android:fillColor="#C8C8C8" android:pathData="M73,63 a4,4 0 0,0 8,0 Z" />
+
+    <!-- Keys Row 2 (5 keys, staggered) y=74 -->
+    <path android:fillColor="#F0F0F0" android:pathData="M32,74 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0 Z" />
+    <path android:fillColor="#F0F0F0" android:pathData="M42,74 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0 Z" />
+    <!-- Red accent key (center) -->
+    <path android:fillColor="#E53935" android:pathData="M52,74 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0 Z" />
+    <path android:fillColor="#F0F0F0" android:pathData="M62,74 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0 Z" />
+    <path android:fillColor="#F0F0F0" android:pathData="M72,74 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0 Z" />
+    <!-- Row 2 key shadows -->
+    <path android:fillColor="#C8C8C8" android:pathData="M28,76 a4,4 0 0,0 8,0 Z" />
+    <path android:fillColor="#C8C8C8" android:pathData="M38,76 a4,4 0 0,0 8,0 Z" />
+    <path android:fillColor="#B71C1C" android:pathData="M48,76 a4,4 0 0,0 8,0 Z" />
+    <path android:fillColor="#C8C8C8" android:pathData="M58,76 a4,4 0 0,0 8,0 Z" />
+    <path android:fillColor="#C8C8C8" android:pathData="M68,76 a4,4 0 0,0 8,0 Z" />
+
+    <!-- Space bar -->
+    <path
+        android:fillColor="#F0F0F0"
+        android:pathData="M34,85 C34,83.3 35.3,82 37,82 L71,82 C72.7,82 74,83.3 74,85 L74,87 C74,88.7 72.7,90 71,90 L37,90 C35.3,90 34,88.7 34,87 Z" />
+    <!-- Space bar shadow -->
+    <path
+        android:fillColor="#C8C8C8"
+        android:pathData="M34,87 C34,88.7 35.3,90 37,90 L71,90 C72.7,90 74,88.7 74,87 Z" />
+
 </vector>

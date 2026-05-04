@@ -38,6 +38,12 @@ class PracticeRepository @Inject constructor(
     private val workManager: WorkManager,
     private val settingsRepository: SettingsRepository
 ) {
+    // In-memory draft storage; survives navigation within the same app session
+    private val drafts = mutableMapOf<Long, String>()
+    fun getDraft(problemId: Long): String = drafts[problemId] ?: ""
+    fun saveDraft(problemId: Long, text: String) { drafts[problemId] = text }
+    fun clearDraft(problemId: Long) { drafts.remove(problemId) }
+
     suspend fun submitAnswer(problemId: Long, answerText: String): Long {
         val existing = userAnswerDao.observeForProblem(problemId).first()
         val attemptNumber = existing.size + 1
@@ -49,7 +55,11 @@ class PracticeRepository @Inject constructor(
             attemptNumber = attemptNumber
         )
         val answerId = userAnswerDao.insert(entity)
-        enqueueGrading(answerId)
+        // Try direct grading immediately; fall back to WorkManager on failure (offline/error)
+        val result = gradeAnswer(answerId)
+        if (result.isFailure) {
+            enqueueGrading(answerId)
+        }
         return answerId
     }
 
