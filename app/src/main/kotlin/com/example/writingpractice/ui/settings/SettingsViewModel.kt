@@ -1,11 +1,12 @@
 package com.example.writingpractice.ui.settings
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import android.content.Context
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.writingpractice.data.repository.SettingsRepository
 import com.example.writingpractice.util.NotificationHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -27,9 +28,9 @@ data class SettingsUiState(
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    application: Application,
+    @ApplicationContext private val context: Context,
     private val settingsRepository: SettingsRepository
-) : AndroidViewModel(application) {
+) : ViewModel() {
 
     private val _apiKeyVisible = MutableStateFlow(false)
     private val _savedMessage = MutableStateFlow("")
@@ -61,13 +62,12 @@ class SettingsViewModel @Inject constructor(
 
     fun setNotificationEnabled(enabled: Boolean) = viewModelScope.launch {
         settingsRepository.setNotificationEnabled(enabled)
-        val ctx = getApplication<Application>()
         if (enabled) {
             val h = settingsRepository.notificationHour.first()
             val m = settingsRepository.notificationMinute.first()
-            NotificationHelper.scheduleDaily(ctx, h, m)
+            NotificationHelper.scheduleDaily(context, h, m)
         } else {
-            NotificationHelper.cancel(ctx)
+            NotificationHelper.cancel(context)
         }
     }
 
@@ -75,7 +75,7 @@ class SettingsViewModel @Inject constructor(
         settingsRepository.setNotificationTime(hour, minute)
         val enabled = settingsRepository.notificationEnabled.first()
         if (enabled) {
-            NotificationHelper.scheduleDaily(getApplication(), hour, minute)
+            NotificationHelper.scheduleDaily(context, hour, minute)
         }
     }
 
