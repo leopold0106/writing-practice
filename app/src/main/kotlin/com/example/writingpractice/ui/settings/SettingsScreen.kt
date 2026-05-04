@@ -66,19 +66,12 @@ fun SettingsScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    // Local state for API key so typing is instant (no DataStore round-trip per keystroke)
+    // Local state for text field — no DataStore round-trip while typing
     var localApiKey by rememberSaveable { mutableStateOf("") }
-    var apiKeyInitialized by rememberSaveable { mutableStateOf(false) }
-    if (!apiKeyInitialized && state.apiKey.isNotEmpty()) {
-        localApiKey = state.apiKey
-        apiKeyInitialized = true
-    }
-    // Also initialize when state loads for the first time if key was empty before
-    LaunchedEffect(state.apiKey) {
-        if (!apiKeyInitialized) {
-            localApiKey = state.apiKey
-            apiKeyInitialized = true
-        }
+
+    // One-time direct DataStore read to bypass stateIn's empty initial value
+    LaunchedEffect(Unit) {
+        localApiKey = viewModel.loadApiKey()
     }
 
     Scaffold(
@@ -98,8 +91,9 @@ fun SettingsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .verticalScroll(rememberScrollState())
+                // imePadding BEFORE verticalScroll so the scroll area shrinks when keyboard appears
                 .imePadding()
+                .verticalScroll(rememberScrollState())
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
@@ -183,6 +177,7 @@ fun SettingsScreen(
                 label = { Text("API Key") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
+                // apiKeyVisible comes from ViewModel — now properly reactive via nested combine
                 visualTransformation = if (state.apiKeyVisible)
                     VisualTransformation.None
                 else
@@ -199,7 +194,7 @@ fun SettingsScreen(
                         Icon(
                             if (state.apiKeyVisible) Icons.Default.VisibilityOff
                             else Icons.Default.Visibility,
-                            contentDescription = null
+                            contentDescription = if (state.apiKeyVisible) "숨기기" else "보기"
                         )
                     }
                 }

@@ -22,8 +22,7 @@ data class SettingsUiState(
     val notificationHour: Int = 9,
     val notificationMinute: Int = 0,
     val apiKey: String = "",
-    val apiKeyVisible: Boolean = false,
-    val savedMessage: String = ""
+    val apiKeyVisible: Boolean = false
 )
 
 @HiltViewModel
@@ -33,28 +32,29 @@ class SettingsViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _apiKeyVisible = MutableStateFlow(false)
-    private val _savedMessage = MutableStateFlow("")
 
+    // Nested combines to include _apiKeyVisible as a reactive flow
     val uiState: StateFlow<SettingsUiState> = combine(
-        settingsRepository.dailyGoal,
-        settingsRepository.notificationEnabled,
-        settingsRepository.notificationHour,
-        settingsRepository.notificationMinute,
-        settingsRepository.apiKey
-    ) { goal, enabled, hour, minute, key ->
+        combine(settingsRepository.dailyGoal, settingsRepository.notificationEnabled) { g, e -> g to e },
+        combine(settingsRepository.notificationHour, settingsRepository.notificationMinute) { h, m -> h to m },
+        combine(settingsRepository.apiKey, _apiKeyVisible) { k, v -> k to v }
+    ) { (goal, enabled), (hour, minute), (key, visible) ->
         SettingsUiState(
             dailyGoal = goal,
             notificationEnabled = enabled,
             notificationHour = hour,
             notificationMinute = minute,
             apiKey = key,
-            apiKeyVisible = _apiKeyVisible.value
+            apiKeyVisible = visible
         )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = SettingsUiState()
     )
+
+    // Direct DataStore read — bypasses stateIn initial empty value
+    suspend fun loadApiKey(): String = settingsRepository.getApiKey()
 
     fun setDailyGoal(goal: Int) = viewModelScope.launch {
         settingsRepository.setDailyGoal(goal.coerceIn(1, 30))
@@ -83,9 +83,7 @@ class SettingsViewModel @Inject constructor(
         settingsRepository.setApiKey(key)
     }
 
-    fun toggleApiKeyVisibility() { _apiKeyVisible.value = !_apiKeyVisible.value }
-
-    fun save() = viewModelScope.launch {
-        _savedMessage.value = "저장되었습니다"
+    fun toggleApiKeyVisibility() {
+        _apiKeyVisible.value = !_apiKeyVisible.value
     }
 }
