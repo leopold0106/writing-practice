@@ -4,6 +4,7 @@ import com.example.writingpractice.data.local.asset.AssetProblemLoader
 import com.example.writingpractice.data.local.db.dao.ProblemDao
 import com.example.writingpractice.data.model.Problem
 import com.example.writingpractice.data.model.toDomain
+import com.example.writingpractice.data.model.toEntity
 import com.example.writingpractice.util.DateTimeUtil
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
