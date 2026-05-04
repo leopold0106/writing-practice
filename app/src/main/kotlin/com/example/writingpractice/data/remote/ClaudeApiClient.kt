@@ -65,6 +65,8 @@ Return ONLY valid JSON (no markdown, no extra text):
         val userContent = "Korean original:\n$koreanText\n\nStudent's English answer:\n$englishAnswer"
         val response = service.complete(
             ClaudeRequest(
+                model = MODEL,
+                maxTokens = 1024,
                 system = gradingSystemPrompt,
                 messages = listOf(ClaudeMessage("user", userContent))
             )
@@ -83,6 +85,8 @@ Return ONLY valid JSON (no markdown, no extra text):
         }
         val response = service.complete(
             ClaudeRequest(
+                model = MODEL,
+                maxTokens = 1024,
                 system = generateSystemPrompt,
                 messages = listOf(
                     ClaudeMessage(
@@ -100,11 +104,16 @@ Return ONLY valid JSON (no markdown, no extra text):
     suspend fun ping(): Result<Unit> = apiCall {
         service.complete(
             ClaudeRequest(
+                model = MODEL,
                 maxTokens = 10,
                 messages = listOf(ClaudeMessage("user", "Hi"))
             )
         )
         Unit
+    }
+
+    companion object {
+        private const val MODEL = "claude-sonnet-4-6"
     }
 
     private suspend fun <T> apiCall(block: suspend () -> T): Result<T> = try {

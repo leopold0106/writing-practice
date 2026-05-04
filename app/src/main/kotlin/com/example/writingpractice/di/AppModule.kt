@@ -64,6 +64,7 @@ object AppModule {
         ignoreUnknownKeys = true
         isLenient = true
         explicitNulls = false
+        encodeDefaults = true
     }
 
     @Provides
