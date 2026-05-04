@@ -14,11 +14,13 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
+enum class ApiStatus { UNKNOWN, VALID, INVALID }
+
 data class HomeUiState(
     val todaySolved: Int = 0,
     val dailyGoal: Int = 5,
     val unreviewedCorrections: Int = 0,
-    val levelCounts: Map<Int, Int> = emptyMap(),
+    val apiStatus: ApiStatus = ApiStatus.UNKNOWN,
     val isLoading: Boolean = true
 )
 
@@ -32,12 +34,21 @@ class HomeViewModel @Inject constructor(
     val uiState: StateFlow<HomeUiState> = combine(
         practiceRepository.observeTodaySolvedCount(),
         settingsRepository.dailyGoal,
-        correctionRepository.observeUnreviewedCount()
-    ) { solved, goal, unreviewed ->
+        correctionRepository.observeUnreviewedCount(),
+        combine(settingsRepository.apiKey, settingsRepository.apiKeyValidated) { key, validated ->
+            when {
+                key.isEmpty() -> ApiStatus.UNKNOWN
+                validated == true -> ApiStatus.VALID
+                validated == false -> ApiStatus.INVALID
+                else -> ApiStatus.UNKNOWN
+            }
+        }
+    ) { solved, goal, unreviewed, apiStatus ->
         HomeUiState(
             todaySolved = solved,
             dailyGoal = goal,
             unreviewedCorrections = unreviewed,
+            apiStatus = apiStatus,
             isLoading = false
         )
     }.stateIn(

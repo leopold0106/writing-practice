@@ -21,6 +21,7 @@ class SettingsRepository @Inject constructor(
     val notificationHour: Flow<Int> = dataStore.data.map { it[Keys.NOTIF_HOUR] ?: 9 }
     val notificationMinute: Flow<Int> = dataStore.data.map { it[Keys.NOTIF_MINUTE] ?: 0 }
     val apiKey: Flow<String> = dataStore.data.map { it[Keys.API_KEY] ?: "" }
+    val apiKeyValidated: Flow<Boolean?> = dataStore.data.map { it[Keys.API_KEY_VALIDATED] }
 
     suspend fun getApiKey(): String = dataStore.data.first()[Keys.API_KEY] ?: ""
     suspend fun isDbSeeded(): Boolean = dataStore.data.first()[Keys.DB_SEEDED] ?: false
@@ -48,6 +49,10 @@ class SettingsRepository @Inject constructor(
         dataStore.edit { it[Keys.API_KEY] = key }
     }
 
+    suspend fun setApiKeyValidated(valid: Boolean) {
+        dataStore.edit { it[Keys.API_KEY_VALIDATED] = valid }
+    }
+
     private object Keys {
         val DAILY_GOAL = intPreferencesKey("daily_goal")
         val NOTIF_ENABLED = booleanPreferencesKey("notif_enabled")
@@ -55,5 +60,6 @@ class SettingsRepository @Inject constructor(
         val NOTIF_MINUTE = intPreferencesKey("notif_minute")
         val API_KEY = stringPreferencesKey("api_key")
         val DB_SEEDED = booleanPreferencesKey("db_seeded")
+        val API_KEY_VALIDATED = booleanPreferencesKey("api_key_validated")
     }
 }

@@ -65,4 +65,14 @@ Only report genuine errors. Do not invent corrections for acceptable variations 
         },
         finalCorrectedVersion = finalCorrectedVersion
     )
+
+    suspend fun ping(): Result<Unit> = runCatching {
+        service.complete(
+            ClaudeRequest(
+                maxTokens = 1,
+                messages = listOf(ClaudeMessage("user", "Hi"))
+            )
+        )
+        Unit
+    }
 }
