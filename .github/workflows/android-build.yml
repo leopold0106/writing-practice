@@ -33,27 +33,15 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x gradlew
 
-      - name: Run KSP (Hilt + Room codegen)
-        run: ./gradlew kspDebugKotlin --stacktrace --no-daemon 2>&1 | tee /tmp/ksp.log; exit ${PIPESTATUS[0]}
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug --stacktrace --no-daemon 2>&1 | tee /tmp/build.log; exit ${PIPESTATUS[0]}
 
-      - name: Compile Kotlin sources
-        run: ./gradlew compileDebugKotlin --stacktrace --no-daemon 2>&1 | tee /tmp/compile.log; exit ${PIPESTATUS[0]}
-
-      - name: Process resources
-        run: ./gradlew processDebugResources --stacktrace --no-daemon 2>&1 | tee /tmp/resources.log; exit ${PIPESTATUS[0]}
-
-      - name: Assemble Debug APK
-        run: ./gradlew assembleDebug --stacktrace --no-daemon
-
-      - name: Upload build logs on failure
+      - name: Upload build log on failure
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: build-logs-${{ github.sha }}
-          path: |
-            /tmp/ksp.log
-            /tmp/compile.log
-            /tmp/resources.log
+          name: build-log-${{ github.sha }}
+          path: /tmp/build.log
           retention-days: 3
 
       - name: Upload Debug APK
