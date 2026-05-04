@@ -13,7 +13,7 @@ data class ClaudeResponse(
 @Serializable
 data class ContentBlock(
     val type: String,
-    val text: String
+    val text: String = ""
 )
 
 @Serializable

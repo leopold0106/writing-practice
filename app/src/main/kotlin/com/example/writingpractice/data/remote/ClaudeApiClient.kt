@@ -8,6 +8,10 @@ import com.example.writingpractice.data.remote.dto.ClaudeRequest
 import com.example.writingpractice.data.remote.dto.GeneratedProblemDto
 import com.example.writingpractice.data.remote.dto.GradingResultDto
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.jsonObject
+import retrofit2.HttpException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -57,7 +61,7 @@ Return ONLY valid JSON (no markdown, no extra text):
     suspend fun gradeAnswer(
         koreanText: String,
         englishAnswer: String
-    ): Result<GradingResult> = runCatching {
+    ): Result<GradingResult> = apiCall {
         val userContent = "Korean original:\n$koreanText\n\nStudent's English answer:\n$englishAnswer"
         val response = service.complete(
             ClaudeRequest(
@@ -70,7 +74,7 @@ Return ONLY valid JSON (no markdown, no extra text):
         dto.toDomain()
     }
 
-    suspend fun generateProblem(level: Int): Result<GeneratedProblem> = runCatching {
+    suspend fun generateProblem(level: Int): Result<GeneratedProblem> = apiCall {
         val levelDesc = when (level) {
             1 -> "a single simple Korean sentence"
             2 -> "two related Korean sentences on the same topic"
@@ -93,14 +97,34 @@ Return ONLY valid JSON (no markdown, no extra text):
         GeneratedProblem(dto.koreanText, dto.referenceAnswer, dto.topicTag)
     }
 
-    suspend fun ping(): Result<Unit> = runCatching {
+    suspend fun ping(): Result<Unit> = apiCall {
         service.complete(
             ClaudeRequest(
-                maxTokens = 1,
+                maxTokens = 10,
                 messages = listOf(ClaudeMessage("user", "Hi"))
             )
         )
         Unit
+    }
+
+    private suspend fun <T> apiCall(block: suspend () -> T): Result<T> = try {
+        Result.success(block())
+    } catch (e: HttpException) {
+        val body = try { e.response()?.errorBody()?.string() } catch (_: Exception) { null }
+        val message = if (body != null) {
+            try {
+                (json.parseToJsonElement(body) as? JsonObject)
+                    ?.get("error")?.jsonObject
+                    ?.get("message")
+                    ?.let { (it as? JsonPrimitive)?.content }
+                    ?: body
+            } catch (_: Exception) { body }
+        } else {
+            "HTTP ${e.code()}"
+        }
+        Result.failure(RuntimeException(message))
+    } catch (e: Exception) {
+        Result.failure(e)
     }
 
     private fun extractJson(text: String): String =
