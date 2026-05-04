@@ -29,16 +29,20 @@ class CorrectionRepository @Inject constructor(
                 }
             }
             combine(flows) { pairs ->
-                pairs.mapNotNull { (pid, corrections) ->
-                    if (corrections.isEmpty()) return@mapNotNull null
-                    val problem = problemDao.getById(pid) ?: return@mapNotNull null
-                    NotebookEntry(
-                        problemId = pid,
-                        koreanText = problem.koreanText,
-                        level = problem.level,
-                        corrections = corrections
+                val entries = mutableListOf<NotebookEntry>()
+                for ((pid, corrections) in pairs) {
+                    if (corrections.isEmpty()) continue
+                    val problem = problemDao.getById(pid) ?: continue
+                    entries.add(
+                        NotebookEntry(
+                            problemId = pid,
+                            koreanText = problem.koreanText,
+                            level = problem.level,
+                            corrections = corrections
+                        )
                     )
                 }
+                entries
             }
         }
 

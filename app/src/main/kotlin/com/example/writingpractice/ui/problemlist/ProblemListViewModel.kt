@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.writingpractice.data.local.db.dao.UserAnswerDao
+import com.example.writingpractice.data.model.Problem
 import com.example.writingpractice.data.model.ProblemWithStatus
 import com.example.writingpractice.data.repository.ProblemRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,18 +30,20 @@ class ProblemListViewModel @Inject constructor(
 
     val uiState: StateFlow<ProblemListUiState> =
         problemRepository.observeByLevel(level).map { problems ->
-            val withStatus = problems.map { problem ->
-                val count = userAnswerDao.countGradedForProblem(problem.id)
-                ProblemWithStatus(
-                    problem = problem,
-                    latestScore = null,
-                    attemptCount = count
-                )
-            }
+            val withStatus = buildWithStatus(problems)
             ProblemListUiState(problems = withStatus, isLoading = false)
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = ProblemListUiState()
         )
+
+    private suspend fun buildWithStatus(problems: List<Problem>): List<ProblemWithStatus> {
+        val result = mutableListOf<ProblemWithStatus>()
+        for (problem in problems) {
+            val count = userAnswerDao.countGradedForProblem(problem.id)
+            result.add(ProblemWithStatus(problem = problem, latestScore = null, attemptCount = count))
+        }
+        return result
+    }
 }
