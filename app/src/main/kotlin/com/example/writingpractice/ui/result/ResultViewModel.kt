@@ -23,7 +23,8 @@ data class ResultUiState(
     val overallFeedback: String = "",
     val corrections: List<Correction> = emptyList(),
     val finalCorrectedVersion: String = "",
-    val isLoading: Boolean = true
+    val isLoading: Boolean = true,
+    val isPending: Boolean = false
 )
 
 @HiltViewModel
@@ -56,7 +57,8 @@ class ResultViewModel @Inject constructor(
             overallFeedback = answer.overallFeedback ?: "",
             corrections = corrections,
             finalCorrectedVersion = answer.finalCorrectedVersion ?: "",
-            isLoading = answer.score == null
+            isLoading = false,
+            isPending = answer.score == null
         )
     }.stateIn(
         scope = viewModelScope,

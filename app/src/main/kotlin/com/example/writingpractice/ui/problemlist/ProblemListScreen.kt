@@ -29,12 +29,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.writingpractice.data.model.ProblemWithStatus
 import com.example.writingpractice.ui.theme.ScoreGreen
+import com.example.writingpractice.ui.theme.ScoreRed
 import com.example.writingpractice.ui.theme.ScoreYellow
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,6 +44,7 @@ import com.example.writingpractice.ui.theme.ScoreYellow
 fun ProblemListScreen(
     level: Int,
     onProblemClick: (Long) -> Unit,
+    onAnswerClick: (Long) -> Unit,
     onStartRandom: () -> Unit,
     onBack: () -> Unit,
     viewModel: ProblemListViewModel = hiltViewModel()
@@ -82,7 +85,16 @@ fun ProblemListScreen(
             } else {
                 LazyColumn {
                     items(state.problems, key = { it.problem.id }) { item ->
-                        ProblemRow(item = item, onClick = { onProblemClick(item.problem.id) })
+                        ProblemRow(
+                            item = item,
+                            onClick = {
+                                if (item.isNew) {
+                                    onProblemClick(item.problem.id)
+                                } else {
+                                    item.latestAnswerId?.let { onAnswerClick(it) }
+                                }
+                            }
+                        )
                         HorizontalDivider()
                     }
                 }
@@ -106,7 +118,7 @@ private fun ProblemRow(item: ProblemWithStatus, onClick: () -> Unit) {
                 if (item.problem.koreanText.length > 50) "$it…" else it
             },
             style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(1f).padding(end = 8.dp),
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
@@ -117,18 +129,28 @@ private fun ProblemRow(item: ProblemWithStatus, onClick: () -> Unit) {
 @Composable
 private fun StatusChip(item: ProblemWithStatus) {
     when {
-        item.isGraded -> SuggestionChip(
-            onClick = {},
-            label = { Text("완료") },
-            colors = SuggestionChipDefaults.suggestionChipColors(
-                containerColor = ScoreGreen.copy(alpha = 0.15f)
+        item.isGraded -> {
+            val score = item.latestScore ?: 0
+            val color = when {
+                score >= 80 -> ScoreGreen
+                score >= 50 -> ScoreYellow
+                else -> ScoreRed
+            }
+            SuggestionChip(
+                onClick = {},
+                label = { Text("${score}점") },
+                colors = SuggestionChipDefaults.suggestionChipColors(
+                    containerColor = color.copy(alpha = 0.15f),
+                    labelColor = color
+                )
             )
-        )
-        item.isAttempted -> SuggestionChip(
+        }
+        item.isPending -> SuggestionChip(
             onClick = {},
             label = { Text("채점중") },
             colors = SuggestionChipDefaults.suggestionChipColors(
-                containerColor = ScoreYellow.copy(alpha = 0.15f)
+                containerColor = ScoreYellow.copy(alpha = 0.15f),
+                labelColor = Color(0xFFE65100)
             )
         )
         else -> SuggestionChip(

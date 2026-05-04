@@ -36,6 +36,14 @@ interface UserAnswerDao {
     fun observeCountForDate(dateIso: String): Flow<Int>
 
     @Query("""
+        SELECT ua.* FROM user_answers ua
+        JOIN problems p ON ua.problem_id = p.id
+        WHERE p.level = :level
+        ORDER BY ua.submitted_at DESC
+    """)
+    fun observeAllForLevel(level: Int): Flow<List<UserAnswerEntity>>
+
+    @Query("""
         SELECT COUNT(*) FROM user_answers
         WHERE problem_id = :problemId AND grading_status = 'GRADED'
     """)

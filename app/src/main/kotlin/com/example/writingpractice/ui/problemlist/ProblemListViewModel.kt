@@ -4,13 +4,12 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.writingpractice.data.local.db.dao.UserAnswerDao
-import com.example.writingpractice.data.model.Problem
 import com.example.writingpractice.data.model.ProblemWithStatus
 import com.example.writingpractice.data.repository.ProblemRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
@@ -28,22 +27,28 @@ class ProblemListViewModel @Inject constructor(
 
     val level: Int = savedStateHandle["level"] ?: 1
 
-    val uiState: StateFlow<ProblemListUiState> =
-        problemRepository.observeByLevel(level).map { problems ->
-            val withStatus = buildWithStatus(problems)
-            ProblemListUiState(problems = withStatus, isLoading = false)
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = ProblemListUiState()
-        )
+    val uiState: StateFlow<ProblemListUiState> = combine(
+        problemRepository.observeByLevel(level),
+        userAnswerDao.observeAllForLevel(level)
+    ) { problems, answers ->
+        val latestByProblem = answers
+            .groupBy { it.problemId }
+            .mapValues { (_, list) -> list.maxByOrNull { it.submittedAt }!! }
 
-    private suspend fun buildWithStatus(problems: List<Problem>): List<ProblemWithStatus> {
-        val result = mutableListOf<ProblemWithStatus>()
-        for (problem in problems) {
-            val count = userAnswerDao.countGradedForProblem(problem.id)
-            result.add(ProblemWithStatus(problem = problem, latestScore = null, attemptCount = count))
+        val withStatus = problems.map { problem ->
+            val latest = latestByProblem[problem.id]
+            ProblemWithStatus(
+                problem = problem,
+                latestAnswerId = latest?.id,
+                latestStatus = latest?.gradingStatus,
+                latestScore = latest?.score,
+                attemptCount = answers.count { it.problemId == problem.id }
+            )
         }
-        return result
-    }
+        ProblemListUiState(problems = withStatus, isLoading = false)
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = ProblemListUiState()
+    )
 }

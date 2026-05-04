@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -20,6 +21,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
@@ -58,13 +60,7 @@ fun ResultScreen(
             Box(
                 Modifier.fillMaxSize().padding(padding),
                 contentAlignment = Alignment.Center
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    CircularProgressIndicator()
-                    Spacer(Modifier.height(16.dp))
-                    Text("채점 중입니다…")
-                }
-            }
+            ) { CircularProgressIndicator() }
             return@Scaffold
         }
 
@@ -76,8 +72,13 @@ fun ResultScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            state.score?.let { score ->
-                ScoreCard(score = score, feedback = state.overallFeedback)
+            // Pending banner — replaces score card while waiting for grading
+            if (state.isPending) {
+                PendingBanner()
+            } else {
+                state.score?.let { score ->
+                    ScoreCard(score = score, feedback = state.overallFeedback)
+                }
             }
 
             state.problem?.let { problem ->
@@ -90,36 +91,38 @@ fun ResultScreen(
                 Text(state.userAnswer, style = MaterialTheme.typography.bodyMedium)
             }
 
-            if (state.corrections.isNotEmpty()) {
-                InfoCard(title = "수정 사항 (${state.corrections.size}개)") {
-                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        state.corrections.forEach { correction ->
-                            CorrectionItem(correction)
+            if (!state.isPending) {
+                if (state.corrections.isNotEmpty()) {
+                    InfoCard(title = "수정 사항 (${state.corrections.size}개)") {
+                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                            state.corrections.forEach { correction ->
+                                CorrectionItem(correction)
+                            }
                         }
                     }
+                } else {
+                    Card(
+                        colors = CardDefaults.cardColors(
+                            containerColor = ScoreGreen.copy(alpha = 0.1f)
+                        )
+                    ) {
+                        Text(
+                            "완벽한 답변입니다!",
+                            modifier = Modifier.padding(16.dp),
+                            color = ScoreGreen,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
                 }
-            } else {
-                Card(
-                    colors = CardDefaults.cardColors(
-                        containerColor = ScoreGreen.copy(alpha = 0.1f)
-                    )
-                ) {
-                    Text(
-                        "완벽한 답변입니다!",
-                        modifier = Modifier.padding(16.dp),
-                        color = ScoreGreen,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-            }
 
-            if (state.finalCorrectedVersion.isNotBlank()) {
-                InfoCard(title = "최종 수정본") {
-                    Text(
-                        state.finalCorrectedVersion,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary
-                    )
+                if (state.finalCorrectedVersion.isNotBlank()) {
+                    InfoCard(title = "최종 수정본") {
+                        Text(
+                            state.finalCorrectedVersion,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
             }
 
@@ -130,12 +133,48 @@ fun ResultScreen(
                 OutlinedButton(onClick = onHome, modifier = Modifier.weight(1f)) {
                     Text("홈으로")
                 }
-                Button(
-                    onClick = { onNextProblem(state.problem?.level ?: 1) },
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text("다음 문제")
+                if (!state.isPending) {
+                    Button(
+                        onClick = { onNextProblem(state.problem?.level ?: 1) },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("다음 문제")
+                    }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PendingBanner() {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        color = ScoreYellow.copy(alpha = 0.12f)
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(20.dp),
+                strokeWidth = 2.dp,
+                color = ScoreYellow
+            )
+            Column {
+                Text(
+                    "채점 대기 중",
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color(0xFFE65100)
+                )
+                Text(
+                    "인터넷 연결 시 자동으로 채점됩니다",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
     }

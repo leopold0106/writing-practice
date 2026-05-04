@@ -53,6 +53,9 @@ fun AppNavigation() {
                 onProblemClick = { problemId ->
                     navController.navigate(Routes.practice(level, problemId))
                 },
+                onAnswerClick = { answerId ->
+                    navController.navigate(Routes.result(answerId))
+                },
                 onStartRandom = {
                     navController.navigate(Routes.practice(level))
                 },
