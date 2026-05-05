@@ -44,7 +44,14 @@ class ProblemListViewModel @Inject constructor(
                 latestScore = latest?.score,
                 attemptCount = answers.count { it.problemId == problem.id }
             )
-        }
+        }.sortedWith(compareBy {
+            when {
+                it.isNew -> 0
+                it.isGraded -> 1
+                it.isPending -> 2
+                else -> 3
+            }
+        })
         ProblemListUiState(problems = withStatus, isLoading = false)
     }.stateIn(
         scope = viewModelScope,

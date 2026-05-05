@@ -2,141 +2,141 @@
   {
     "uuid": "l6-001",
     "level": 6,
-    "korean_text": "저는 요즘 명상을 배우고 있습니다.\n처음에는 집중하기가 어려웠습니다.\n하지만 꾸준히 하다 보니 마음이 많이 안정되었습니다.",
-    "reference_answer": "I have been learning meditation lately.\nAt first it was difficult to focus.\nHowever, the more consistently I practice, the calmer my mind has become.",
-    "topic_tag": "health"
+    "korean_text": "그 연구는 기존의 이론을 반박하는 새로운 증거를 제시했다.\n학계에서는 이 발견의 신뢰성에 대한 논쟁이 여전히 이어지고 있다.",
+    "reference_answer": "The study presented new evidence refuting the existing theory. The academic community continues to debate the reliability of this finding.",
+    "topic_tag": "science"
   },
   {
     "uuid": "l6-002",
     "level": 6,
-    "korean_text": "그녀는 어릴 때부터 글쓰기를 좋아했습니다.\n대학교 때 처음 단편 소설을 발표했습니다.\n지금은 베스트셀러 작가가 되었습니다.",
-    "reference_answer": "She has loved writing since she was young.\nShe published her first short story in college.\nNow she has become a bestselling author.",
-    "topic_tag": "career"
+    "korean_text": "글로벌 공급망의 붕괴는 여러 산업에 심각한 영향을 미쳤다.\n특히 반도체 산업은 생산 중단이라는 위기에 직면했으며, 그 여파는 수년간 지속되었다.",
+    "reference_answer": "The collapse of global supply chains had a serious impact on various industries. In particular, the semiconductor industry faced a crisis of production halts, and the repercussions lasted for years.",
+    "topic_tag": "business"
   },
   {
     "uuid": "l6-003",
     "level": 6,
-    "korean_text": "저는 매달 새로운 책 한 권을 읽으려고 합니다.\n이달에는 경제에 관한 책을 읽었습니다.\n다음 달에는 역사책을 읽을 계획입니다.",
-    "reference_answer": "I try to read one new book every month.\nThis month I read a book about economics.\nI plan to read a history book next month.",
-    "topic_tag": "hobby"
+    "korean_text": "도시화가 빠르게 진행됨에 따라 농촌 인구는 지속적으로 감소하고 있다.\n이에 따른 지역 경제 침체와 고령화 문제는 정부의 정책적 개입을 요구하고 있다.",
+    "reference_answer": "As urbanization progresses rapidly, the rural population continues to decline. The resulting regional economic depression and aging population problems require government policy intervention.",
+    "topic_tag": "politics"
   },
   {
     "uuid": "l6-004",
     "level": 6,
-    "korean_text": "오늘 신입 사원 오리엔테이션이 있었습니다.\n회사의 규정과 문화를 소개받았습니다.\n새로운 환경에서 잘 적응할 수 있을 것 같습니다.",
-    "reference_answer": "There was a new employee orientation today.\nI was introduced to the company's regulations and culture.\nI think I will be able to adapt well in this new environment.",
-    "topic_tag": "work"
+    "korean_text": "인공지능 기술의 발전은 기존 직업 구조에 근본적인 변화를 가져오고 있다.\n일부 전문가들은 이를 새로운 기회로 보는 반면, 다른 이들은 대규모 실업의 위협으로 간주한다.",
+    "reference_answer": "The development of artificial intelligence technology is bringing fundamental changes to the existing job structure. Some experts see this as a new opportunity, while others regard it as a threat of mass unemployment.",
+    "topic_tag": "technology"
   },
   {
     "uuid": "l6-005",
     "level": 6,
-    "korean_text": "이번 휴가에 가족과 유럽 여행을 다녀왔습니다.\n프랑스, 이탈리아, 스페인을 방문했습니다.\n각 나라의 문화와 음식이 정말 인상적이었습니다.",
-    "reference_answer": "I went on a trip to Europe with my family this vacation.\nWe visited France, Italy, and Spain.\nThe culture and food of each country were truly impressive.",
-    "topic_tag": "travel"
+    "korean_text": "그 정책의 효과는 단기적으로는 긍정적이었으나, 장기적으로는 부작용이 드러나기 시작했다.\n전문가들은 보다 세밀한 분석과 점진적인 정책 수정이 필요하다고 지적한다.",
+    "reference_answer": "The effects of the policy were positive in the short term, but side effects began to emerge in the long run. Experts point out that more detailed analysis and gradual policy revision are necessary.",
+    "topic_tag": "politics"
   },
   {
     "uuid": "l6-006",
     "level": 6,
-    "korean_text": "저는 뉴스를 매일 챙겨봅니다.\n국내외 중요한 사건들을 파악하고 싶습니다.\n정보를 갖고 있어야 올바른 판단을 할 수 있다고 생각합니다.",
-    "reference_answer": "I keep up with the news every day.\nI want to keep track of important events at home and abroad.\nI believe that having information allows you to make the right judgments.",
-    "topic_tag": "social"
+    "korean_text": "그 기업의 급격한 성장은 단순한 기술 혁신의 결과가 아니었다.\n창업자의 강력한 리더십과 전략적 파트너십이 그 성공의 핵심 요인으로 작용했다.",
+    "reference_answer": "The company's rapid growth was not simply the result of technological innovation. The founder's strong leadership and strategic partnerships served as the key factors behind its success.",
+    "topic_tag": "business"
   },
   {
     "uuid": "l6-007",
     "level": 6,
-    "korean_text": "그 레스토랑은 재료 본연의 맛을 살린 요리로 유명합니다.\n인공 조미료를 전혀 사용하지 않습니다.\n건강을 생각하는 사람들에게 특히 인기가 있습니다.",
-    "reference_answer": "That restaurant is famous for dishes that bring out the natural flavor of ingredients.\nThey do not use any artificial seasoning.\nIt is especially popular with people who are conscious of their health.",
-    "topic_tag": "food"
+    "korean_text": "이번 협약은 두 기관 간의 오랜 갈등을 봉합하는 데 기여했다.\n그러나 근본적인 구조적 문제들이 해결되지 않은 상태에서 지속적인 협력이 가능할지는 미지수다.",
+    "reference_answer": "This agreement contributed to resolving the longstanding conflict between the two institutions. However, it remains to be seen whether sustained cooperation is possible given that fundamental structural issues have not been resolved.",
+    "topic_tag": "politics"
   },
   {
     "uuid": "l6-008",
     "level": 6,
-    "korean_text": "저는 프리랜서로 일한 지 2년이 되었습니다.\n처음에는 수입이 불규칙해서 힘들었습니다.\n이제는 안정적인 클라이언트들이 생겼습니다.",
-    "reference_answer": "It has been two years since I started working as a freelancer.\nAt first, it was tough because my income was irregular.\nNow I have a set of stable clients.",
-    "topic_tag": "career"
+    "korean_text": "기후 변화에 따른 자연재해의 빈도와 강도가 점점 높아지고 있다.\n전 세계 정부들은 탄소 배출 감축과 친환경 에너지로의 전환을 더 이상 미룰 수 없는 과제로 인식하게 되었다.",
+    "reference_answer": "The frequency and intensity of natural disasters due to climate change are increasing. Governments around the world have come to recognize reducing carbon emissions and transitioning to clean energy as tasks that can no longer be postponed.",
+    "topic_tag": "environment"
   },
   {
     "uuid": "l6-009",
     "level": 6,
-    "korean_text": "오늘은 첫눈이 왔습니다.\n사람들이 모두 설레며 밖을 바라봤습니다.\n도시 전체가 하얀 눈으로 덮였습니다.",
-    "reference_answer": "The first snow of the year fell today.\nEveryone looked outside with excitement.\nThe entire city was covered in white snow.",
-    "topic_tag": "weather"
+    "korean_text": "그 연구자는 수집된 데이터를 면밀히 분석한 결과, 기존의 가설이 특정 조건에서만 유효하다는 사실을 밝혀냈다.\n이 발견은 해당 분야의 연구 방향을 재정립하는 데 중요한 역할을 할 것으로 기대된다.",
+    "reference_answer": "After carefully analyzing the collected data, the researcher found that the existing hypothesis was valid only under certain conditions. This discovery is expected to play an important role in redefining the research direction in the field.",
+    "topic_tag": "science"
   },
   {
     "uuid": "l6-010",
     "level": 6,
-    "korean_text": "저는 언젠가 카페를 열고 싶은 꿈이 있습니다.\n직접 커피를 내리고 손님과 이야기를 나누고 싶습니다.\n그 꿈을 이루기 위해 지금은 바리스타 자격증을 준비하고 있습니다.",
-    "reference_answer": "I have a dream of opening a cafe someday.\nI want to brew coffee myself and chat with customers.\nTo achieve that dream, I am currently preparing for a barista certification.",
-    "topic_tag": "career"
+    "korean_text": "최근 몇 년간 국제 정세의 불안정성이 증가하면서 각국의 에너지 안보 전략이 주목받고 있다.\n일부 국가들은 자국 내 에너지 생산 능력 강화에 적극적으로 투자하기 시작했다.",
+    "reference_answer": "As global geopolitical instability has increased in recent years, energy security strategies of various countries are gaining attention. Some countries have begun actively investing in strengthening their domestic energy production capabilities.",
+    "topic_tag": "politics"
   },
   {
     "uuid": "l6-011",
     "level": 6,
-    "korean_text": "그는 은퇴 후 전원에서 생활하고 있습니다.\n텃밭을 가꾸고 책을 읽으며 여유롭게 지냅니다.\n그 조용하고 단순한 삶이 진정한 행복이라고 말합니다.",
-    "reference_answer": "He lives in the countryside after retirement.\nHe spends his time leisurely tending his vegetable garden and reading books.\nHe says that quiet, simple life is true happiness.",
-    "topic_tag": "lifestyle"
+    "korean_text": "그 소설은 독자들의 뜨거운 반응을 얻었음에도 불구하고 주요 문학상 수상에는 실패했다.\n비평가들은 그 작품의 상업적 성공이 오히려 문학적 가치 평가에 부정적 영향을 미쳤다고 분석했다.",
+    "reference_answer": "Despite receiving an enthusiastic response from readers, the novel failed to win major literary awards. Critics analyzed that the work's commercial success actually had a negative impact on the evaluation of its literary value.",
+    "topic_tag": "culture"
   },
   {
     "uuid": "l6-012",
     "level": 6,
-    "korean_text": "저는 최근에 디지털 디톡스를 실천했습니다.\n일주일 동안 스마트폰 사용을 최소화했습니다.\n생각보다 훨씬 상쾌하고 집중력이 높아졌습니다.",
-    "reference_answer": "I recently practiced a digital detox.\nI minimized my smartphone use for a week.\nI felt much more refreshed and my concentration improved more than I expected.",
-    "topic_tag": "technology"
+    "korean_text": "그 의원은 회의에서 법안의 타당성을 강력히 주장했으나, 반대 의원들의 설득에는 실패했다.\n결국 해당 법안은 표결에서 근소한 차이로 부결되었다.",
+    "reference_answer": "The lawmaker strongly argued for the validity of the bill at the session, but failed to persuade the opposing members. In the end, the bill was narrowly rejected in the vote.",
+    "topic_tag": "politics"
   },
   {
     "uuid": "l6-013",
     "level": 6,
-    "korean_text": "오늘 봉사 활동으로 양로원을 방문했습니다.\n할머니, 할아버지들과 함께 노래를 부르고 게임을 했습니다.\n보람차고 행복한 하루였습니다.",
-    "reference_answer": "I visited a nursing home for volunteer work today.\nI sang songs and played games with the elderly.\nIt was a rewarding and happy day.",
-    "topic_tag": "social"
+    "korean_text": "선진국과 개발도상국 간의 기술 격차는 단순히 경제적 문제에 국한되지 않는다.\n이는 교육 기회의 불평등과 제도적 취약성이 복합적으로 작용한 결과다.",
+    "reference_answer": "The technology gap between developed and developing countries is not simply limited to economic issues. This is the result of the complex interplay of inequality in educational opportunities and institutional vulnerabilities.",
+    "topic_tag": "education"
   },
   {
     "uuid": "l6-014",
     "level": 6,
-    "korean_text": "저는 매년 봄에 옷장을 정리합니다.\n입지 않는 옷들은 기부하거나 버립니다.\n미니멀한 생활이 마음을 편하게 해줍니다.",
-    "reference_answer": "I organize my closet every spring.\nI donate or throw away clothes I don't wear.\nA minimalist lifestyle puts my mind at ease.",
-    "topic_tag": "daily_life"
+    "korean_text": "그 과학자의 논문은 처음 발표 당시 학계의 주목을 받지 못했다.\n수십 년이 지난 후에야 그의 연구가 현대 생물학의 중요한 토대가 되었음이 인정되었다.",
+    "reference_answer": "The scientist's paper did not receive attention from the academic community when it was first published. Only decades later was it recognized that his research had become an important foundation for modern biology.",
+    "topic_tag": "science"
   },
   {
     "uuid": "l6-015",
     "level": 6,
-    "korean_text": "그녀는 블로그에 여행 기록을 남깁니다.\n사진과 함께 현지에서 경험한 것들을 자세히 씁니다.\n많은 구독자들이 그녀의 글을 따라 여행을 떠납니다.",
-    "reference_answer": "She keeps a travel journal on her blog.\nShe writes in detail about her local experiences along with photos.\nMany subscribers travel following her posts.",
-    "topic_tag": "travel"
+    "korean_text": "장기적인 경제 침체는 사회 전반에 걸쳐 다양한 문제를 야기하고 있다.\n특히 청년층의 고용 불안정과 중산층의 해체는 사회적 불안을 증폭시키는 주요 요인으로 지목된다.",
+    "reference_answer": "Long-term economic recession is causing various problems throughout society. In particular, employment instability among young people and the dissolution of the middle class are identified as major factors amplifying social unrest.",
+    "topic_tag": "business"
   },
   {
     "uuid": "l6-016",
     "level": 6,
-    "korean_text": "저는 처음 발표할 때 다리가 떨렸습니다.\n하지만 청중의 따뜻한 반응이 자신감을 주었습니다.\n지금은 발표가 즐겁기까지 합니다.",
-    "reference_answer": "My legs trembled the first time I gave a presentation.\nBut the warm response from the audience gave me confidence.\nNow I actually enjoy giving presentations.",
-    "topic_tag": "career"
+    "korean_text": "그 스포츠 선수는 부상 이후 재기를 향한 혹독한 훈련을 이어갔다.\n그의 집념과 의지는 팀 동료들에게도 큰 귀감이 되었으며, 결국 복귀 무대에서 최고의 기량을 선보였다.",
+    "reference_answer": "The athlete continued grueling training in pursuit of a comeback after the injury. His tenacity and determination served as a great example to his teammates, and he ultimately displayed his best performance on the stage of his return.",
+    "topic_tag": "sports"
   },
   {
     "uuid": "l6-017",
     "level": 6,
-    "korean_text": "이 도시는 밤이 되면 더욱 아름답습니다.\n도시의 불빛이 강물에 비쳐 환상적인 풍경을 만들어 냅니다.\n밤 산책을 하기에 최고의 장소입니다.",
-    "reference_answer": "This city becomes even more beautiful at night.\nThe city lights reflect on the river, creating a fantastic view.\nIt is the best place for a night stroll.",
-    "topic_tag": "travel"
+    "korean_text": "환경 규제 강화에 대한 산업계의 반발은 예상보다 거셌다.\n일부 기업들은 해외 이전을 위협 카드로 사용하며 정부의 정책 완화를 요구했다.",
+    "reference_answer": "Industry's backlash against the tightening of environmental regulations was fiercer than expected. Some companies used the threat of relocating abroad as a bargaining chip and demanded the government ease its policies.",
+    "topic_tag": "environment"
   },
   {
     "uuid": "l6-018",
     "level": 6,
-    "korean_text": "저는 어릴 때 피아노를 배웠습니다.\n중간에 그만뒀지만 최근에 다시 시작했습니다.\n어렸을 때 배운 것이 몸에 남아 있어 금방 실력이 돌아왔습니다.",
-    "reference_answer": "I learned piano when I was young.\nI stopped in the middle but recently started again.\nWhat I learned as a child stayed in my body, so my skills came back quickly.",
-    "topic_tag": "hobby"
+    "korean_text": "그 작곡가의 교향곡은 초연 당시 혹독한 비판을 받았다.\n그러나 시간이 흐르면서 그 작품은 현대 음악사에서 가장 혁신적인 걸작 중 하나로 재평가되었다.",
+    "reference_answer": "The composer's symphony received harsh criticism when it premiered. However, as time passed, the work was reassessed as one of the most innovative masterpieces in the history of modern music.",
+    "topic_tag": "culture"
   },
   {
     "uuid": "l6-019",
     "level": 6,
-    "korean_text": "그 팀은 예상치 못한 어려움에 직면했습니다.\n팀원들이 서로 의견을 나누며 해결책을 찾았습니다.\n위기 속에서 팀의 결속력이 더욱 강해졌습니다.",
-    "reference_answer": "The team faced unexpected difficulties.\nThe members shared their opinions and found a solution.\nThe team's bond grew stronger in the face of the crisis.",
-    "topic_tag": "work"
+    "korean_text": "디지털 전환이 가속화되면서 전통 미디어 산업은 구조적 위기에 직면하고 있다.\n인쇄 매체의 쇠퇴와 온라인 콘텐츠의 급성장은 광고 수익 모델의 근본적인 재편을 강제하고 있다.",
+    "reference_answer": "As digital transformation accelerates, the traditional media industry is facing a structural crisis. The decline of print media and the rapid growth of online content are forcing a fundamental restructuring of advertising revenue models.",
+    "topic_tag": "technology"
   },
   {
     "uuid": "l6-020",
     "level": 6,
-    "korean_text": "저는 요즘 유기농 식품에 관심을 갖게 되었습니다.\n조금 더 비싸지만 건강을 위한 투자라고 생각합니다.\n가능하면 지역 농산물을 구입하려고 합니다.",
-    "reference_answer": "I have recently become interested in organic food.\nIt is a bit more expensive, but I consider it an investment in my health.\nI try to purchase locally grown produce whenever possible.",
-    "topic_tag": "health"
+    "korean_text": "그 결정은 단기적 이익을 위해 장기적 지속 가능성을 희생시켰다는 비판을 받았다.\n이사회는 주주들의 압박에 굴복했으며, 그 결과는 기업의 평판 훼손으로 이어졌다.",
+    "reference_answer": "The decision was criticized for sacrificing long-term sustainability in favor of short-term gains. The board of directors yielded to pressure from shareholders, and the result led to damage to the company's reputation.",
+    "topic_tag": "business"
   }
 ]

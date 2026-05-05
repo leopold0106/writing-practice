@@ -24,8 +24,7 @@ interface ProblemDao {
         WHERE p.level = :level
         AND p.id NOT IN (
             SELECT ua.problem_id FROM user_answers ua
-            WHERE ua.grading_status = 'GRADED'
-            AND date(ua.submitted_at / 1000, 'unixepoch', 'localtime') = :todayIso
+            WHERE date(ua.submitted_at / 1000, 'unixepoch', 'localtime') = :todayIso
         )
         ORDER BY RANDOM() LIMIT 1
     """)
@@ -51,8 +50,7 @@ interface ProblemDao {
         WHERE p.level = :level
         AND p.id NOT IN (
             SELECT ua.problem_id FROM user_answers ua
-            WHERE ua.grading_status = 'GRADED'
-            AND date(ua.submitted_at / 1000, 'unixepoch', 'localtime') = :todayIso
+            WHERE date(ua.submitted_at / 1000, 'unixepoch', 'localtime') = :todayIso
         )
     """)
     suspend fun countUnsolvedForToday(level: Int, todayIso: String): Int

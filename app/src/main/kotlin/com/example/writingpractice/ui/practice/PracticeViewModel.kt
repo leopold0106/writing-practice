@@ -2,7 +2,6 @@ package com.example.writingpractice.ui.practice
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.writingpractice.data.local.db.entity.GradingStatus
 import com.example.writingpractice.data.model.Problem
 import com.example.writingpractice.data.repository.PracticeRepository
 import com.example.writingpractice.data.repository.ProblemRepository
@@ -11,9 +10,6 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -23,8 +19,6 @@ sealed class PracticeUiState {
     data object Loading : PracticeUiState()
     data class Writing(val problem: Problem, val answer: String = "") : PracticeUiState()
     data class Submitting(val problem: Problem) : PracticeUiState()
-    data class Grading(val problem: Problem, val answerId: Long) : PracticeUiState()
-    data class Pending(val problem: Problem, val answerId: Long) : PracticeUiState()
     data class Error(val message: String) : PracticeUiState()
 }
 
@@ -70,24 +64,7 @@ class PracticeViewModel @Inject constructor(
             _uiState.value = PracticeUiState.Submitting(current.problem)
             val answerId = practiceRepository.submitAnswer(current.problem.id, current.answer)
             practiceRepository.clearDraft(current.problem.id)
-            val status = practiceRepository.getGradingStatus(answerId)
-            if (status == GradingStatus.GRADED) {
-                _navigateToResult.send(answerId)
-            } else {
-                _uiState.value = PracticeUiState.Pending(current.problem, answerId)
-                observeGrading(answerId)
-            }
+            _navigateToResult.send(answerId)
         }
-    }
-
-    private fun observeGrading(answerId: Long) {
-        practiceRepository.observeGradingStatus(answerId)
-            .filterNotNull()
-            .onEach { status ->
-                if (status == GradingStatus.GRADED) {
-                    _navigateToResult.send(answerId)
-                }
-            }
-            .launchIn(viewModelScope)
     }
 }
