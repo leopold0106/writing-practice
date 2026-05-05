@@ -103,6 +103,11 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    fun sendTestNotification() = viewModelScope.launch {
+        val goal = settingsRepository.dailyGoal.first()
+        NotificationHelper.showDailyReminder(context, 0, goal)
+    }
+
     fun toggleApiKeyVisibility() {
         _apiKeyVisible.value = !_apiKeyVisible.value
     }

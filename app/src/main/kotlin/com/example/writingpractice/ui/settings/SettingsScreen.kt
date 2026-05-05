@@ -189,6 +189,12 @@ fun SettingsScreen(
                         Text("시간 변경")
                     }
                 }
+                Button(
+                    onClick = { viewModel.sendTestNotification() },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("테스트 알림 보내기")
+                }
             }
 
             HorizontalDivider()
