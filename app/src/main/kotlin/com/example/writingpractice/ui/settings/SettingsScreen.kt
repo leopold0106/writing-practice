@@ -1,7 +1,13 @@
 package com.example.writingpractice.ui.settings
 
+import android.Manifest
 import android.app.TimePickerDialog
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
+import androidx.core.content.ContextCompat
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -70,6 +76,25 @@ fun SettingsScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted -> viewModel.setNotificationEnabled(granted) }
+
+    fun onNotificationToggle(enable: Boolean) {
+        if (!enable) { viewModel.setNotificationEnabled(false); return }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+                == PackageManager.PERMISSION_GRANTED
+            ) {
+                viewModel.setNotificationEnabled(true)
+            } else {
+                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        } else {
+            viewModel.setNotificationEnabled(true)
+        }
+    }
+
     // Local state for text field — no DataStore round-trip while typing
     var localApiKey by rememberSaveable { mutableStateOf("") }
 
@@ -136,7 +161,7 @@ fun SettingsScreen(
                 Text("푸시 알림", style = MaterialTheme.typography.bodyMedium)
                 Switch(
                     checked = state.notificationEnabled,
-                    onCheckedChange = viewModel::setNotificationEnabled
+                    onCheckedChange = ::onNotificationToggle
                 )
             }
 
