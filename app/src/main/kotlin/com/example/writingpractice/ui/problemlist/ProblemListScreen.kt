@@ -91,7 +91,7 @@ fun ProblemListScreen(
                                 if (item.isNew) {
                                     onProblemClick(item.problem.id)
                                 } else {
-                                    item.latestAnswerId?.let { onAnswerClick(it) }
+                                    onAnswerClick(item.problem.id)
                                 }
                             }
                         )

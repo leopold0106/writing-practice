@@ -44,4 +44,7 @@ interface CorrectionDao {
 
     @Query("SELECT DISTINCT problem_id FROM corrections ORDER BY created_at DESC")
     fun observeDistinctProblemIds(): Flow<List<Long>>
+
+    @Query("SELECT error_type FROM corrections GROUP BY error_type ORDER BY COUNT(*) DESC LIMIT :limit")
+    suspend fun getMostCommonErrorTypes(limit: Int): List<String>
 }

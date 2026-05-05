@@ -49,12 +49,12 @@ Only report genuine errors. Do not invent corrections for acceptable variations 
 
     private val generateSystemPrompt = """
 You are a Korean language teacher creating English translation practice exercises.
-Generate a Korean text for English translation practice at the requested level.
-Return ONLY valid JSON (no markdown, no extra text):
+Generate a batch of Korean texts for English translation practice at the requested level.
+Return ONLY a valid JSON array (no markdown, no extra text) where each element has:
 {
   "korean_text": "<the Korean text to translate>",
   "reference_answer": "<a natural English translation>",
-  "topic_tag": "<one of: 일상생활, 여행, 비즈니스, 환경, 기술, 감정, 음식, 문화>"
+  "topic_tag": "<one of: daily_life, travel, business, environment, technology, emotion, food, culture, education, science, health, politics, sports, career, law>"
 }
 """.trimIndent()
 
@@ -76,29 +76,36 @@ Return ONLY valid JSON (no markdown, no extra text):
         dto.toDomain()
     }
 
-    suspend fun generateProblem(level: Int): Result<GeneratedProblem> = apiCall {
+    suspend fun generateProblems(level: Int, weaknesses: List<String> = emptyList()): Result<List<GeneratedProblem>> = apiCall {
         val levelDesc = when (level) {
-            1 -> "a single simple Korean sentence"
-            2 -> "two related Korean sentences on the same topic"
-            3 -> "three related Korean sentences forming a short paragraph"
-            else -> "a short Korean paragraph of 4-6 sentences"
+            1 -> "a single short, simple Korean sentence (subject-verb-object, everyday vocabulary)"
+            2 -> "a single Korean sentence with adverbs or modifying phrases"
+            3 -> "2-3 Korean sentences connected by conjunctions (하지만, 그래서, 그런데)"
+            4 -> "a single longer Korean sentence with a subordinate clause (because/although/when structure)"
+            5 -> "a sophisticated Korean sentence with formal grammar and complex structure (에도 불구하고, ~한 덕분에, etc.)"
+            6 -> "2-3 difficult Korean sentences with logical flow between them"
+            else -> "an academic-style Korean paragraph of 4-7 sentences in formal register"
         }
+        val weaknessHint = if (weaknesses.isNotEmpty()) {
+            val types = weaknesses.joinToString(", ")
+            "\n6 of the problems should specifically target improving these error types the student struggles with: $types. The remaining 4 should cover diverse new patterns and topics."
+        } else {
+            "\nCover a wide variety of topics and sentence patterns."
+        }
+        val topics = "daily_life, travel, business, environment, technology, emotion, food, culture, education, science, health, politics, sports, career, law"
+        val userMessage = "Generate exactly 10 Korean sentences at this level: $levelDesc.$weaknessHint Use diverse topics from: $topics. Return a JSON array of exactly 10 objects."
         val response = service.complete(
             ClaudeRequest(
                 model = MODEL,
-                maxTokens = 1024,
+                maxTokens = 4096,
                 system = generateSystemPrompt,
-                messages = listOf(
-                    ClaudeMessage(
-                        "user",
-                        "Generate $levelDesc for English translation practice. Make it natural, practical, and from a varied topic."
-                    )
-                )
+                messages = listOf(ClaudeMessage("user", userMessage))
             )
         )
         val raw = extractJson(response.content.first().text)
-        val dto = json.decodeFromString<GeneratedProblemDto>(raw)
-        GeneratedProblem(dto.koreanText, dto.referenceAnswer, dto.topicTag)
+        json.decodeFromString<List<GeneratedProblemDto>>(raw).map { dto ->
+            GeneratedProblem(dto.koreanText, dto.referenceAnswer, dto.topicTag)
+        }
     }
 
     suspend fun ping(): Result<Unit> = apiCall {

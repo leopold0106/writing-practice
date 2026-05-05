@@ -21,7 +21,7 @@ enum class ApiStatus { UNKNOWN, VALID, INVALID }
 sealed class GenerateState {
     object Idle : GenerateState()
     data class Loading(val level: Int) : GenerateState()
-    data class Success(val level: Int) : GenerateState()
+    data class Success(val level: Int, val count: Int) : GenerateState()
     data class Error(val level: Int, val message: String) : GenerateState()
 }
 
@@ -47,9 +47,10 @@ class HomeViewModel @Inject constructor(
     fun generateProblem(level: Int) {
         viewModelScope.launch {
             _generateState.value = GenerateState.Loading(level)
-            val result = problemRepository.generateAndInsert(level)
+            val weaknesses = correctionRepository.getMostCommonErrorTypes(3)
+            val result = problemRepository.generateAndInsert(level, weaknesses)
             _generateState.value = if (result.isSuccess) {
-                GenerateState.Success(level)
+                GenerateState.Success(level, result.getOrDefault(emptyList()).size)
             } else {
                 GenerateState.Error(level, result.exceptionOrNull()?.message ?: "알 수 없는 오류")
             }

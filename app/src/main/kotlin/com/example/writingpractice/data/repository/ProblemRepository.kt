@@ -47,17 +47,20 @@ class ProblemRepository @Inject constructor(
     suspend fun insertGeneratedProblem(problem: Problem): Long =
         problemDao.insert(problem.toEntity().copy(isPrebundled = false))
 
-    suspend fun generateAndInsert(level: Int): Result<Problem> =
-        claudeApiClient.generateProblem(level).map { generated ->
-            val entity = ProblemEntity(
-                uuid = "ai-${System.currentTimeMillis()}-$level",
-                level = level,
-                koreanText = generated.koreanText,
-                referenceAnswer = generated.referenceAnswer,
-                topicTag = generated.topicTag,
-                isPrebundled = false
-            )
-            val id = problemDao.insert(entity)
-            entity.copy(id = id).toDomain()
+    suspend fun generateAndInsert(level: Int, weaknesses: List<String> = emptyList()): Result<List<Problem>> =
+        claudeApiClient.generateProblems(level, weaknesses).map { generatedList ->
+            val ts = System.currentTimeMillis()
+            generatedList.mapIndexed { index, generated ->
+                val entity = ProblemEntity(
+                    uuid = "ai-$ts-$level-$index",
+                    level = level,
+                    koreanText = generated.koreanText,
+                    referenceAnswer = generated.referenceAnswer,
+                    topicTag = generated.topicTag,
+                    isPrebundled = false
+                )
+                val id = problemDao.insert(entity)
+                entity.copy(id = id).toDomain()
+            }
         }
 }

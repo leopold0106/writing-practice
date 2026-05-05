@@ -38,7 +38,10 @@ class AssetProblemLoader @Inject constructor(
         "problems/level1_problems.json",
         "problems/level2_problems.json",
         "problems/level3_problems.json",
-        "problems/level4_problems.json"
+        "problems/level4_problems.json",
+        "problems/level5_problems.json",
+        "problems/level6_problems.json",
+        "problems/level7_problems.json"
     )
 
     suspend fun loadAll(): List<ProblemEntity> = withContext(Dispatchers.IO) {

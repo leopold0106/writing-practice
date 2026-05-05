@@ -98,10 +98,13 @@ fun HomeScreen(
             )
 
             val levelDescriptions = listOf(
-                "문장 1개",
-                "문장 2개 (관련 주제)",
-                "문장 3개 (관련 주제)",
-                "문단 쓰기"
+                "짧고 간단한 단문",
+                "수식어 포함 단문",
+                "접속사로 연결된 2~3문장",
+                "종속절 포함 복합 단문",
+                "고급 문법·형식 문체",
+                "어려운 2~3문장",
+                "학술 수준 문단"
             )
             levelDescriptions.forEachIndexed { index, desc ->
                 val level = index + 1
@@ -229,21 +232,22 @@ private fun GenerateSection(
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            (1..4).forEach { level ->
+            (1..7).forEach { level ->
                 OutlinedButton(
                     onClick = { onGenerate(level) },
                     enabled = generateState !is GenerateState.Loading,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 4.dp, vertical = 8.dp)
                 ) {
                     if (loadingLevel == level) {
                         CircularProgressIndicator(
-                            modifier = Modifier.size(16.dp),
+                            modifier = Modifier.size(14.dp),
                             strokeWidth = 2.dp
                         )
                     } else {
-                        Text("Lv$level")
+                        Text("L$level", style = MaterialTheme.typography.labelSmall)
                     }
                 }
             }
@@ -262,7 +266,7 @@ private fun GenerateSection(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            "레벨 ${generateState.level} 문제가 추가되었습니다!",
+                            "레벨 ${generateState.level} 문제 ${generateState.count}개가 추가되었습니다!",
                             style = MaterialTheme.typography.bodySmall,
                             color = Color(0xFF1B5E20)
                         )

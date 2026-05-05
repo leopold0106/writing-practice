@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.writingpractice.ui.answerhistory.AnswerHistoryScreen
 import com.example.writingpractice.ui.home.HomeScreen
 import com.example.writingpractice.ui.notebook.NotebookScreen
 import com.example.writingpractice.ui.notebookdetail.NotebookDetailScreen
@@ -22,12 +23,14 @@ object Routes {
     const val NOTEBOOK = "notebook"
     const val NOTEBOOK_DETAIL = "notebook_detail/{problemId}"
     const val SETTINGS = "settings"
+    const val ANSWER_HISTORY = "answer_history/{problemId}"
 
     fun problemList(level: Int) = "problem_list/$level"
     fun practice(level: Int, problemId: Long? = null) =
         "practice?level=$level" + (problemId?.let { "&problemId=$it" } ?: "")
     fun result(answerId: Long) = "result/$answerId"
     fun notebookDetail(problemId: Long) = "notebook_detail/$problemId"
+    fun answerHistory(problemId: Long) = "answer_history/$problemId"
 }
 
 @Composable
@@ -53,8 +56,8 @@ fun AppNavigation() {
                 onProblemClick = { problemId ->
                     navController.navigate(Routes.practice(level, problemId))
                 },
-                onAnswerClick = { answerId ->
-                    navController.navigate(Routes.result(answerId))
+                onAnswerClick = { problemId ->
+                    navController.navigate(Routes.answerHistory(problemId))
                 },
                 onStartRandom = {
                     navController.navigate(Routes.practice(level))
@@ -97,6 +100,24 @@ fun AppNavigation() {
                     }
                 },
                 onHome = { navController.popBackStack(Routes.HOME, inclusive = false) }
+            )
+        }
+
+        composable(
+            route = Routes.ANSWER_HISTORY,
+            arguments = listOf(navArgument("problemId") { type = NavType.LongType })
+        ) { backStack ->
+            val problemId = backStack.arguments?.getLong("problemId") ?: return@composable
+            AnswerHistoryScreen(
+                onBack = { navController.popBackStack() },
+                onAnswerClick = { answerId ->
+                    navController.navigate(Routes.result(answerId))
+                },
+                onRePractice = { level ->
+                    navController.navigate(Routes.practice(level, problemId)) {
+                        popUpTo(Routes.HOME)
+                    }
+                }
             )
         }
 

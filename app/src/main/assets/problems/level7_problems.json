@@ -1,0 +1,142 @@
+[
+  {
+    "uuid": "l7-001",
+    "level": 7,
+    "korean_text": "저는 매일 아침 일찍 일어나 하루를 시작합니다. 먼저 간단한 스트레칭으로 몸을 깨우고, 따뜻한 물 한 잔을 마십니다. 그 다음 30분 동안 책을 읽으며 마음을 준비합니다. 이 루틴 덕분에 하루를 더 활기차고 집중력 있게 보낼 수 있습니다.",
+    "reference_answer": "I wake up early every morning to start my day. First, I wake my body up with a simple stretch and drink a glass of warm water. Then I spend 30 minutes reading to prepare my mind. Thanks to this routine, I am able to spend the day more energetically and with greater focus.",
+    "topic_tag": "daily_life"
+  },
+  {
+    "uuid": "l7-002",
+    "level": 7,
+    "korean_text": "한국 음식은 전 세계적으로 인기가 높아지고 있습니다. 김치, 비빔밥, 삼겹살 같은 음식들이 외국에서도 쉽게 찾아볼 수 있게 되었습니다. 한국 드라마와 K-팝의 인기가 한식에 대한 관심도 함께 높였습니다. 저는 한국 음식의 맛과 건강함이 세계인들의 마음을 사로잡을 수 있다고 생각합니다.",
+    "reference_answer": "Korean food is becoming increasingly popular around the world. Dishes like kimchi, bibimbap, and samgyeopsal can now be easily found even abroad. The popularity of Korean dramas and K-pop has also raised interest in Korean cuisine. I think the taste and healthfulness of Korean food can capture the hearts of people around the world.",
+    "topic_tag": "food"
+  },
+  {
+    "uuid": "l7-003",
+    "level": 7,
+    "korean_text": "환경 보호는 우리 모두의 책임입니다. 매년 수백만 톤의 플라스틱이 바다로 흘러들어 해양 생태계를 파괴합니다. 일회용품 사용을 줄이고 재활용을 생활화하는 것이 중요합니다. 작은 실천 하나하나가 모여 지구를 지키는 큰 힘이 될 수 있습니다.",
+    "reference_answer": "Protecting the environment is the responsibility of all of us. Every year, millions of tons of plastic flow into the ocean, destroying marine ecosystems. It is important to reduce the use of disposable products and make recycling a part of daily life. Each small action, when combined, can become a great force to protect the Earth.",
+    "topic_tag": "environment"
+  },
+  {
+    "uuid": "l7-004",
+    "level": 7,
+    "korean_text": "저는 지난여름 제주도 여행을 통해 잊지 못할 추억을 만들었습니다. 에메랄드빛 바다와 울창한 숲이 어우러진 풍경은 정말 아름다웠습니다. 현지 음식인 흑돼지 구이와 해산물은 여행의 즐거움을 더해주었습니다. 그 여행 이후로 국내 여행의 매력에 더욱 빠지게 되었습니다.",
+    "reference_answer": "I created unforgettable memories through a trip to Jeju Island last summer. The scenery of the emerald sea blended with dense forests was truly beautiful. Local foods such as black pork barbecue and seafood added to the joy of the trip. Since that journey, I have become even more drawn to the charm of domestic travel.",
+    "topic_tag": "travel"
+  },
+  {
+    "uuid": "l7-005",
+    "level": 7,
+    "korean_text": "독서는 제 삶에서 가장 중요한 취미 중 하나입니다. 책을 읽으면서 다양한 시각과 지식을 얻을 수 있습니다. 소설을 통해 다른 삶을 간접 경험하고, 비소설을 통해 실용적인 지식을 습득합니다. 바쁜 일상 속에서도 하루 30분씩 독서 시간을 꼭 지키려고 노력합니다.",
+    "reference_answer": "Reading is one of the most important hobbies in my life. Through books, I can gain various perspectives and knowledge. I experience other lives indirectly through fiction, and acquire practical knowledge through non-fiction. Even in a busy daily life, I try to set aside at least 30 minutes a day for reading.",
+    "topic_tag": "hobby"
+  },
+  {
+    "uuid": "l7-006",
+    "level": 7,
+    "korean_text": "현대 사회에서 스마트폰은 우리 생활의 필수품이 되었습니다. 정보 검색, 소통, 금융 거래까지 모든 것이 스마트폰 하나로 가능합니다. 하지만 과도한 사용은 집중력 저하와 수면 장애를 일으킬 수 있습니다. 스마트폰을 현명하게 사용하는 디지털 리터러시가 필요한 시대입니다.",
+    "reference_answer": "In modern society, smartphones have become an essential part of our lives. Everything from searching for information, communication, to financial transactions is possible with just one smartphone. However, excessive use can cause reduced concentration and sleep disorders. We live in an era where digital literacy — using smartphones wisely — is necessary.",
+    "topic_tag": "technology"
+  },
+  {
+    "uuid": "l7-007",
+    "level": 7,
+    "korean_text": "건강한 생활 습관은 행복한 삶의 기초입니다. 규칙적인 운동과 균형 잡힌 식단은 신체 건강을 유지하는 데 필수적입니다. 충분한 수면과 스트레스 관리 역시 정신 건강에 매우 중요합니다. 작은 습관 하나를 바꾸는 것부터 시작하면 삶의 질이 크게 향상될 수 있습니다.",
+    "reference_answer": "Healthy lifestyle habits are the foundation of a happy life. Regular exercise and a balanced diet are essential for maintaining physical health. Sufficient sleep and stress management are also very important for mental health. Starting by changing just one small habit can greatly improve your quality of life.",
+    "topic_tag": "health"
+  },
+  {
+    "uuid": "l7-008",
+    "level": 7,
+    "korean_text": "저는 대학 졸업 후 처음 취업했을 때 많은 것을 배웠습니다. 학교에서 배운 이론과 실제 업무 사이에는 큰 차이가 있었습니다. 선배들의 도움을 받으며 빠르게 적응할 수 있었습니다. 그 경험이 지금의 저를 만든 중요한 밑거름이 되었습니다.",
+    "reference_answer": "I learned a great deal when I got my first job after graduating from university. There was a big gap between the theory I had learned at school and actual work. I was able to adapt quickly with the help of senior colleagues. That experience became an important foundation that shaped who I am today.",
+    "topic_tag": "career"
+  },
+  {
+    "uuid": "l7-009",
+    "level": 7,
+    "korean_text": "우정은 인생에서 가장 소중한 자산 중 하나입니다. 진정한 친구는 기쁠 때나 슬플 때나 항상 곁에 있어 줍니다. 오래된 우정일수록 더 깊은 이해와 신뢰를 바탕으로 합니다. 좋은 친구를 곁에 두는 것이 인생을 더욱 풍요롭게 만든다고 생각합니다.",
+    "reference_answer": "Friendship is one of the most precious assets in life. A true friend is always by your side, whether you are happy or sad. The longer a friendship lasts, the deeper the understanding and trust it is built on. I believe that having good friends around you makes life all the richer.",
+    "topic_tag": "social"
+  },
+  {
+    "uuid": "l7-010",
+    "level": 7,
+    "korean_text": "글로벌 시대에 외국어 실력은 매우 중요한 경쟁력입니다. 영어를 비롯한 다양한 언어를 구사할 수 있으면 더 많은 기회가 열립니다. 언어를 배우는 과정에서 그 나라의 문화와 사고방식도 함께 이해하게 됩니다. 꾸준한 노력으로 언어 장벽을 넘는 것은 충분히 가능한 일입니다.",
+    "reference_answer": "In the global era, foreign language skills are a very important competitive edge. Being able to speak various languages, including English, opens up more opportunities. In the process of learning a language, you also come to understand the culture and way of thinking of that country. It is entirely possible to overcome the language barrier with consistent effort.",
+    "topic_tag": "language"
+  },
+  {
+    "uuid": "l7-011",
+    "level": 7,
+    "korean_text": "가족은 제 삶에서 가장 큰 힘의 원천입니다. 어렵고 힘든 순간마다 가족의 응원과 지지가 저를 일으켜 세웠습니다. 부모님의 희생과 헌신에 항상 감사함을 느낍니다. 앞으로도 가족을 위해 더 열심히 살아가겠다는 다짐을 합니다.",
+    "reference_answer": "Family is the greatest source of strength in my life. In every difficult and challenging moment, my family's encouragement and support has lifted me back up. I always feel grateful for my parents' sacrifice and dedication. I make a promise to myself to work even harder for my family going forward.",
+    "topic_tag": "family"
+  },
+  {
+    "uuid": "l7-012",
+    "level": 7,
+    "korean_text": "최근 인공지능 기술의 발전이 사회 전반에 큰 변화를 가져오고 있습니다. 의료, 교육, 금융 등 다양한 분야에서 AI가 활용되고 있습니다. 이러한 변화는 새로운 기회를 창출하지만, 동시에 일자리 감소 같은 문제도 제기됩니다. 기술의 혜택을 모두가 누릴 수 있도록 사회적 논의가 필요합니다.",
+    "reference_answer": "The recent advancement of artificial intelligence is bringing about major changes throughout society. AI is being utilized in various fields such as medicine, education, and finance. These changes create new opportunities, but also raise issues like job losses. Social discussion is needed so that everyone can enjoy the benefits of technology.",
+    "topic_tag": "technology"
+  },
+  {
+    "uuid": "l7-013",
+    "level": 7,
+    "korean_text": "봉사활동은 단순히 남을 돕는 것을 넘어 자신에게도 큰 보람을 줍니다. 처음에는 어색하고 낯설었지만, 점점 더 의미 있게 느껴졌습니다. 어려운 이웃의 미소를 보며 삶의 소중함을 다시 한번 깨달았습니다. 앞으로도 정기적으로 봉사활동에 참여하고 싶습니다.",
+    "reference_answer": "Volunteering goes beyond simply helping others — it also brings great fulfillment to oneself. At first it felt awkward and unfamiliar, but it gradually became more meaningful. Seeing the smiles of neighbors in need made me realize once again how precious life is. I want to continue participating in volunteer activities regularly.",
+    "topic_tag": "social"
+  },
+  {
+    "uuid": "l7-014",
+    "level": 7,
+    "korean_text": "경제적 자유를 위해서는 일찍부터 재테크를 시작하는 것이 중요합니다. 저는 사회 초년생 때부터 수입의 일부를 저축하고 투자했습니다. 주식과 펀드에 대해 꾸준히 공부하며 포트폴리오를 관리해왔습니다. 아직 갈 길이 멀지만, 꾸준한 습관이 미래를 바꿀 것이라고 믿습니다.",
+    "reference_answer": "To achieve financial freedom, it is important to start managing your finances early. Since I was a newcomer to the workforce, I have been saving and investing a portion of my income. I have been continuously studying stocks and funds while managing my portfolio. I still have a long way to go, but I believe that consistent habits will change my future.",
+    "topic_tag": "finance"
+  },
+  {
+    "uuid": "l7-015",
+    "level": 7,
+    "korean_text": "음악은 언어를 초월한 보편적인 소통의 수단입니다. 슬플 때 위로가 되고, 기쁠 때 함께 즐길 수 있는 것이 음악입니다. 저는 특히 재즈와 클래식을 즐겨 듣습니다. 좋아하는 음악을 들으며 하루의 피로를 풀 때가 가장 행복합니다.",
+    "reference_answer": "Music is a universal means of communication that transcends language. Music is something that comforts you when you are sad and that you can enjoy together when you are happy. I especially enjoy listening to jazz and classical music. I am happiest when I relieve the fatigue of the day by listening to music I love.",
+    "topic_tag": "hobby"
+  },
+  {
+    "uuid": "l7-016",
+    "level": 7,
+    "korean_text": "도시화가 빠르게 진행되면서 자연과 멀어지는 사람들이 늘고 있습니다. 콘크리트 숲 속에서 생활하다 보면 자연의 소중함을 잊기 쉽습니다. 주말마다 공원이나 산을 찾는 것만으로도 몸과 마음이 회복됩니다. 자연과 함께하는 삶이 진정한 웰빙이라는 것을 느낍니다.",
+    "reference_answer": "As urbanization progresses rapidly, more and more people are becoming disconnected from nature. Living in a concrete jungle makes it easy to forget the preciousness of nature. Just visiting a park or a mountain on weekends helps restore both body and mind. I feel that a life spent with nature is true well-being.",
+    "topic_tag": "lifestyle"
+  },
+  {
+    "uuid": "l7-017",
+    "level": 7,
+    "korean_text": "교육은 개인의 성장과 사회 발전의 핵심 요소입니다. 단순한 지식 전달을 넘어 비판적 사고와 창의성을 키워주어야 합니다. 좋은 선생님 한 명이 학생의 인생을 바꿀 수 있다고 생각합니다. 교육 환경을 개선하고 교사를 충분히 지원하는 것이 국가의 중요한 과제입니다.",
+    "reference_answer": "Education is a key element of personal growth and social development. It should go beyond simply conveying knowledge to nurturing critical thinking and creativity. I believe one good teacher can change a student's life. Improving the educational environment and sufficiently supporting teachers is an important task for the nation.",
+    "topic_tag": "education"
+  },
+  {
+    "uuid": "l7-018",
+    "level": 7,
+    "korean_text": "저는 오랫동안 꿈꿔온 작은 카페를 마침내 열었습니다. 처음에는 운영이 어렵고 손님도 많지 않았습니다. 하지만 진심을 담은 커피와 따뜻한 서비스로 단골손님이 생기기 시작했습니다. 이제는 매일 사랑하는 일을 하며 살아가고 있다는 것이 행복합니다.",
+    "reference_answer": "I finally opened the small cafe I had dreamed of for a long time. At first, managing it was difficult and there weren't many customers. However, through sincerely crafted coffee and warm service, regular customers began to appear. Now I am happy that I live each day doing the work I love.",
+    "topic_tag": "career"
+  },
+  {
+    "uuid": "l7-019",
+    "level": 7,
+    "korean_text": "여행은 단순한 관광을 넘어 자기 자신을 발견하는 여정이기도 합니다. 낯선 환경에서 혼자 문제를 해결하다 보면 생각지도 못한 자신의 강점을 발견합니다. 다양한 문화와 사람들을 만나며 세상을 보는 시각도 넓어집니다. 그래서 저는 여행을 가장 좋은 형태의 교육이라고 생각합니다.",
+    "reference_answer": "Travel is not just sightseeing — it is also a journey of discovering yourself. When you solve problems alone in an unfamiliar environment, you discover strengths in yourself that you hadn't expected. Your perspective on the world also broadens as you encounter various cultures and people. That is why I think travel is the best form of education.",
+    "topic_tag": "travel"
+  },
+  {
+    "uuid": "l7-020",
+    "level": 7,
+    "korean_text": "성공적인 삶을 위해서는 끊임없는 자기 계발이 필요합니다. 새로운 기술을 배우고, 독서를 통해 지식을 넓히는 것이 중요합니다. 실패를 두려워하지 않고 도전하는 자세가 성장의 밑거름이 됩니다. 매일 조금씩 더 나은 사람이 되기 위해 노력하는 것, 그것이 제 삶의 목표입니다.",
+    "reference_answer": "For a successful life, constant self-improvement is necessary. Learning new skills and broadening knowledge through reading are important. A mindset that doesn't fear failure and embraces challenges is the foundation of growth. Striving to become a slightly better person every day — that is the goal of my life.",
+    "topic_tag": "lifestyle"
+  }
+]

@@ -51,4 +51,7 @@ class CorrectionRepository @Inject constructor(
 
     suspend fun markProblemReviewed(problemId: Long) =
         correctionDao.markReviewed(problemId)
+
+    suspend fun getMostCommonErrorTypes(limit: Int): List<String> =
+        correctionDao.getMostCommonErrorTypes(limit)
 }
