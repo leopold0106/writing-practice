@@ -7,6 +7,7 @@ import com.example.writingpractice.data.remote.dto.WeaknessAnalysisDto
 import com.example.writingpractice.data.remote.dto.WeaknessPointDto
 import com.example.writingpractice.ui.common.Period
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 enum class OverallLevel { BEGINNER, INTERMEDIATE, ADVANCED }
@@ -81,9 +82,9 @@ fun WeaknessAnalysis.toEntity(json: Json) = WeaknessAnalysisEntity(
     analyzedAt = analyzedAt,
     summary = summary,
     overallLevel = overallLevel.name,
-    weaknessPointsJson = json.encodeToString(weaknessPoints),
-    suggestionsJson = json.encodeToString(suggestions),
-    recommendedPatternsJson = json.encodeToString(recommendedPatterns),
+    weaknessPointsJson = json.encodeToString<List<WeaknessPoint>>(weaknessPoints),
+    suggestionsJson = json.encodeToString<List<String>>(suggestions),
+    recommendedPatternsJson = json.encodeToString<List<RecommendedPattern>>(recommendedPatterns),
     recommendedLevel = recommendedLevel,
     totalCorrections = totalCorrections,
     avgScore = avgScore
