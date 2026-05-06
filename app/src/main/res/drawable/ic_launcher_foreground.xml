@@ -8,8 +8,8 @@
     <group
         android:pivotX="54"
         android:pivotY="54"
-        android:scaleX="1.2"
-        android:scaleY="1.2">
+        android:scaleX="0.8"
+        android:scaleY="0.8">
 
     <!-- Paper (white sheet sticking up) -->
     <path
