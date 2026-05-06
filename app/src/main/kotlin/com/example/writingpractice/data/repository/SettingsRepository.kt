@@ -53,6 +53,13 @@ class SettingsRepository @Inject constructor(
         dataStore.edit { it[Keys.API_KEY_VALIDATED] = valid }
     }
 
+    suspend fun getLastAutoAnalyzedCount(): Int =
+        dataStore.data.first()[Keys.LAST_AUTO_ANALYZED_COUNT] ?: 0
+
+    suspend fun setLastAutoAnalyzedCount(count: Int) {
+        dataStore.edit { it[Keys.LAST_AUTO_ANALYZED_COUNT] = count }
+    }
+
     private object Keys {
         val DAILY_GOAL = intPreferencesKey("daily_goal")
         val NOTIF_ENABLED = booleanPreferencesKey("notif_enabled")
@@ -61,5 +68,6 @@ class SettingsRepository @Inject constructor(
         val API_KEY = stringPreferencesKey("api_key")
         val DB_SEEDED = booleanPreferencesKey("db_seeded")
         val API_KEY_VALIDATED = booleanPreferencesKey("api_key_validated")
+        val LAST_AUTO_ANALYZED_COUNT = intPreferencesKey("last_auto_analyzed_count")
     }
 }

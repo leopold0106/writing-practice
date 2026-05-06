@@ -9,6 +9,7 @@ import com.example.writingpractice.data.model.Correction
 import com.example.writingpractice.data.model.Problem
 import com.example.writingpractice.data.repository.PracticeRepository
 import com.example.writingpractice.data.repository.ProblemRepository
+import com.example.writingpractice.data.repository.SettingsRepository
 import com.example.writingpractice.data.repository.WeaknessAnalysisRepository
 import com.example.writingpractice.ui.common.Period
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -45,7 +46,8 @@ class ResultViewModel @Inject constructor(
     private val practiceRepository: PracticeRepository,
     private val userAnswerDao: UserAnswerDao,
     private val correctionDao: CorrectionDao,
-    private val weaknessAnalysisRepository: WeaknessAnalysisRepository
+    private val weaknessAnalysisRepository: WeaknessAnalysisRepository,
+    private val settingsRepository: SettingsRepository
 ) : ViewModel() {
 
     val answerId: Long = savedStateHandle["answerId"] ?: -1L
@@ -100,9 +102,11 @@ class ResultViewModel @Inject constructor(
 
     private suspend fun checkAndAutoAnalyze() {
         val total = correctionDao.countCorrectionsAfter(0L)
-        if (total > 0 && total % 30 == 0) {
+        val lastCount = settingsRepository.getLastAutoAnalyzedCount()
+        if (total / 30 > lastCount / 30) {
             _autoAnalysisState.value = AutoAnalysisState.Running
             weaknessAnalysisRepository.analyze(Period.ALL)
+            settingsRepository.setLastAutoAnalyzedCount(total)
             _autoAnalysisState.value = AutoAnalysisState.Done
         }
     }
