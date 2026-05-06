@@ -47,4 +47,7 @@ interface CorrectionDao {
 
     @Query("SELECT error_type FROM corrections GROUP BY error_type ORDER BY COUNT(*) DESC LIMIT :limit")
     suspend fun getMostCommonErrorTypes(limit: Int): List<String>
+
+    @Query("SELECT * FROM corrections WHERE created_at >= :sinceMs")
+    fun observeCorrectionsAfter(sinceMs: Long): Flow<List<CorrectionEntity>>
 }

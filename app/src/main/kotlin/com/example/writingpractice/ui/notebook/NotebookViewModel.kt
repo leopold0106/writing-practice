@@ -6,35 +6,71 @@ import com.example.writingpractice.data.local.db.entity.ErrorType
 import com.example.writingpractice.data.model.NotebookEntry
 import com.example.writingpractice.data.repository.CorrectionRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
+
+enum class SortOrder(val label: String) {
+    BY_TIME("시간순"),
+    BY_SCORE("점수순"),
+    BY_LEVEL("레벨순"),
+    BY_ERROR_TYPE("오류 유형순")
+}
+
+enum class Period(val label: String, val days: Long?) {
+    WEEK("1주", 7L),
+    MONTH("1개월", 30L),
+    THREE_MONTHS("3개월", 90L),
+    SIX_MONTHS("6개월", 180L),
+    YEAR("1년", 365L),
+    ALL("전체", null)
+}
 
 data class NotebookUiState(
     val entries: List<NotebookEntry> = emptyList(),
     val filteredEntries: List<NotebookEntry> = emptyList(),
     val selectedFilter: ErrorType? = null,
+    val sortOrder: SortOrder = SortOrder.BY_TIME,
+    val selectedPeriod: Period = Period.MONTH,
+    val errorCounts: Map<ErrorType, Int> = emptyMap(),
     val searchQuery: String = "",
     val isLoading: Boolean = true
 )
 
 @HiltViewModel
 class NotebookViewModel @Inject constructor(
-    correctionRepository: CorrectionRepository
+    private val correctionRepository: CorrectionRepository
 ) : ViewModel() {
 
     private val _filter = MutableStateFlow<ErrorType?>(null)
     private val _query = MutableStateFlow("")
+    private val _sortOrder = MutableStateFlow(SortOrder.BY_TIME)
+    private val _period = MutableStateFlow(Period.MONTH)
+
+    private val _periodAndCounts: Flow<Pair<Period, Map<ErrorType, Int>>> =
+        _period.flatMapLatest { period ->
+            val sinceMs = period.days
+                ?.let { System.currentTimeMillis() - it * 24 * 60 * 60 * 1000L }
+                ?: 0L
+            correctionRepository.observeErrorCounts(sinceMs).map { period to it }
+        }
 
     val uiState: StateFlow<NotebookUiState> = combine(
         correctionRepository.observeNotebookEntries(),
         _filter,
-        _query
-    ) { entries, filter, query ->
+        _query,
+        _sortOrder,
+        _periodAndCounts
+    ) { entries, filter, query, sortOrder, periodData ->
+        val (period, errorCounts) = periodData
+
         val filtered = entries
             .map { entry ->
                 entry.copy(
@@ -48,11 +84,27 @@ class NotebookViewModel @Inject constructor(
                 )
             }
             .filter { it.corrections.isNotEmpty() }
+            .sortedWith(
+                when (sortOrder) {
+                    SortOrder.BY_TIME -> compareByDescending { it.latestAnsweredAt }
+                    SortOrder.BY_SCORE -> compareByDescending { it.latestScore ?: -1 }
+                    SortOrder.BY_LEVEL -> compareBy { it.level }
+                    SortOrder.BY_ERROR_TYPE -> compareBy { entry ->
+                        entry.corrections
+                            .groupBy { it.errorType }
+                            .maxByOrNull { (_, list) -> list.size }
+                            ?.key?.ordinal ?: Int.MAX_VALUE
+                    }
+                }
+            )
 
         NotebookUiState(
             entries = entries,
             filteredEntries = filtered,
             selectedFilter = filter,
+            sortOrder = sortOrder,
+            selectedPeriod = period,
+            errorCounts = errorCounts,
             searchQuery = query,
             isLoading = false
         )
@@ -64,4 +116,6 @@ class NotebookViewModel @Inject constructor(
 
     fun setFilter(filter: ErrorType?) { _filter.update { filter } }
     fun setQuery(query: String) { _query.update { query } }
+    fun setSortOrder(order: SortOrder) { _sortOrder.update { order } }
+    fun setPeriod(period: Period) { _period.update { period } }
 }

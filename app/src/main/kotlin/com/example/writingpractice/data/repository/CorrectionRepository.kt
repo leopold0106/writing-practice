@@ -2,6 +2,8 @@ package com.example.writingpractice.data.repository
 
 import com.example.writingpractice.data.local.db.dao.CorrectionDao
 import com.example.writingpractice.data.local.db.dao.ProblemDao
+import com.example.writingpractice.data.local.db.dao.UserAnswerDao
+import com.example.writingpractice.data.local.db.entity.ErrorType
 import com.example.writingpractice.data.model.Correction
 import com.example.writingpractice.data.model.NotebookEntry
 import com.example.writingpractice.data.model.toDomain
@@ -16,7 +18,8 @@ import javax.inject.Singleton
 @Singleton
 class CorrectionRepository @Inject constructor(
     private val correctionDao: CorrectionDao,
-    private val problemDao: ProblemDao
+    private val problemDao: ProblemDao,
+    private val userAnswerDao: UserAnswerDao
 ) {
     fun observeUnreviewedCount(): Flow<Int> = correctionDao.observeUnreviewedCount()
 
@@ -24,21 +27,22 @@ class CorrectionRepository @Inject constructor(
         correctionDao.observeDistinctProblemIds().flatMapLatest { problemIds ->
             if (problemIds.isEmpty()) return@flatMapLatest flowOf(emptyList())
             val flows = problemIds.map { pid ->
-                correctionDao.observeForProblem(pid).map { corrections ->
-                    pid to corrections.map { it.toDomain() }
-                }
+                correctionDao.observeForProblem(pid).map { entities -> pid to entities }
             }
             combine(flows) { pairs ->
                 val entries = mutableListOf<NotebookEntry>()
-                for ((pid, corrections) in pairs) {
-                    if (corrections.isEmpty()) continue
+                for ((pid, entities) in pairs) {
+                    if (entities.isEmpty()) continue
                     val problem = problemDao.getById(pid) ?: continue
+                    val latestScore = userAnswerDao.getLatestScoreForProblem(pid)
                     entries.add(
                         NotebookEntry(
                             problemId = pid,
                             koreanText = problem.koreanText,
                             level = problem.level,
-                            corrections = corrections
+                            corrections = entities.map { it.toDomain() },
+                            latestAnsweredAt = entities.maxOf { it.createdAt },
+                            latestScore = latestScore
                         )
                     )
                 }
@@ -48,6 +52,11 @@ class CorrectionRepository @Inject constructor(
 
     fun observeCorrectionsForProblem(problemId: Long): Flow<List<Correction>> =
         correctionDao.observeForProblem(problemId).map { list -> list.map { it.toDomain() } }
+
+    fun observeErrorCounts(sinceMs: Long): Flow<Map<ErrorType, Int>> =
+        correctionDao.observeCorrectionsAfter(sinceMs).map { corrections ->
+            ErrorType.entries.associateWith { type -> corrections.count { it.errorType == type } }
+        }
 
     suspend fun markProblemReviewed(problemId: Long) =
         correctionDao.markReviewed(problemId)
