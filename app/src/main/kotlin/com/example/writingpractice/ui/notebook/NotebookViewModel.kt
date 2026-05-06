@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.writingpractice.data.local.db.entity.ErrorType
 import com.example.writingpractice.data.model.NotebookEntry
 import com.example.writingpractice.data.repository.CorrectionRepository
+import com.example.writingpractice.ui.common.Period
+import com.example.writingpractice.ui.common.sinceMs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,15 +24,6 @@ enum class SortOrder(val label: String) {
     BY_SCORE("점수순"),
     BY_LEVEL("레벨순"),
     BY_ERROR_TYPE("오류 유형순")
-}
-
-enum class Period(val label: String, val days: Long?) {
-    WEEK("1주", 7L),
-    MONTH("1개월", 30L),
-    THREE_MONTHS("3개월", 90L),
-    SIX_MONTHS("6개월", 180L),
-    YEAR("1년", 365L),
-    ALL("전체", null)
 }
 
 data class NotebookUiState(
@@ -56,10 +49,7 @@ class NotebookViewModel @Inject constructor(
 
     private val _periodAndCounts: Flow<Pair<Period, Map<ErrorType, Int>>> =
         _period.flatMapLatest { period ->
-            val sinceMs = period.days
-                ?.let { System.currentTimeMillis() - it * 24 * 60 * 60 * 1000L }
-                ?: 0L
-            correctionRepository.observeErrorCounts(sinceMs).map { period to it }
+            correctionRepository.observeErrorCounts(period.sinceMs).map { period to it }
         }
 
     val uiState: StateFlow<NotebookUiState> = combine(

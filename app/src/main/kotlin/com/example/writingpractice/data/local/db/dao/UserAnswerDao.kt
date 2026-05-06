@@ -51,4 +51,10 @@ interface UserAnswerDao {
 
     @Query("SELECT score FROM user_answers WHERE problem_id = :problemId AND grading_status = 'GRADED' ORDER BY submitted_at DESC LIMIT 1")
     suspend fun getLatestScoreForProblem(problemId: Long): Int?
+
+    @Query("""
+        SELECT AVG(score) FROM user_answers
+        WHERE submitted_at >= :sinceMs AND grading_status = 'GRADED' AND score IS NOT NULL
+    """)
+    suspend fun avgScoreAfter(sinceMs: Long): Double?
 }

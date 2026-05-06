@@ -14,6 +14,7 @@ import com.example.writingpractice.ui.practice.PracticeScreen
 import com.example.writingpractice.ui.problemlist.ProblemListScreen
 import com.example.writingpractice.ui.result.ResultScreen
 import com.example.writingpractice.ui.settings.SettingsScreen
+import com.example.writingpractice.ui.weaknessanalysis.WeaknessAnalysisScreen
 
 object Routes {
     const val HOME = "home"
@@ -24,6 +25,7 @@ object Routes {
     const val NOTEBOOK_DETAIL = "notebook_detail/{problemId}"
     const val SETTINGS = "settings"
     const val ANSWER_HISTORY = "answer_history/{problemId}"
+    const val WEAKNESS_ANALYSIS = "weakness_analysis"
 
     fun problemList(level: Int) = "problem_list/$level"
     fun practice(level: Int, problemId: Long? = null) =
@@ -42,7 +44,8 @@ fun AppNavigation() {
             HomeScreen(
                 onLevelClick = { level -> navController.navigate(Routes.problemList(level)) },
                 onNotebookClick = { navController.navigate(Routes.NOTEBOOK) },
-                onSettingsClick = { navController.navigate(Routes.SETTINGS) }
+                onSettingsClick = { navController.navigate(Routes.SETTINGS) },
+                onWeaknessAnalysisClick = { navController.navigate(Routes.WEAKNESS_ANALYSIS) }
             )
         }
 
@@ -146,6 +149,10 @@ fun AppNavigation() {
 
         composable(Routes.SETTINGS) {
             SettingsScreen(onBack = { navController.popBackStack() })
+        }
+
+        composable(Routes.WEAKNESS_ANALYSIS) {
+            WeaknessAnalysisScreen(onBack = { navController.popBackStack() })
         }
     }
 }

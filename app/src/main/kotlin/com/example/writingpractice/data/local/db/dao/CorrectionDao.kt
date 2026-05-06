@@ -50,4 +50,10 @@ interface CorrectionDao {
 
     @Query("SELECT * FROM corrections WHERE created_at >= :sinceMs")
     fun observeCorrectionsAfter(sinceMs: Long): Flow<List<CorrectionEntity>>
+
+    @Query("SELECT * FROM corrections WHERE created_at >= :sinceMs ORDER BY created_at DESC LIMIT :limit")
+    suspend fun getRecentCorrections(sinceMs: Long, limit: Int): List<CorrectionEntity>
+
+    @Query("SELECT COUNT(*) FROM corrections WHERE created_at >= :sinceMs")
+    suspend fun countCorrectionsAfter(sinceMs: Long): Int
 }

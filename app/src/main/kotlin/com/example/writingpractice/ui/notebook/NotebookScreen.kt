@@ -47,6 +47,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.writingpractice.data.local.db.entity.ErrorType
 import com.example.writingpractice.data.model.NotebookEntry
+import com.example.writingpractice.ui.common.Period
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

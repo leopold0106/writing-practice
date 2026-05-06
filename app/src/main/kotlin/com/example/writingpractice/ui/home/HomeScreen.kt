@@ -51,6 +51,7 @@ fun HomeScreen(
     onLevelClick: (Int) -> Unit,
     onNotebookClick: () -> Unit,
     onSettingsClick: () -> Unit,
+    onWeaknessAnalysisClick: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -117,6 +118,8 @@ fun HomeScreen(
             }
 
             HorizontalDivider()
+
+            WeaknessAnalysisCard(onClick = onWeaknessAnalysisClick)
 
             GenerateSection(
                 generateState = generateState,
@@ -206,6 +209,36 @@ private fun LevelButton(
         ) {
             Text("레벨 $level", fontWeight = FontWeight.Bold)
             Text(description, style = MaterialTheme.typography.bodyMedium)
+        }
+    }
+}
+
+@Composable
+private fun WeaknessAnalysisCard(onClick: () -> Unit) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(
+                "AI 약점 분석",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold
+            )
+            Text(
+                "최근 오답 패턴을 진단하고 개선 방향을 제안받으세요.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Button(
+                onClick = onClick,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("분석 시작")
+            }
         }
     }
 }

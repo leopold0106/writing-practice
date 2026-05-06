@@ -7,6 +7,7 @@ import com.example.writingpractice.data.remote.dto.ClaudeMessage
 import com.example.writingpractice.data.remote.dto.ClaudeRequest
 import com.example.writingpractice.data.remote.dto.GeneratedProblemDto
 import com.example.writingpractice.data.remote.dto.GradingResultDto
+import com.example.writingpractice.data.remote.dto.WeaknessAnalysisDto
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
@@ -19,6 +20,21 @@ data class GeneratedProblem(
     val koreanText: String,
     val referenceAnswer: String,
     val topicTag: String
+)
+
+data class WeaknessAnalysisInput(
+    val periodLabel: String,
+    val totalCorrections: Int,
+    val avgScore: Int?,
+    val errorCountsByType: Map<String, Int>,
+    val sampleCorrections: List<SampleCorrection>
+)
+
+data class SampleCorrection(
+    val original: String,
+    val corrected: String,
+    val explanation: String,
+    val errorType: String
 )
 
 @Singleton
@@ -45,6 +61,48 @@ Return ONLY valid JSON with this exact structure (no markdown, no extra text):
 }
 If the answer is perfect, return an empty corrections array and a score of 100.
 Only report genuine errors. Do not invent corrections for acceptable variations in phrasing.
+""".trimIndent()
+
+    private val weaknessSystemPrompt = """
+You are an English-writing tutor analyzing the recurring mistakes of a Korean student who translates Korean sentences into English.
+You will receive aggregate error counts by type and a sample of recent corrections (each with original, corrected, explanation, error type).
+
+Identify recurring linguistic patterns, not individual mistakes. Group them into 3-5 high-level "weakness points" (e.g., "subject-verb agreement after collective nouns", "preposition choice with time expressions").
+
+Return ONLY valid JSON (no markdown, no extra text, no comments) with this exact structure:
+{
+  "summary": "<1-2 concise Korean sentences capturing the student's overall profile>",
+  "overall_level": "<BEGINNER | INTERMEDIATE | ADVANCED>",
+  "weakness_points": [
+    {
+      "error_type": "<GRAMMAR | VOCABULARY | STRUCTURE | PUNCTUATION | SPELLING>",
+      "title": "<short Korean title, max 20 chars, e.g. '시제 일치 오류'>",
+      "description": "<2-3 Korean sentences explaining the pattern and why it matters>",
+      "examples": ["<원문 → 수정문 (간단한 한국어 주석)>", "..."],
+      "severity": "<LOW | MEDIUM | HIGH>"
+    }
+  ],
+  "improvement_suggestions": [
+    "<one concrete actionable Korean tip>",
+    "..."
+  ],
+  "recommended_patterns": [
+    {
+      "pattern": "<Korean name of sentence pattern>",
+      "example_sentence": "<one English example sentence>"
+    }
+  ],
+  "recommended_practice_level": <integer 1-7>
+}
+
+Rules:
+- All user-facing strings (summary, title, description, examples, suggestions, pattern names) MUST be in Korean.
+- example_sentence MUST be in English.
+- weakness_points: 3-5 items, ordered by severity DESC (HIGH first).
+- improvement_suggestions: 4-6 specific actionable items (not generic platitudes).
+- recommended_patterns: 3-5 items.
+- If the data is too sparse (fewer than 5 corrections), still produce a valid response but acknowledge the limited sample in the summary.
+- Do not invent errors that aren't supported by the data.
 """.trimIndent()
 
     private val generateSystemPrompt = """
@@ -106,6 +164,42 @@ Return ONLY a valid JSON array (no markdown, no extra text) where each element h
         json.decodeFromString<List<GeneratedProblemDto>>(raw).map { dto ->
             GeneratedProblem(dto.koreanText, dto.referenceAnswer, dto.topicTag)
         }
+    }
+
+    suspend fun analyzeWeaknesses(input: WeaknessAnalysisInput): Result<WeaknessAnalysisDto> = apiCall {
+        val userMessage = buildWeaknessUserMessage(input)
+        val response = service.complete(
+            ClaudeRequest(
+                model = MODEL,
+                maxTokens = 2048,
+                system = weaknessSystemPrompt,
+                messages = listOf(ClaudeMessage("user", userMessage))
+            )
+        )
+        val raw = extractJson(response.content.first().text)
+        json.decodeFromString<WeaknessAnalysisDto>(raw)
+    }
+
+    private fun buildWeaknessUserMessage(input: WeaknessAnalysisInput): String {
+        val countsLine = input.errorCountsByType.entries
+            .joinToString(", ") { "${it.key}=${it.value}" }
+        val avgLine = input.avgScore?.let { "Average score: ${it}\n" } ?: ""
+        val sampleLines = input.sampleCorrections.mapIndexed { i, c ->
+            val orig = c.original.take(200)
+            val corr = c.corrected.take(200)
+            val expl = c.explanation.take(200)
+            "${i + 1}. [${c.errorType}]\n   Original: \"$orig\"\n   Corrected: \"$corr\"\n   Explanation: \"$expl\""
+        }.joinToString("\n")
+        return """
+Period: ${input.periodLabel}
+Total corrections: ${input.totalCorrections}
+${avgLine}Error counts by type: $countsLine
+
+Sample corrections (most recent ${input.sampleCorrections.size}):
+$sampleLines
+
+Analyze these patterns and return the weakness analysis JSON.
+""".trimIndent()
     }
 
     suspend fun ping(): Result<Unit> = apiCall {

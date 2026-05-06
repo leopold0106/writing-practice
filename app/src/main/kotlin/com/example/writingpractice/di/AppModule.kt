@@ -47,12 +47,14 @@ object AppModule {
     @Singleton
     fun provideDatabase(@ApplicationContext ctx: Context): AppDatabase =
         Room.databaseBuilder(ctx, AppDatabase::class.java, AppDatabase.DATABASE_NAME)
+            .addMigrations(AppDatabase.MIGRATION_1_2)
             .build()
 
     @Provides fun provideProblemDao(db: AppDatabase) = db.problemDao()
     @Provides fun provideUserAnswerDao(db: AppDatabase) = db.userAnswerDao()
     @Provides fun provideCorrectionDao(db: AppDatabase) = db.correctionDao()
     @Provides fun provideProgressDao(db: AppDatabase) = db.progressDao()
+    @Provides fun provideWeaknessAnalysisDao(db: AppDatabase) = db.weaknessAnalysisDao()
 
     @Provides
     @Singleton
