@@ -171,7 +171,7 @@ Return ONLY a valid JSON array (no markdown, no extra text) where each element h
         val response = service.complete(
             ClaudeRequest(
                 model = MODEL,
-                maxTokens = 2048,
+                maxTokens = 4096,
                 system = weaknessSystemPrompt,
                 messages = listOf(ClaudeMessage("user", userMessage))
             )

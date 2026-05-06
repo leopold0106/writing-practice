@@ -65,6 +65,7 @@ object AppModule {
     fun provideJson(): Json = Json {
         ignoreUnknownKeys = true
         isLenient = true
+        allowTrailingCommas = true
         explicitNulls = false
         encodeDefaults = true
     }
