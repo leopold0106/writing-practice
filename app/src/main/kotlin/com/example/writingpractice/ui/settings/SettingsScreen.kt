@@ -7,7 +7,10 @@ import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.OutlinedButton
 import androidx.core.content.ContextCompat
+import com.example.writingpractice.BuildConfig
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -71,6 +74,7 @@ fun SettingsScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val apiKeyStatus by viewModel.apiKeyStatus.collectAsStateWithLifecycle()
+    val updateState by viewModel.updateState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     val snackbarHostState = remember { SnackbarHostState() }
@@ -268,6 +272,120 @@ fun SettingsScreen(
                     style = MaterialTheme.typography.bodySmall
                 )
                 else -> Unit
+            }
+
+            HorizontalDivider()
+
+            // App update
+            SectionHeader("앱 업데이트")
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    "현재 버전: ${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                OutlinedButton(
+                    onClick = { viewModel.checkForUpdate() },
+                    enabled = updateState !is UpdateState.Checking &&
+                            updateState !is UpdateState.Downloading
+                ) {
+                    Text("업데이트 확인")
+                }
+            }
+
+            when (val us = updateState) {
+                UpdateState.Checking -> Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
+                    Text("확인 중...", style = MaterialTheme.typography.bodySmall)
+                }
+
+                UpdateState.UpToDate -> Text(
+                    "최신 버전입니다.",
+                    color = Color(0xFF388E3C),
+                    style = MaterialTheme.typography.bodySmall
+                )
+
+                is UpdateState.UpdateAvailable -> Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        "새 버전 ${us.version}이(가) 있습니다.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Button(
+                        onClick = { viewModel.downloadAndInstall(us.downloadUrl) },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("다운로드 및 설치")
+                    }
+                }
+
+                is UpdateState.Downloading -> Column(
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    val p = us.progress
+                    if (p < 0) {
+                        LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+                        Text("다운로드 준비 중...", style = MaterialTheme.typography.bodySmall)
+                    } else {
+                        LinearProgressIndicator(
+                            progress = { p },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Text(
+                            "다운로드 중... ${(p * 100).toInt()}%",
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                }
+
+                is UpdateState.ReadyToInstall -> Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        "다운로드 완료. 설치 창이 열립니다.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color(0xFF388E3C)
+                    )
+                    OutlinedButton(
+                        onClick = { viewModel.retryInstall(us.apkPath) },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("설치 창 다시 열기")
+                    }
+                }
+
+                is UpdateState.NeedInstallPermission -> Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        "설치 권한이 필요합니다.\n설정에서 '알 수 없는 앱 설치'를 허용한 후 아래 버튼을 누르세요.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                    Button(
+                        onClick = { viewModel.retryInstall(us.apkPath) },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("설치하기")
+                    }
+                }
+
+                is UpdateState.Error -> Text(
+                    "오류: ${us.message}",
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall
+                )
+
+                UpdateState.Idle -> Unit
             }
         }
     }

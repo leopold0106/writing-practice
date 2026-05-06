@@ -3,6 +3,7 @@ package com.example.writingpractice.ui.settings
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.writingpractice.data.remote.AppUpdateChecker
 import com.example.writingpractice.data.remote.ClaudeApiClient
 import com.example.writingpractice.data.repository.SettingsRepository
 import com.example.writingpractice.util.NotificationHelper
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 sealed class ApiKeyStatus {
@@ -23,6 +25,17 @@ sealed class ApiKeyStatus {
     object Checking : ApiKeyStatus()
     object Valid : ApiKeyStatus()
     data class Invalid(val reason: String) : ApiKeyStatus()
+}
+
+sealed class UpdateState {
+    object Idle : UpdateState()
+    object Checking : UpdateState()
+    object UpToDate : UpdateState()
+    data class UpdateAvailable(val version: String, val downloadUrl: String) : UpdateState()
+    data class Downloading(val progress: Float) : UpdateState()
+    data class ReadyToInstall(val apkPath: String) : UpdateState()
+    data class NeedInstallPermission(val apkPath: String) : UpdateState()
+    data class Error(val message: String) : UpdateState()
 }
 
 data class SettingsUiState(
@@ -38,12 +51,16 @@ data class SettingsUiState(
 class SettingsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val settingsRepository: SettingsRepository,
-    private val claudeApiClient: ClaudeApiClient
+    private val claudeApiClient: ClaudeApiClient,
+    private val appUpdateChecker: AppUpdateChecker
 ) : ViewModel() {
 
     private val _apiKeyVisible = MutableStateFlow(false)
     private val _apiKeyStatus = MutableStateFlow<ApiKeyStatus>(ApiKeyStatus.Idle)
     val apiKeyStatus: StateFlow<ApiKeyStatus> = _apiKeyStatus.asStateFlow()
+
+    private val _updateState = MutableStateFlow<UpdateState>(UpdateState.Idle)
+    val updateState: StateFlow<UpdateState> = _updateState.asStateFlow()
 
     val uiState: StateFlow<SettingsUiState> = combine(
         combine(settingsRepository.dailyGoal, settingsRepository.notificationEnabled) { g, e -> g to e },
@@ -111,4 +128,42 @@ class SettingsViewModel @Inject constructor(
     fun toggleApiKeyVisibility() {
         _apiKeyVisible.value = !_apiKeyVisible.value
     }
+
+    fun checkForUpdate() = viewModelScope.launch {
+        _updateState.value = UpdateState.Checking
+        appUpdateChecker.checkForUpdate()
+            .onSuccess { info ->
+                _updateState.value = if (info != null)
+                    UpdateState.UpdateAvailable(info.version, info.downloadUrl)
+                else
+                    UpdateState.UpToDate
+            }
+            .onFailure { e ->
+                _updateState.value = UpdateState.Error(e.message ?: "알 수 없는 오류")
+            }
+    }
+
+    fun downloadAndInstall(downloadUrl: String) = viewModelScope.launch {
+        _updateState.value = UpdateState.Downloading(-1f)
+        appUpdateChecker.downloadApk(downloadUrl) { progress ->
+            _updateState.value = UpdateState.Downloading(progress)
+        }.onSuccess { apkFile ->
+            if (appUpdateChecker.canInstallPackages()) {
+                _updateState.value = UpdateState.ReadyToInstall(apkFile.absolutePath)
+                appUpdateChecker.installApk(apkFile)
+            } else {
+                _updateState.value = UpdateState.NeedInstallPermission(apkFile.absolutePath)
+                appUpdateChecker.openInstallPermissionSettings()
+            }
+        }.onFailure { e ->
+            _updateState.value = UpdateState.Error(e.message ?: "다운로드 실패")
+        }
+    }
+
+    fun retryInstall(apkPath: String) {
+        val apkFile = File(apkPath)
+        if (apkFile.exists()) appUpdateChecker.installApk(apkFile)
+    }
+
+    fun resetUpdateState() { _updateState.value = UpdateState.Idle }
 }
