@@ -5,6 +5,12 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
+    <group
+        android:pivotX="54"
+        android:pivotY="54"
+        android:scaleX="1.2"
+        android:scaleY="1.2">
+
     <!-- Paper (white sheet sticking up) -->
     <path
         android:fillColor="#FFFFFF"
@@ -95,4 +101,5 @@
         android:fillColor="#C8C8C8"
         android:pathData="M34,87 C34,88.7 35.3,90 37,90 L71,90 C72.7,90 74,88.7 74,87 Z" />
 
+    </group>
 </vector>
