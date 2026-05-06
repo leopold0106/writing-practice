@@ -52,6 +52,7 @@ fun ResultScreen(
     viewModel: ResultViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val autoAnalysisState by viewModel.autoAnalysisState.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = { TopAppBar(title = { Text("채점 결과") }) }
@@ -126,6 +127,10 @@ fun ResultScreen(
                 }
             }
 
+            if (autoAnalysisState != AutoAnalysisState.Idle) {
+                AutoAnalysisBanner(autoAnalysisState)
+            }
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -142,6 +147,36 @@ fun ResultScreen(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun AutoAnalysisBanner(state: AutoAnalysisState) {
+    val isRunning = state is AutoAnalysisState.Running
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        color = Color(0xFFE3F2FD)
+    ) {
+        Row(
+            modifier = Modifier.padding(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (isRunning) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(16.dp),
+                    strokeWidth = 2.dp,
+                    color = Color(0xFF1565C0)
+                )
+            }
+            Text(
+                text = if (isRunning) "30문제 달성! 약점 분석 자동 업데이트 중..."
+                       else "약점 분석이 업데이트되었습니다",
+                style = MaterialTheme.typography.bodySmall,
+                color = Color(0xFF1565C0)
+            )
         }
     }
 }

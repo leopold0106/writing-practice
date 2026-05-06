@@ -3,18 +3,29 @@ package com.example.writingpractice.ui.result
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.writingpractice.data.local.db.dao.CorrectionDao
 import com.example.writingpractice.data.local.db.dao.UserAnswerDao
 import com.example.writingpractice.data.model.Correction
 import com.example.writingpractice.data.model.Problem
 import com.example.writingpractice.data.repository.PracticeRepository
 import com.example.writingpractice.data.repository.ProblemRepository
+import com.example.writingpractice.data.repository.WeaknessAnalysisRepository
+import com.example.writingpractice.ui.common.Period
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+sealed class AutoAnalysisState {
+    object Idle : AutoAnalysisState()
+    object Running : AutoAnalysisState()
+    object Done : AutoAnalysisState()
+}
 
 data class ResultUiState(
     val problem: Problem? = null,
@@ -32,12 +43,18 @@ class ResultViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val problemRepository: ProblemRepository,
     private val practiceRepository: PracticeRepository,
-    private val userAnswerDao: UserAnswerDao
+    private val userAnswerDao: UserAnswerDao,
+    private val correctionDao: CorrectionDao,
+    private val weaknessAnalysisRepository: WeaknessAnalysisRepository
 ) : ViewModel() {
 
     val answerId: Long = savedStateHandle["answerId"] ?: -1L
 
     private val _problem = MutableStateFlow<Problem?>(null)
+    private val _autoAnalysisState = MutableStateFlow<AutoAnalysisState>(AutoAnalysisState.Idle)
+    val autoAnalysisState: StateFlow<AutoAnalysisState> = _autoAnalysisState.asStateFlow()
+
+    private var wasPending = false
 
     val uiState: StateFlow<ResultUiState> = combine(
         practiceRepository.observeAnswer(answerId),
@@ -65,4 +82,28 @@ class ResultViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = ResultUiState()
     )
+
+    init {
+        viewModelScope.launch {
+            uiState.collect { state ->
+                if (!state.isLoading) {
+                    if (state.isPending) {
+                        wasPending = true
+                    } else if (wasPending && state.score != null) {
+                        wasPending = false
+                        checkAndAutoAnalyze()
+                    }
+                }
+            }
+        }
+    }
+
+    private suspend fun checkAndAutoAnalyze() {
+        val total = correctionDao.countCorrectionsAfter(0L)
+        if (total > 0 && total % 30 == 0) {
+            _autoAnalysisState.value = AutoAnalysisState.Running
+            weaknessAnalysisRepository.analyze(Period.ALL)
+            _autoAnalysisState.value = AutoAnalysisState.Done
+        }
+    }
 }
