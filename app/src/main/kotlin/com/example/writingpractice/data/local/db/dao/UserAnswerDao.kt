@@ -57,4 +57,10 @@ interface UserAnswerDao {
         WHERE submitted_at >= :sinceMs AND grading_status = 'GRADED' AND score IS NOT NULL
     """)
     suspend fun avgScoreAfter(sinceMs: Long): Double?
+
+    @Query("""
+        SELECT AVG(score) FROM user_answers
+        WHERE submitted_at >= :startMs AND submitted_at < :endMs AND grading_status = 'GRADED' AND score IS NOT NULL
+    """)
+    suspend fun avgScoreInRange(startMs: Long, endMs: Long): Double?
 }

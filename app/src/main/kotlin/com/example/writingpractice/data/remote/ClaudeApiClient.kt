@@ -7,6 +7,7 @@ import com.example.writingpractice.data.remote.dto.ClaudeMessage
 import com.example.writingpractice.data.remote.dto.ClaudeRequest
 import com.example.writingpractice.data.remote.dto.GeneratedProblemDto
 import com.example.writingpractice.data.remote.dto.GradingResultDto
+import com.example.writingpractice.data.remote.dto.MonthlyComparisonDto
 import com.example.writingpractice.data.remote.dto.WeaknessAnalysisDto
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
@@ -35,6 +36,19 @@ data class SampleCorrection(
     val corrected: String,
     val explanation: String,
     val errorType: String
+)
+
+data class MonthlyComparisonInput(
+    val currentYearMonth: String,
+    val previousYearMonth: String,
+    val currentTotalCorrections: Int,
+    val previousTotalCorrections: Int,
+    val currentCounts: Map<String, Int>,
+    val previousCounts: Map<String, Int>,
+    val currentSamples: List<SampleCorrection>,
+    val previousSamples: List<SampleCorrection>,
+    val currentAvgScore: Int?,
+    val previousAvgScore: Int?
 )
 
 @Singleton
@@ -199,6 +213,74 @@ Sample corrections (most recent ${input.sampleCorrections.size}):
 $sampleLines
 
 Analyze these patterns and return the weakness analysis JSON.
+""".trimIndent()
+    }
+
+    private val monthlyComparisonSystemPrompt = """
+You are an English-writing tutor analyzing one Korean student's monthly progress.
+You will receive two months of error data. Compare them and identify meaningful trends.
+
+Return ONLY valid JSON (no markdown, no extra text) with this exact structure:
+{
+  "comparison_summary": "<2-3 Korean sentences summarizing the overall change>",
+  "overall_trend": "<IMPROVING|DECLINING|STABLE|MIXED>",
+  "error_type_changes": [
+    {
+      "error_type": "<GRAMMAR|VOCABULARY|STRUCTURE|PUNCTUATION|SPELLING>",
+      "previous_count": <integer>,
+      "current_count": <integer>,
+      "trend": "<IMPROVED|WORSENED|STABLE>",
+      "insight": "<1 Korean sentence explaining the change>"
+    }
+  ],
+  "key_improvements": ["<Korean>", "<Korean>"],
+  "areas_to_focus": ["<Korean>", "<Korean>"]
+}
+
+Rules:
+- Include ALL 5 error types in error_type_changes even if count is 0.
+- trend: IMPROVED if current_count < previous_count, WORSENED if current_count > previous_count, STABLE if equal.
+- overall_trend: IMPROVING if most error types improved, DECLINING if most worsened, MIXED if split, STABLE if total change < 10%.
+- key_improvements: 2-3 items (what the student did better).
+- areas_to_focus: 2-3 items (what still needs work).
+- All user-facing strings (summary, insight, improvements, areas) MUST be in Korean.
+- If either month has 0 corrections, acknowledge sparse data in the summary.
+""".trimIndent()
+
+    suspend fun compareMonthlyPatterns(input: MonthlyComparisonInput): Result<MonthlyComparisonDto> = apiCall {
+        val userMessage = buildMonthlyUserMessage(input)
+        val response = service.complete(
+            ClaudeRequest(
+                model = MODEL,
+                maxTokens = 4096,
+                system = monthlyComparisonSystemPrompt,
+                messages = listOf(ClaudeMessage("user", userMessage))
+            )
+        )
+        val raw = extractJson(response.content.first().text)
+        json.decodeFromString<MonthlyComparisonDto>(raw)
+    }
+
+    private fun buildMonthlyUserMessage(input: MonthlyComparisonInput): String {
+        val prevCountsLine = input.previousCounts.entries.joinToString(", ") { "${it.key}=${it.value}" }
+        val currCountsLine = input.currentCounts.entries.joinToString(", ") { "${it.key}=${it.value}" }
+        val prevAvgLine = input.previousAvgScore?.let { "avg score: $it pts\n" } ?: ""
+        val currAvgLine = input.currentAvgScore?.let { "avg score: $it pts\n" } ?: ""
+        fun formatSamples(samples: List<SampleCorrection>) = samples.mapIndexed { i, c ->
+            "${i + 1}. [${c.errorType}] \"${c.original.take(150)}\" → \"${c.corrected.take(150)}\"\n   ${c.explanation.take(150)}"
+        }.joinToString("\n")
+        return """
+Previous month (${input.previousYearMonth}): ${input.previousTotalCorrections} corrections
+${prevAvgLine}Error counts: $prevCountsLine
+Recent samples (${input.previousSamples.size}):
+${formatSamples(input.previousSamples)}
+
+Current month (${input.currentYearMonth}): ${input.currentTotalCorrections} corrections
+${currAvgLine}Error counts: $currCountsLine
+Recent samples (${input.currentSamples.size}):
+${formatSamples(input.currentSamples)}
+
+Compare these two months and return the JSON analysis.
 """.trimIndent()
     }
 

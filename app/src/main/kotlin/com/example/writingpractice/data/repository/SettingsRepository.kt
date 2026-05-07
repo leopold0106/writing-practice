@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -60,6 +61,27 @@ class SettingsRepository @Inject constructor(
         dataStore.edit { it[Keys.LAST_AUTO_ANALYZED_COUNT] = count }
     }
 
+    suspend fun getInstallYearMonth(): String? =
+        dataStore.data.first()[Keys.INSTALL_YEAR_MONTH]
+
+    suspend fun setInstallYearMonth(ym: String) {
+        dataStore.edit { it[Keys.INSTALL_YEAR_MONTH] = ym }
+    }
+
+    suspend fun getLastMonthlyAnalyzedYearMonth(): String? =
+        dataStore.data.first()[Keys.LAST_MONTHLY_ANALYZED_YM]
+
+    suspend fun setLastMonthlyAnalyzedYearMonth(ym: String) {
+        dataStore.edit { it[Keys.LAST_MONTHLY_ANALYZED_YM] = ym }
+    }
+
+    suspend fun getLastUpdateCheckDate(): Long =
+        dataStore.data.first()[Keys.LAST_UPDATE_CHECK_DATE] ?: 0L
+
+    suspend fun setLastUpdateCheckDate(ts: Long) {
+        dataStore.edit { it[Keys.LAST_UPDATE_CHECK_DATE] = ts }
+    }
+
     private object Keys {
         val DAILY_GOAL = intPreferencesKey("daily_goal")
         val NOTIF_ENABLED = booleanPreferencesKey("notif_enabled")
@@ -69,5 +91,8 @@ class SettingsRepository @Inject constructor(
         val DB_SEEDED = booleanPreferencesKey("db_seeded")
         val API_KEY_VALIDATED = booleanPreferencesKey("api_key_validated")
         val LAST_AUTO_ANALYZED_COUNT = intPreferencesKey("last_auto_analyzed_count")
+        val INSTALL_YEAR_MONTH = stringPreferencesKey("install_year_month")
+        val LAST_MONTHLY_ANALYZED_YM = stringPreferencesKey("last_monthly_analyzed_ym")
+        val LAST_UPDATE_CHECK_DATE = longPreferencesKey("last_update_check_date")
     }
 }

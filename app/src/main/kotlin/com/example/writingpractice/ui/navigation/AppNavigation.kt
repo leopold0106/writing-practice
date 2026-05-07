@@ -14,6 +14,7 @@ import com.example.writingpractice.ui.practice.PracticeScreen
 import com.example.writingpractice.ui.problemlist.ProblemListScreen
 import com.example.writingpractice.ui.result.ResultScreen
 import com.example.writingpractice.ui.settings.SettingsScreen
+import com.example.writingpractice.ui.monthlytrend.MonthlyTrendScreen
 import com.example.writingpractice.ui.weaknessanalysis.WeaknessAnalysisScreen
 
 object Routes {
@@ -26,6 +27,7 @@ object Routes {
     const val SETTINGS = "settings"
     const val ANSWER_HISTORY = "answer_history/{problemId}"
     const val WEAKNESS_ANALYSIS = "weakness_analysis"
+    const val MONTHLY_TREND = "monthly_trend"
 
     fun problemList(level: Int) = "problem_list/$level"
     fun practice(level: Int, problemId: Long? = null) =
@@ -45,7 +47,8 @@ fun AppNavigation() {
                 onLevelClick = { level -> navController.navigate(Routes.problemList(level)) },
                 onNotebookClick = { navController.navigate(Routes.NOTEBOOK) },
                 onSettingsClick = { navController.navigate(Routes.SETTINGS) },
-                onWeaknessAnalysisClick = { navController.navigate(Routes.WEAKNESS_ANALYSIS) }
+                onWeaknessAnalysisClick = { navController.navigate(Routes.WEAKNESS_ANALYSIS) },
+                onMonthlyTrendClick = { navController.navigate(Routes.MONTHLY_TREND) }
             )
         }
 
@@ -153,6 +156,10 @@ fun AppNavigation() {
 
         composable(Routes.WEAKNESS_ANALYSIS) {
             WeaknessAnalysisScreen(onBack = { navController.popBackStack() })
+        }
+
+        composable(Routes.MONTHLY_TREND) {
+            MonthlyTrendScreen(onBack = { navController.popBackStack() })
         }
     }
 }

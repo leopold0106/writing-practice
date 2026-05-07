@@ -7,6 +7,7 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.writingpractice.data.local.db.dao.CorrectionDao
+import com.example.writingpractice.data.local.db.dao.MonthlySnapshotDao
 import com.example.writingpractice.data.local.db.dao.ProgressDao
 import com.example.writingpractice.data.local.db.dao.ProblemDao
 import com.example.writingpractice.data.local.db.dao.UserAnswerDao
@@ -15,6 +16,7 @@ import com.example.writingpractice.data.local.db.entity.CorrectionEntity
 import com.example.writingpractice.data.local.db.entity.DailyProgressEntity
 import com.example.writingpractice.data.local.db.entity.ErrorType
 import com.example.writingpractice.data.local.db.entity.GradingStatus
+import com.example.writingpractice.data.local.db.entity.MonthlySnapshotEntity
 import com.example.writingpractice.data.local.db.entity.ProblemEntity
 import com.example.writingpractice.data.local.db.entity.UserAnswerEntity
 import com.example.writingpractice.data.local.db.entity.WeaknessAnalysisEntity
@@ -25,9 +27,10 @@ import com.example.writingpractice.data.local.db.entity.WeaknessAnalysisEntity
         UserAnswerEntity::class,
         CorrectionEntity::class,
         DailyProgressEntity::class,
-        WeaknessAnalysisEntity::class
+        WeaknessAnalysisEntity::class,
+        MonthlySnapshotEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -37,6 +40,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun correctionDao(): CorrectionDao
     abstract fun progressDao(): ProgressDao
     abstract fun weaknessAnalysisDao(): WeaknessAnalysisDao
+    abstract fun monthlySnapshotDao(): MonthlySnapshotDao
 
     companion object {
         const val DATABASE_NAME = "writing_practice.db"
@@ -57,6 +61,28 @@ abstract class AppDatabase : RoomDatabase() {
                         recommendedLevel INTEGER NOT NULL,
                         totalCorrections INTEGER NOT NULL,
                         avgScore INTEGER
+                    )
+                    """.trimIndent()
+                )
+            }
+        }
+
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS monthly_snapshots (
+                        yearMonth TEXT NOT NULL PRIMARY KEY,
+                        analyzedAt INTEGER NOT NULL,
+                        comparisonSummary TEXT NOT NULL,
+                        overallTrend TEXT NOT NULL,
+                        errorChangesJson TEXT NOT NULL,
+                        keyImprovementsJson TEXT NOT NULL,
+                        areasToFocusJson TEXT NOT NULL,
+                        currentMonthCorrections INTEGER NOT NULL,
+                        previousMonthCorrections INTEGER NOT NULL,
+                        currentMonthAvgScore INTEGER,
+                        previousMonthAvgScore INTEGER
                     )
                     """.trimIndent()
                 )

@@ -2,7 +2,10 @@ package com.example.writingpractice.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.writingpractice.data.remote.AppUpdateChecker
+import com.example.writingpractice.data.remote.UpdateInfo
 import com.example.writingpractice.data.repository.CorrectionRepository
+import com.example.writingpractice.data.repository.MonthlyAnalysisRepository
 import com.example.writingpractice.data.repository.PracticeRepository
 import com.example.writingpractice.data.repository.ProblemRepository
 import com.example.writingpractice.data.repository.SettingsRepository
@@ -14,6 +17,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.time.YearMonth
 import javax.inject.Inject
 
 enum class ApiStatus { UNKNOWN, VALID, INVALID }
@@ -39,10 +43,42 @@ class HomeViewModel @Inject constructor(
     private val correctionRepository: CorrectionRepository,
     private val settingsRepository: SettingsRepository,
     private val problemRepository: ProblemRepository,
+    private val monthlyAnalysisRepository: MonthlyAnalysisRepository,
+    private val appUpdateChecker: AppUpdateChecker
 ) : ViewModel() {
 
     private val _generateState = MutableStateFlow<GenerateState>(GenerateState.Idle)
     val generateState: StateFlow<GenerateState> = _generateState.asStateFlow()
+
+    private val _updateInfo = MutableStateFlow<UpdateInfo?>(null)
+    val updateInfo: StateFlow<UpdateInfo?> = _updateInfo.asStateFlow()
+
+    private val _isMonthlyAnalysisRunning = MutableStateFlow(false)
+    val isMonthlyAnalysisRunning: StateFlow<Boolean> = _isMonthlyAnalysisRunning.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            val now = System.currentTimeMillis()
+            if (now - settingsRepository.getLastUpdateCheckDate() > 24 * 3_600_000L) {
+                settingsRepository.setLastUpdateCheckDate(now)
+                appUpdateChecker.checkForUpdate().getOrNull()?.let { _updateInfo.value = it }
+            }
+        }
+        viewModelScope.launch {
+            val currentYM = YearMonth.now().toString()
+            val installYM = settingsRepository.getInstallYearMonth()
+                ?: run { settingsRepository.setInstallYearMonth(currentYM); currentYM }
+            val lastAnalyzedYM = settingsRepository.getLastMonthlyAnalyzedYearMonth()
+            if (currentYM != installYM && currentYM != lastAnalyzedYM) {
+                _isMonthlyAnalysisRunning.value = true
+                monthlyAnalysisRepository.analyzeMonthly(currentYM)
+                settingsRepository.setLastMonthlyAnalyzedYearMonth(currentYM)
+                _isMonthlyAnalysisRunning.value = false
+            }
+        }
+    }
+
+    fun dismissUpdate() { _updateInfo.value = null }
 
     fun generateProblem(level: Int) {
         viewModelScope.launch {

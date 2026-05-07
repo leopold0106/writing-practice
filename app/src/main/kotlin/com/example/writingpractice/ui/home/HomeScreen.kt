@@ -10,10 +10,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Badge
@@ -52,10 +54,13 @@ fun HomeScreen(
     onNotebookClick: () -> Unit,
     onSettingsClick: () -> Unit,
     onWeaknessAnalysisClick: () -> Unit,
+    onMonthlyTrendClick: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val generateState by viewModel.generateState.collectAsStateWithLifecycle()
+    val updateInfo by viewModel.updateInfo.collectAsStateWithLifecycle()
+    val isMonthlyAnalysisRunning by viewModel.isMonthlyAnalysisRunning.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
@@ -88,6 +93,14 @@ fun HomeScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
+            updateInfo?.let { info ->
+                UpdateBanner(
+                    version = info.version,
+                    onUpdate = onSettingsClick,
+                    onDismiss = viewModel::dismissUpdate
+                )
+            }
+
             ApiStatusCard(apiStatus = state.apiStatus)
 
             DailyProgressCard(solved = state.todaySolved, goal = state.dailyGoal)
@@ -121,11 +134,52 @@ fun HomeScreen(
 
             WeaknessAnalysisCard(onClick = onWeaknessAnalysisClick)
 
+            MonthlyTrendCard(
+                isRunning = isMonthlyAnalysisRunning,
+                onClick = onMonthlyTrendClick
+            )
+
             GenerateSection(
                 generateState = generateState,
                 onGenerate = viewModel::generateProblem,
                 onReset = viewModel::resetGenerateState
             )
+        }
+    }
+}
+
+@Composable
+private fun UpdateBanner(version: String, onUpdate: () -> Unit, onDismiss: () -> Unit) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(8.dp),
+        color = Color(0xFFE3F2FD)
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "새 버전 $version 사용 가능",
+                style = MaterialTheme.typography.bodySmall,
+                color = Color(0xFF1565C0),
+                modifier = Modifier.weight(1f)
+            )
+            OutlinedButton(
+                onClick = onUpdate,
+                modifier = Modifier.height(32.dp)
+            ) {
+                Text("업데이트", style = MaterialTheme.typography.labelSmall)
+            }
+            Spacer(Modifier.width(4.dp))
+            IconButton(onClick = onDismiss, modifier = Modifier.size(32.dp)) {
+                Icon(
+                    Icons.Default.Close,
+                    contentDescription = "닫기",
+                    tint = Color(0xFF1565C0),
+                    modifier = Modifier.size(16.dp)
+                )
+            }
         }
     }
 }
@@ -238,6 +292,50 @@ private fun WeaknessAnalysisCard(onClick: () -> Unit) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("분석 시작")
+            }
+        }
+    }
+}
+
+@Composable
+private fun MonthlyTrendCard(isRunning: Boolean, onClick: () -> Unit) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(
+                "월별 학습 추이",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold
+            )
+            Text(
+                "매달 오류 패턴 변화를 자동으로 분석합니다.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            if (isRunning) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
+                    Text(
+                        "월별 추이 분석 중...",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            } else {
+                OutlinedButton(
+                    onClick = onClick,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("월별 학습 추이 보기")
+                }
             }
         }
     }

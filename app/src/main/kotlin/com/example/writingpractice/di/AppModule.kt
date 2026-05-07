@@ -47,7 +47,7 @@ object AppModule {
     @Singleton
     fun provideDatabase(@ApplicationContext ctx: Context): AppDatabase =
         Room.databaseBuilder(ctx, AppDatabase::class.java, AppDatabase.DATABASE_NAME)
-            .addMigrations(AppDatabase.MIGRATION_1_2)
+            .addMigrations(AppDatabase.MIGRATION_1_2, AppDatabase.MIGRATION_2_3)
             .build()
 
     @Provides fun provideProblemDao(db: AppDatabase) = db.problemDao()
@@ -55,6 +55,7 @@ object AppModule {
     @Provides fun provideCorrectionDao(db: AppDatabase) = db.correctionDao()
     @Provides fun provideProgressDao(db: AppDatabase) = db.progressDao()
     @Provides fun provideWeaknessAnalysisDao(db: AppDatabase) = db.weaknessAnalysisDao()
+    @Provides fun provideMonthlySnapshotDao(db: AppDatabase) = db.monthlySnapshotDao()
 
     @Provides
     @Singleton
