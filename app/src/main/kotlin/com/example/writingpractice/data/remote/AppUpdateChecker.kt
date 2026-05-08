@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
-data class UpdateInfo(val version: String, val versionCode: Int, val downloadUrl: String)
+data class UpdateInfo(val version: String, val downloadUrl: String)
 
 @Serializable
 private data class GithubRelease(
@@ -66,20 +66,16 @@ class AppUpdateChecker @Inject constructor(
             val body = response.body?.string()
                 ?: return@withContext Result.failure(Exception("빈 응답"))
             val release = json.decodeFromString<GithubRelease>(body)
-            val remoteCode = release.tagName.removePrefix("v").toIntOrNull()
-                ?: return@withContext Result.failure(Exception("버전 형식 오류: ${release.tagName}"))
-            if (remoteCode <= BuildConfig.VERSION_CODE) {
+            val remoteVersion = release.tagName.removePrefix("v")
+            if (remoteVersion.isBlank()) {
+                return@withContext Result.failure(Exception("버전 형식 오류: ${release.tagName}"))
+            }
+            if (!isNewerVersion(remoteVersion, BuildConfig.VERSION_NAME)) {
                 return@withContext Result.success(null)
             }
             val apkAsset = release.assets.firstOrNull { it.name.endsWith(".apk") }
                 ?: return@withContext Result.failure(Exception("APK 파일을 찾을 수 없습니다"))
-            Result.success(
-                UpdateInfo(
-                    version = release.tagName,
-                    versionCode = remoteCode,
-                    downloadUrl = apkAsset.browserDownloadUrl
-                )
-            )
+            Result.success(UpdateInfo(version = release.tagName, downloadUrl = apkAsset.browserDownloadUrl))
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -131,6 +127,20 @@ class AppUpdateChecker @Inject constructor(
     }
 
     fun canInstallPackages(): Boolean = context.packageManager.canRequestPackageInstalls()
+
+    // Returns true if remote > current using component-wise semver comparison.
+    // Supports both "2" and "1.0.1" style versions.
+    private fun isNewerVersion(remote: String, current: String): Boolean {
+        val r = remote.split(".").mapNotNull { it.toIntOrNull() }
+        val c = current.split(".").mapNotNull { it.toIntOrNull() }
+        for (i in 0 until maxOf(r.size, c.size)) {
+            val rv = r.getOrElse(i) { 0 }
+            val cv = c.getOrElse(i) { 0 }
+            if (rv > cv) return true
+            if (rv < cv) return false
+        }
+        return false
+    }
 
     fun openInstallPermissionSettings() {
         val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
