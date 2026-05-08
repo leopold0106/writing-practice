@@ -4,6 +4,12 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: '릴리즈 태그 (예: v1.1.0)'
+        required: true
+        default: 'v1.1.0'
 
 jobs:
   release:
@@ -28,18 +34,26 @@ jobs:
         run: chmod +x gradlew
 
       - name: Decode keystore
-        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > keystore.jks
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > writing-practice-release.jks
 
       - name: Build signed release APK
+        env:
+          STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: ./gradlew assembleRelease
+
+      - name: Determine tag name
+        id: tag
         run: |
-          ./gradlew assembleRelease \
-            -Pandroid.injected.signing.store.file=$PWD/keystore.jks \
-            -Pandroid.injected.signing.store.password=${{ secrets.KEYSTORE_PASSWORD }} \
-            -Pandroid.injected.signing.key.alias=${{ secrets.KEYSTORE_ALIAS }} \
-            -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "name=${{ github.event.inputs.tag }}" >> $GITHUB_OUTPUT
+          else
+            echo "name=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          fi
 
       - name: Upload APK to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ steps.tag.outputs.name }}
           files: app/build/outputs/apk/release/app-release.apk
           fail_on_unmatched_files: true
