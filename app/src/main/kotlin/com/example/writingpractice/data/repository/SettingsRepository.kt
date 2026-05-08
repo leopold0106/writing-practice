@@ -82,6 +82,16 @@ class SettingsRepository @Inject constructor(
         dataStore.edit { it[Keys.LAST_UPDATE_CHECK_DATE] = ts }
     }
 
+    val selectedModel: Flow<String> =
+        dataStore.data.map { it[Keys.SELECTED_MODEL] ?: DEFAULT_MODEL }
+
+    suspend fun getSelectedModel(): String =
+        dataStore.data.first()[Keys.SELECTED_MODEL] ?: DEFAULT_MODEL
+
+    suspend fun setSelectedModel(model: String) {
+        dataStore.edit { it[Keys.SELECTED_MODEL] = model }
+    }
+
     private object Keys {
         val DAILY_GOAL = intPreferencesKey("daily_goal")
         val NOTIF_ENABLED = booleanPreferencesKey("notif_enabled")
@@ -94,5 +104,10 @@ class SettingsRepository @Inject constructor(
         val INSTALL_YEAR_MONTH = stringPreferencesKey("install_year_month")
         val LAST_MONTHLY_ANALYZED_YM = stringPreferencesKey("last_monthly_analyzed_ym")
         val LAST_UPDATE_CHECK_DATE = longPreferencesKey("last_update_check_date")
+        val SELECTED_MODEL = stringPreferencesKey("selected_model")
+    }
+
+    companion object {
+        const val DEFAULT_MODEL = "claude-sonnet-4-6"
     }
 }

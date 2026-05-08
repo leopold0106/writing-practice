@@ -20,6 +20,8 @@ import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
 
+data class ModelOption(val id: String, val label: String, val description: String)
+
 sealed class ApiKeyStatus {
     object Idle : ApiKeyStatus()
     object Checking : ApiKeyStatus()
@@ -44,7 +46,8 @@ data class SettingsUiState(
     val notificationHour: Int = 9,
     val notificationMinute: Int = 0,
     val apiKey: String = "",
-    val apiKeyVisible: Boolean = false
+    val apiKeyVisible: Boolean = false,
+    val selectedModel: String = SettingsRepository.DEFAULT_MODEL
 )
 
 @HiltViewModel
@@ -65,15 +68,20 @@ class SettingsViewModel @Inject constructor(
     val uiState: StateFlow<SettingsUiState> = combine(
         combine(settingsRepository.dailyGoal, settingsRepository.notificationEnabled) { g, e -> g to e },
         combine(settingsRepository.notificationHour, settingsRepository.notificationMinute) { h, m -> h to m },
-        combine(settingsRepository.apiKey, _apiKeyVisible) { k, v -> k to v }
-    ) { (goal, enabled), (hour, minute), (key, visible) ->
+        combine(settingsRepository.apiKey, _apiKeyVisible) { k, v -> k to v },
+        settingsRepository.selectedModel
+    ) { goalAndEnabled, hourAndMinute, keyAndVisible, model ->
+        val (goal, enabled) = goalAndEnabled
+        val (hour, minute) = hourAndMinute
+        val (key, visible) = keyAndVisible
         SettingsUiState(
             dailyGoal = goal,
             notificationEnabled = enabled,
             notificationHour = hour,
             notificationMinute = minute,
             apiKey = key,
-            apiKeyVisible = visible
+            apiKeyVisible = visible,
+            selectedModel = model
         )
     }.stateIn(
         scope = viewModelScope,
@@ -166,4 +174,16 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun resetUpdateState() { _updateState.value = UpdateState.Idle }
+
+    fun setSelectedModel(model: String) = viewModelScope.launch {
+        settingsRepository.setSelectedModel(model)
+    }
+
+    companion object {
+        val MODELS = listOf(
+            ModelOption("claude-haiku-4-5-20251001", "Haiku 4.5", "빠름 · 저비용"),
+            ModelOption("claude-sonnet-4-6", "Sonnet 4.6", "균형 · 권장"),
+            ModelOption("claude-opus-4-7", "Opus 4.7", "강력 · 고비용")
+        )
+    }
 }

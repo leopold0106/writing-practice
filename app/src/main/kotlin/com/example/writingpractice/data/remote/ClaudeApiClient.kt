@@ -1,6 +1,7 @@
 package com.example.writingpractice.data.remote
 
 import com.example.writingpractice.data.local.db.entity.ErrorType
+import com.example.writingpractice.data.repository.SettingsRepository
 import com.example.writingpractice.data.model.Correction
 import com.example.writingpractice.data.model.GradingResult
 import com.example.writingpractice.data.remote.dto.ClaudeMessage
@@ -54,7 +55,8 @@ data class MonthlyComparisonInput(
 @Singleton
 class ClaudeApiClient @Inject constructor(
     private val service: ClaudeApiService,
-    private val json: Json
+    private val json: Json,
+    private val settingsRepository: SettingsRepository
 ) {
     private val gradingSystemPrompt = """
 You are an English writing teacher grading Korean students' English translations.
@@ -137,7 +139,7 @@ Return ONLY a valid JSON array (no markdown, no extra text) where each element h
         val userContent = "Korean original:\n$koreanText\n\nStudent's English answer:\n$englishAnswer"
         val response = service.complete(
             ClaudeRequest(
-                model = MODEL,
+                model = model(),
                 maxTokens = 1024,
                 system = gradingSystemPrompt,
                 messages = listOf(ClaudeMessage("user", userContent))
@@ -168,7 +170,7 @@ Return ONLY a valid JSON array (no markdown, no extra text) where each element h
         val userMessage = "Generate exactly 10 Korean sentences at this level: $levelDesc.$weaknessHint Use diverse topics from: $topics. Return a JSON array of exactly 10 objects."
         val response = service.complete(
             ClaudeRequest(
-                model = MODEL,
+                model = model(),
                 maxTokens = 4096,
                 system = generateSystemPrompt,
                 messages = listOf(ClaudeMessage("user", userMessage))
@@ -184,7 +186,7 @@ Return ONLY a valid JSON array (no markdown, no extra text) where each element h
         val userMessage = buildWeaknessUserMessage(input)
         val response = service.complete(
             ClaudeRequest(
-                model = MODEL,
+                model = model(),
                 maxTokens = 4096,
                 system = weaknessSystemPrompt,
                 messages = listOf(ClaudeMessage("user", userMessage))
@@ -251,7 +253,7 @@ Rules:
         val userMessage = buildMonthlyUserMessage(input)
         val response = service.complete(
             ClaudeRequest(
-                model = MODEL,
+                model = model(),
                 maxTokens = 4096,
                 system = monthlyComparisonSystemPrompt,
                 messages = listOf(ClaudeMessage("user", userMessage))
@@ -287,7 +289,7 @@ Compare these two months and return the JSON analysis.
     suspend fun ping(): Result<Unit> = apiCall {
         service.complete(
             ClaudeRequest(
-                model = MODEL,
+                model = model(),
                 maxTokens = 10,
                 messages = listOf(ClaudeMessage("user", "Hi"))
             )
@@ -295,9 +297,7 @@ Compare these two months and return the JSON analysis.
         Unit
     }
 
-    companion object {
-        private const val MODEL = "claude-sonnet-4-5"
-    }
+    private suspend fun model() = settingsRepository.getSelectedModel()
 
     private suspend fun <T> apiCall(block: suspend () -> T): Result<T> = try {
         Result.success(block())
