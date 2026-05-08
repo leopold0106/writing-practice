@@ -140,9 +140,16 @@ fun WeaknessAnalysisScreen(
                     items = state.history,
                     key = { it.id }
                 ) { analysis ->
-                    val isLatest = analysis.id == state.history.first().id
+                    val idx = state.history.indexOf(analysis)
+                    val isLatest = idx == 0
+                    val addedSince = if (isLatest) {
+                        maxOf(0, state.totalCorrections - analysis.totalCorrections)
+                    } else {
+                        maxOf(0, state.history[idx - 1].totalCorrections - analysis.totalCorrections)
+                    }
                     AnalysisHistoryCard(
                         analysis = analysis,
+                        addedSince = addedSince,
                         defaultExpanded = isLatest,
                         showGenerateButton = isLatest,
                         generateState = generateState,
@@ -296,6 +303,7 @@ private fun EmptyHint(text: String) {
 @Composable
 private fun AnalysisHistoryCard(
     analysis: WeaknessAnalysis,
+    addedSince: Int,
     defaultExpanded: Boolean,
     showGenerateButton: Boolean,
     generateState: GenerateState,
@@ -318,12 +326,15 @@ private fun AnalysisHistoryCard(
             ) {
                 Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                     Text(
-                        formatRelative(analysis.analyzedAt),
+                        formatDate(analysis.analyzedAt),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        "오답 ${analysis.totalCorrections}개 · ${analysis.avgScore?.let { "평균 ${it}점" } ?: "점수 없음"}",
+                        buildString {
+                            append("분석 이후 +${addedSince}개")
+                            analysis.avgScore?.let { append("  ·  평균 ${it}점") }
+                        },
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -560,17 +571,5 @@ private fun ErrorType.barColor() = when (this) {
     ErrorType.SPELLING -> Color(0xFFAB47BC)
 }
 
-private fun formatRelative(timestamp: Long): String {
-    val now = System.currentTimeMillis()
-    val diff = now - timestamp
-    val minutes = diff / 60_000
-    val hours = diff / 3_600_000
-    val days = diff / 86_400_000
-    return when {
-        minutes < 1 -> "방금 전"
-        minutes < 60 -> "${minutes}분 전"
-        hours < 24 -> "${hours}시간 전"
-        days < 7 -> "${days}일 전"
-        else -> SimpleDateFormat("yyyy.M.d", Locale.KOREAN).format(Date(timestamp))
-    }
-}
+private fun formatDate(timestamp: Long): String =
+    SimpleDateFormat("yyyy년 M월 d일 a h:mm", Locale.KOREAN).format(Date(timestamp))

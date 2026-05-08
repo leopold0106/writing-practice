@@ -57,6 +57,7 @@ class ResultViewModel @Inject constructor(
     val autoAnalysisState: StateFlow<AutoAnalysisState> = _autoAnalysisState.asStateFlow()
 
     private var wasPending = false
+    private var hasCheckedAutoAnalysis = false
 
     val uiState: StateFlow<ResultUiState> = combine(
         practiceRepository.observeAnswer(answerId),
@@ -88,11 +89,12 @@ class ResultViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             uiState.collect { state ->
-                if (!state.isLoading) {
+                if (!state.isLoading && !hasCheckedAutoAnalysis) {
                     if (state.isPending) {
                         wasPending = true
-                    } else if (wasPending && state.score != null) {
-                        wasPending = false
+                    } else if (state.score != null) {
+                        // Trigger whether screen opened mid-grading or with already-graded answer
+                        hasCheckedAutoAnalysis = true
                         checkAndAutoAnalyze()
                     }
                 }
@@ -105,8 +107,10 @@ class ResultViewModel @Inject constructor(
         val lastCount = settingsRepository.getLastAutoAnalyzedCount()
         if (total / 30 > lastCount / 30) {
             _autoAnalysisState.value = AutoAnalysisState.Running
-            weaknessAnalysisRepository.analyze(Period.ALL)
-            settingsRepository.setLastAutoAnalyzedCount(total)
+            val result = weaknessAnalysisRepository.analyze(Period.ALL)
+            if (result.isSuccess) {
+                settingsRepository.setLastAutoAnalyzedCount(total)
+            }
             _autoAnalysisState.value = AutoAnalysisState.Done
         }
     }
