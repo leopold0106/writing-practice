@@ -1,6 +1,7 @@
 package com.example.writingpractice.ui.weaknessanalysis
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,17 +14,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,7 +36,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,7 +53,6 @@ import com.example.writingpractice.data.model.RecommendedPattern
 import com.example.writingpractice.data.model.Severity
 import com.example.writingpractice.data.model.WeaknessAnalysis
 import com.example.writingpractice.data.model.WeaknessPoint
-import com.example.writingpractice.ui.common.Period
 import com.example.writingpractice.ui.home.ApiStatus
 import com.example.writingpractice.ui.home.GenerateState
 import java.text.SimpleDateFormat
@@ -79,51 +82,33 @@ fun WeaknessAnalysisScreen(
     ) { padding ->
         LazyColumn(
             modifier = Modifier.fillMaxSize().padding(padding),
-            contentPadding = PaddingValues(bottom = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             if (state.apiStatus != ApiStatus.VALID) {
                 item { ApiStatusBanner(state.apiStatus) }
             }
 
             item {
-                LazyRow(
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(Period.entries) { period ->
-                        FilterChip(
-                            selected = state.period == period,
-                            onClick = { viewModel.setPeriod(period) },
-                            label = { Text(period.label) }
-                        )
-                    }
-                }
-            }
-
-            item {
-                StatsRow(
-                    correctionCount = state.correctionCount,
-                    latestAnalysis = state.latestAnalysis,
-                    modifier = Modifier.padding(horizontal = 16.dp)
+                StatsHeader(
+                    totalCorrections = state.totalCorrections,
+                    historyCount = state.history.size
                 )
             }
 
             item {
                 AnalyzeButton(
-                    state = state,
-                    onAnalyze = viewModel::analyze,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                    apiValid = state.apiStatus == ApiStatus.VALID,
+                    isAnalyzing = state.isAnalyzing,
+                    hasHistory = state.history.isNotEmpty(),
+                    correctionCount = state.totalCorrections,
+                    onAnalyze = viewModel::analyzeNow
                 )
             }
 
             state.error?.let { errorMsg ->
                 item {
-                    ErrorSurface(
-                        message = errorMsg,
-                        onDismiss = viewModel::dismissError,
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
+                    ErrorSurface(message = errorMsg, onDismiss = viewModel::dismissError)
                 }
             }
 
@@ -131,40 +116,38 @@ fun WeaknessAnalysisScreen(
                 item { AnalyzingPlaceholder() }
             }
 
-            val analysis = state.latestAnalysis
-            if (analysis != null && !state.isAnalyzing) {
-                item { HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp)) }
-                item { SummaryCard(analysis, Modifier.padding(horizontal = 16.dp)) }
-                item { WeaknessPointsCard(analysis.weaknessPoints, Modifier.padding(horizontal = 16.dp)) }
-                if (analysis.suggestions.isNotEmpty()) {
-                    item { SuggestionsCard(analysis.suggestions, Modifier.padding(horizontal = 16.dp)) }
-                }
-                if (analysis.recommendedPatterns.isNotEmpty()) {
-                    item {
-                        PatternsCard(analysis.recommendedPatterns, Modifier.padding(horizontal = 16.dp))
-                    }
-                }
+            if (state.history.isEmpty() && !state.isAnalyzing) {
                 item {
-                    GenerateProblemsCard(
-                        recommendedLevel = analysis.recommendedLevel,
+                    EmptyHint(
+                        text = if (state.totalCorrections == 0)
+                            "오답이 쌓이면 30개마다 자동으로 분석됩니다.\n먼저 문제를 풀어보세요."
+                        else
+                            "아직 분석 기록이 없습니다.\n‘지금 분석하기’를 눌러 첫 분석을 시작하세요."
+                    )
+                }
+            }
+
+            if (state.history.isNotEmpty()) {
+                item {
+                    Text(
+                        "분석 기록",
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
+                items(
+                    items = state.history,
+                    key = { it.id }
+                ) { analysis ->
+                    val isLatest = analysis.id == state.history.first().id
+                    AnalysisHistoryCard(
+                        analysis = analysis,
+                        defaultExpanded = isLatest,
+                        showGenerateButton = isLatest,
                         generateState = generateState,
-                        onGenerate = viewModel::generateProblemsFromWeaknesses,
-                        onReset = viewModel::resetGenerateState,
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
-                }
-            } else if (analysis == null && !state.isAnalyzing && state.correctionCount > 0) {
-                item {
-                    EmptyHint(
-                        text = "“분석 시작”을 눌러 최근 오답 패턴을 진단해 보세요.",
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp)
-                    )
-                }
-            } else if (analysis == null && !state.isAnalyzing && state.correctionCount == 0) {
-                item {
-                    EmptyHint(
-                        text = "이 기간에 분석할 오답이 없습니다.\n먼저 문제를 풀어보세요.",
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp)
+                        onGenerate = { viewModel.generateProblemsFromWeaknesses(analysis) },
+                        onResetGenerate = viewModel::resetGenerateState
                     )
                 }
             }
@@ -180,7 +163,7 @@ private fun ApiStatusBanner(status: ApiStatus) {
         ApiStatus.VALID -> return
     }
     Surface(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
+        modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),
         color = bg
     ) {
@@ -194,25 +177,24 @@ private fun ApiStatusBanner(status: ApiStatus) {
 }
 
 @Composable
-private fun StatsRow(
-    correctionCount: Int,
-    latestAnalysis: WeaknessAnalysis?,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+private fun StatsHeader(totalCorrections: Int, historyCount: Int) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(8.dp),
+        color = MaterialTheme.colorScheme.surfaceVariant
     ) {
-        Text(
-            "분석 대상 오답: ${correctionCount}개",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        if (latestAnalysis != null) {
+        Column(
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp)
+        ) {
             Text(
-                "최근 분석: ${formatRelative(latestAnalysis.analyzedAt)}",
+                "전체 누적 오답: ${totalCorrections}개  ·  분석 횟수: ${historyCount}회",
                 style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                "오답 30개마다 자동으로 분석됩니다.",
+                style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
@@ -221,24 +203,24 @@ private fun StatsRow(
 
 @Composable
 private fun AnalyzeButton(
-    state: WeaknessAnalysisUiState,
-    onAnalyze: () -> Unit,
-    modifier: Modifier = Modifier
+    apiValid: Boolean,
+    isAnalyzing: Boolean,
+    hasHistory: Boolean,
+    correctionCount: Int,
+    onAnalyze: () -> Unit
 ) {
-    val enabled = state.apiStatus == ApiStatus.VALID &&
-            state.correctionCount > 0 &&
-            !state.isAnalyzing
+    val enabled = apiValid && correctionCount > 0 && !isAnalyzing
     val label = when {
-        state.isAnalyzing -> "분석 중..."
-        state.latestAnalysis != null -> "다시 분석"
-        else -> "분석 시작"
+        isAnalyzing -> "분석 중..."
+        hasHistory -> "지금 다시 분석하기"
+        else -> "지금 분석하기"
     }
     Button(
         onClick = onAnalyze,
         enabled = enabled,
-        modifier = modifier.fillMaxWidth().height(48.dp)
+        modifier = Modifier.fillMaxWidth().height(48.dp)
     ) {
-        if (state.isAnalyzing) {
+        if (isAnalyzing) {
             CircularProgressIndicator(
                 modifier = Modifier.size(18.dp),
                 strokeWidth = 2.dp,
@@ -253,7 +235,7 @@ private fun AnalyzeButton(
 @Composable
 private fun AnalyzingPlaceholder() {
     Column(
-        modifier = Modifier.fillMaxWidth().padding(32.dp),
+        modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -272,9 +254,9 @@ private fun AnalyzingPlaceholder() {
 }
 
 @Composable
-private fun ErrorSurface(message: String, onDismiss: () -> Unit, modifier: Modifier = Modifier) {
+private fun ErrorSurface(message: String, onDismiss: () -> Unit) {
     Surface(
-        modifier = modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),
         color = Color(0xFFFFEBEE)
     ) {
@@ -297,8 +279,11 @@ private fun ErrorSurface(message: String, onDismiss: () -> Unit, modifier: Modif
 }
 
 @Composable
-private fun EmptyHint(text: String, modifier: Modifier = Modifier) {
-    Box(modifier = modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+private fun EmptyHint(text: String) {
+    Box(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 32.dp),
+        contentAlignment = Alignment.Center
+    ) {
         Text(
             text,
             style = MaterialTheme.typography.bodyMedium,
@@ -309,30 +294,119 @@ private fun EmptyHint(text: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun SummaryCard(analysis: WeaknessAnalysis, modifier: Modifier = Modifier) {
+private fun AnalysisHistoryCard(
+    analysis: WeaknessAnalysis,
+    defaultExpanded: Boolean,
+    showGenerateButton: Boolean,
+    generateState: GenerateState,
+    onGenerate: () -> Unit,
+    onResetGenerate: () -> Unit
+) {
+    var expanded by rememberSaveable(analysis.id) { mutableStateOf(defaultExpanded) }
+
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(2.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { expanded = !expanded },
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("종합 평가", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+                Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Text(
+                        formatRelative(analysis.analyzedAt),
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        "오답 ${analysis.totalCorrections}개 · ${analysis.avgScore?.let { "평균 ${it}점" } ?: "점수 없음"}",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
                 OverallLevelChip(analysis.overallLevel)
-            }
-            Text(analysis.summary, style = MaterialTheme.typography.bodyMedium)
-            if (analysis.avgScore != null) {
-                Text(
-                    "평균 점수: ${analysis.avgScore}점",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                Spacer(Modifier.size(4.dp))
+                Icon(
+                    if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                    contentDescription = if (expanded) "접기" else "펼치기"
                 )
+            }
+
+            Text(
+                analysis.summary,
+                style = MaterialTheme.typography.bodyMedium
+            )
+
+            if (expanded) {
+                HorizontalDivider()
+
+                if (analysis.weaknessPoints.isNotEmpty()) {
+                    SectionHeader("주요 약점")
+                    analysis.weaknessPoints.forEach { p -> WeaknessPointItem(p) }
+                }
+
+                if (analysis.suggestions.isNotEmpty()) {
+                    HorizontalDivider()
+                    SectionHeader("개선 방향")
+                    analysis.suggestions.forEachIndexed { i, s ->
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Text(
+                                "${i + 1}.",
+                                style = MaterialTheme.typography.bodySmall,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            Text(s, style = MaterialTheme.typography.bodySmall)
+                        }
+                    }
+                }
+
+                if (analysis.recommendedPatterns.isNotEmpty()) {
+                    HorizontalDivider()
+                    SectionHeader("추천 연습 패턴")
+                    analysis.recommendedPatterns.forEach { p ->
+                        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                            Text(
+                                p.pattern,
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            Text(
+                                p.exampleSentence,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+
+                if (showGenerateButton) {
+                    HorizontalDivider()
+                    GenerateProblemsSection(
+                        recommendedLevel = analysis.recommendedLevel,
+                        generateState = generateState,
+                        onGenerate = onGenerate,
+                        onReset = onResetGenerate
+                    )
+                }
             }
         }
     }
+}
+
+@Composable
+private fun SectionHeader(text: String) {
+    Text(
+        text,
+        style = MaterialTheme.typography.titleSmall,
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.primary
+    )
 }
 
 @Composable
@@ -350,27 +424,6 @@ private fun OverallLevelChip(level: OverallLevel) {
             fontWeight = FontWeight.Bold,
             color = fg
         )
-    }
-}
-
-@Composable
-private fun WeaknessPointsCard(points: List<WeaknessPoint>, modifier: Modifier = Modifier) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(2.dp)
-    ) {
-        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text("주요 약점", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
-            if (points.isEmpty()) {
-                Text(
-                    "뚜렷한 약점 패턴이 발견되지 않았습니다.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            } else {
-                points.forEach { p -> WeaknessPointItem(p) }
-            }
-        }
     }
 }
 
@@ -426,135 +479,75 @@ private fun SeverityBadge(severity: Severity) {
 }
 
 @Composable
-private fun SuggestionsCard(suggestions: List<String>, modifier: Modifier = Modifier) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(2.dp)
-    ) {
-        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text("개선 방향", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
-            suggestions.forEachIndexed { i, s ->
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(
-                        "${i + 1}.",
-                        style = MaterialTheme.typography.bodySmall,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    Text(s, style = MaterialTheme.typography.bodySmall)
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun PatternsCard(patterns: List<RecommendedPattern>, modifier: Modifier = Modifier) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(2.dp)
-    ) {
-        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            Text("추천 연습 패턴", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
-            patterns.forEach { p ->
-                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    Text(
-                        p.pattern,
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    Text(
-                        p.exampleSentence,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun GenerateProblemsCard(
+private fun GenerateProblemsSection(
     recommendedLevel: Int,
     generateState: GenerateState,
     onGenerate: () -> Unit,
-    onReset: () -> Unit,
-    modifier: Modifier = Modifier
+    onReset: () -> Unit
 ) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(2.dp)
-    ) {
-        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(
-                "이 약점 기반 문제 만들기",
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                "분석된 약점을 극복하는 데 초점을 맞춘 새 문제 10개를 생성합니다.",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Button(
-                onClick = onGenerate,
-                enabled = generateState !is GenerateState.Loading,
-                modifier = Modifier.fillMaxWidth()
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        SectionHeader("이 약점 기반 문제 만들기")
+        Text(
+            "분석된 약점을 극복하는 데 초점을 맞춘 새 문제 10개를 생성합니다.",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Button(
+            onClick = onGenerate,
+            enabled = generateState !is GenerateState.Loading,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            if (generateState is GenerateState.Loading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(16.dp),
+                    strokeWidth = 2.dp,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+                Spacer(Modifier.size(8.dp))
+            }
+            Text("Lv.${recommendedLevel} 문제 10개 생성")
+        }
+        when (generateState) {
+            is GenerateState.Success -> Surface(
+                shape = RoundedCornerShape(8.dp),
+                color = Color(0xFFE8F5E9)
             ) {
-                if (generateState is GenerateState.Loading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(16.dp),
-                        strokeWidth = 2.dp,
-                        color = MaterialTheme.colorScheme.onPrimary
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        "레벨 ${generateState.level} 문제 ${generateState.count}개 추가됨",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color(0xFF1B5E20)
                     )
-                    Spacer(Modifier.size(8.dp))
-                }
-                Text("Lv.${recommendedLevel} 문제 10개 생성")
-            }
-            when (generateState) {
-                is GenerateState.Success -> Surface(
-                    shape = RoundedCornerShape(8.dp),
-                    color = Color(0xFFE8F5E9)
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            "레벨 ${generateState.level} 문제 ${generateState.count}개 추가됨",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = Color(0xFF1B5E20)
-                        )
-                        OutlinedButton(onClick = onReset, modifier = Modifier.height(28.dp)) {
-                            Text("닫기", style = MaterialTheme.typography.labelSmall)
-                        }
+                    OutlinedButton(onClick = onReset, modifier = Modifier.height(28.dp)) {
+                        Text("닫기", style = MaterialTheme.typography.labelSmall)
                     }
                 }
-                is GenerateState.Error -> Surface(
-                    shape = RoundedCornerShape(8.dp),
-                    color = Color(0xFFFFEBEE)
+            }
+            is GenerateState.Error -> Surface(
+                shape = RoundedCornerShape(8.dp),
+                color = Color(0xFFFFEBEE)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            "오류: ${generateState.message}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.weight(1f)
-                        )
-                        OutlinedButton(onClick = onReset, modifier = Modifier.height(28.dp)) {
-                            Text("닫기", style = MaterialTheme.typography.labelSmall)
-                        }
+                    Text(
+                        "오류: ${generateState.message}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.weight(1f)
+                    )
+                    OutlinedButton(onClick = onReset, modifier = Modifier.height(28.dp)) {
+                        Text("닫기", style = MaterialTheme.typography.labelSmall)
                     }
                 }
-                else -> Unit
             }
+            else -> Unit
         }
     }
 }

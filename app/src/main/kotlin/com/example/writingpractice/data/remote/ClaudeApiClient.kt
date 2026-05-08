@@ -296,7 +296,7 @@ Compare these two months and return the JSON analysis.
     }
 
     companion object {
-        private const val MODEL = "claude-sonnet-4-6"
+        private const val MODEL = "claude-sonnet-4-5"
     }
 
     private suspend fun <T> apiCall(block: suspend () -> T): Result<T> = try {

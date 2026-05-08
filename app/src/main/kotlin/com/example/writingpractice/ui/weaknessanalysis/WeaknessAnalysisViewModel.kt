@@ -15,19 +15,15 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 
 data class WeaknessAnalysisUiState(
-    val period: Period = Period.MONTH,
-    val latestAnalysis: WeaknessAnalysis? = null,
-    val correctionCount: Int = 0,
+    val history: List<WeaknessAnalysis> = emptyList(),
+    val totalCorrections: Int = 0,
     val apiStatus: ApiStatus = ApiStatus.UNKNOWN,
     val isAnalyzing: Boolean = false,
     val error: String? = null,
@@ -41,10 +37,9 @@ class WeaknessAnalysisViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository
 ) : ViewModel() {
 
-    private val _period = MutableStateFlow(Period.MONTH)
     private val _isAnalyzing = MutableStateFlow(false)
     private val _error = MutableStateFlow<String?>(null)
-    private val _correctionCount = MutableStateFlow(0)
+    private val _totalCorrections = MutableStateFlow(0)
     private val analysisMutex = Mutex()
 
     private val _generateState = MutableStateFlow<GenerateState>(GenerateState.Idle)
@@ -60,21 +55,15 @@ class WeaknessAnalysisViewModel @Inject constructor(
             }
         }
 
-    private val latestFlow = _period.flatMapLatest { period ->
-        weaknessRepository.observeLatestForPeriod(period)
-    }
-
     val uiState: StateFlow<WeaknessAnalysisUiState> = combine(
-        _period,
-        latestFlow,
-        _correctionCount,
+        weaknessRepository.observeHistory(),
+        _totalCorrections,
         apiStatusFlow,
         combine(_isAnalyzing, _error) { analyzing, err -> analyzing to err }
-    ) { period, latest, count, apiStatus, (analyzing, err) ->
+    ) { history, total, apiStatus, (analyzing, err) ->
         WeaknessAnalysisUiState(
-            period = period,
-            latestAnalysis = latest,
-            correctionCount = count,
+            history = history,
+            totalCorrections = total,
             apiStatus = apiStatus,
             isAnalyzing = analyzing,
             error = err,
@@ -87,36 +76,26 @@ class WeaknessAnalysisViewModel @Inject constructor(
     )
 
     init {
-        // Refresh correction count whenever the period changes
         viewModelScope.launch {
-            _period.collect { period ->
-                _correctionCount.value = weaknessRepository.countCorrectionsForPeriod(period)
-            }
+            _totalCorrections.value = weaknessRepository.countCorrectionsForPeriod(Period.ALL)
         }
     }
 
-    fun setPeriod(period: Period) {
-        _period.update { period }
-        _error.update { null }
-    }
-
-    fun analyze() {
+    fun analyzeNow() {
         if (_isAnalyzing.value) return
         viewModelScope.launch {
             analysisMutex.withLock {
                 _isAnalyzing.value = true
                 _error.value = null
-                val period = _period.value
-                weaknessRepository.analyze(period)
+                weaknessRepository.analyze(Period.ALL)
                     .onFailure { e -> _error.value = e.message ?: "알 수 없는 오류" }
-                _correctionCount.value = weaknessRepository.countCorrectionsForPeriod(period)
+                _totalCorrections.value = weaknessRepository.countCorrectionsForPeriod(Period.ALL)
                 _isAnalyzing.value = false
             }
         }
     }
 
-    fun generateProblemsFromWeaknesses() {
-        val analysis = uiState.value.latestAnalysis ?: return
+    fun generateProblemsFromWeaknesses(analysis: WeaknessAnalysis) {
         if (_generateState.value is GenerateState.Loading) return
         viewModelScope.launch {
             val level = analysis.recommendedLevel.coerceIn(1, 7)

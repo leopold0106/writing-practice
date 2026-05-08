@@ -56,6 +56,10 @@ class AppUpdateChecker @Inject constructor(
                 .header("Accept", "application/vnd.github.v3+json")
                 .build()
             val response = http.newCall(request).execute()
+            if (response.code == 404) {
+                // No releases published yet — treat as up to date.
+                return@withContext Result.success(null)
+            }
             if (!response.isSuccessful) {
                 return@withContext Result.failure(Exception("서버 응답 오류: ${response.code}"))
             }
