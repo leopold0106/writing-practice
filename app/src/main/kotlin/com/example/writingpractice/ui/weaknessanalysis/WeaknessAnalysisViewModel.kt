@@ -17,8 +17,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 
 data class WeaknessAnalysisUiState(
@@ -34,13 +32,10 @@ data class WeaknessAnalysisUiState(
 class WeaknessAnalysisViewModel @Inject constructor(
     private val weaknessRepository: WeaknessAnalysisRepository,
     private val problemRepository: ProblemRepository,
-    private val settingsRepository: SettingsRepository
+    settingsRepository: SettingsRepository
 ) : ViewModel() {
 
-    private val _isAnalyzing = MutableStateFlow(false)
-    private val _error = MutableStateFlow<String?>(null)
     private val _totalCorrections = MutableStateFlow(0)
-    private val analysisMutex = Mutex()
 
     private val _generateState = MutableStateFlow<GenerateState>(GenerateState.Idle)
     val generateState: StateFlow<GenerateState> = _generateState.asStateFlow()
@@ -59,7 +54,7 @@ class WeaknessAnalysisViewModel @Inject constructor(
         weaknessRepository.observeHistory(),
         _totalCorrections,
         apiStatusFlow,
-        combine(_isAnalyzing, _error) { analyzing, err -> analyzing to err }
+        combine(weaknessRepository.isAnalyzing, weaknessRepository.lastError) { a, e -> a to e }
     ) { history, total, apiStatus, (analyzing, err) ->
         WeaknessAnalysisUiState(
             history = history,
@@ -76,23 +71,19 @@ class WeaknessAnalysisViewModel @Inject constructor(
     )
 
     init {
+        // Refresh total corrections whenever an analysis completes (initial false also triggers).
         viewModelScope.launch {
-            _totalCorrections.value = weaknessRepository.countCorrectionsForPeriod(Period.ALL)
+            weaknessRepository.isAnalyzing.collect { analyzing ->
+                if (!analyzing) {
+                    _totalCorrections.value =
+                        weaknessRepository.countCorrectionsForPeriod(Period.ALL)
+                }
+            }
         }
     }
 
     fun analyzeNow() {
-        if (_isAnalyzing.value) return
-        viewModelScope.launch {
-            analysisMutex.withLock {
-                _isAnalyzing.value = true
-                _error.value = null
-                weaknessRepository.analyze(Period.ALL)
-                    .onFailure { e -> _error.value = e.message ?: "알 수 없는 오류" }
-                _totalCorrections.value = weaknessRepository.countCorrectionsForPeriod(Period.ALL)
-                _isAnalyzing.value = false
-            }
-        }
+        weaknessRepository.triggerAnalyze(Period.ALL)
     }
 
     fun generateProblemsFromWeaknesses(analysis: WeaknessAnalysis) {
@@ -118,6 +109,6 @@ class WeaknessAnalysisViewModel @Inject constructor(
     }
 
     fun dismissError() {
-        _error.value = null
+        weaknessRepository.dismissError()
     }
 }
