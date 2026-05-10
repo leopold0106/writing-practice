@@ -2,6 +2,7 @@ package com.example.writingpractice.ui.settings
 
 import android.Manifest
 import android.app.TimePickerDialog
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -77,10 +78,32 @@ fun SettingsScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val apiKeyStatus by viewModel.apiKeyStatus.collectAsStateWithLifecycle()
     val updateState by viewModel.updateState.collectAsStateWithLifecycle()
+    val backupState by viewModel.backupState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+
+    val importLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri -> uri?.let { viewModel.importBackup(it) } }
+
+    LaunchedEffect(backupState) {
+        val bs = backupState
+        if (bs is BackupState.ExportDone) {
+            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                type = "application/json"
+                putExtra(Intent.EXTRA_STREAM, bs.uri)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+            context.startActivity(
+                Intent.createChooser(shareIntent, "백업 파일 공유").apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+            )
+            viewModel.resetBackupState()
+        }
+    }
 
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -420,6 +443,98 @@ fun SettingsScreen(
                 )
 
                 UpdateState.Idle -> Unit
+            }
+
+            HorizontalDivider()
+
+            // Data backup / restore
+            SectionHeader("데이터 백업")
+            Text(
+                "오답 기록을 JSON 파일로 저장하거나 이전 백업 파일에서 복원합니다.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            val backupBusy = backupState is BackupState.Exporting || backupState is BackupState.Importing
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                OutlinedButton(
+                    onClick = { viewModel.exportBackup() },
+                    enabled = !backupBusy,
+                    modifier = Modifier.weight(1f)
+                ) { Text("내보내기") }
+                OutlinedButton(
+                    onClick = { importLauncher.launch(arrayOf("*/*")) },
+                    enabled = !backupBusy,
+                    modifier = Modifier.weight(1f)
+                ) { Text("가져오기") }
+            }
+
+            when (val bs = backupState) {
+                BackupState.Exporting -> Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
+                    Text("저장 중...", style = MaterialTheme.typography.bodySmall)
+                }
+
+                BackupState.Importing -> Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
+                    Text("복원 중...", style = MaterialTheme.typography.bodySmall)
+                }
+
+                is BackupState.ImportDone -> androidx.compose.material3.Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp),
+                    color = Color(0xFFE8F5E9)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            "${bs.count}개 답변을 복원했습니다.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color(0xFF1B5E20),
+                            modifier = Modifier.weight(1f)
+                        )
+                        OutlinedButton(
+                            onClick = { viewModel.resetBackupState() },
+                            modifier = Modifier.height(32.dp)
+                        ) { Text("닫기", style = MaterialTheme.typography.labelSmall) }
+                    }
+                }
+
+                is BackupState.Error -> androidx.compose.material3.Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp),
+                    color = Color(0xFFFFEBEE)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            "오류: ${bs.message}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.weight(1f)
+                        )
+                        OutlinedButton(
+                            onClick = { viewModel.resetBackupState() },
+                            modifier = Modifier.height(32.dp)
+                        ) { Text("닫기", style = MaterialTheme.typography.labelSmall) }
+                    }
+                }
+
+                else -> Unit
             }
         }
     }

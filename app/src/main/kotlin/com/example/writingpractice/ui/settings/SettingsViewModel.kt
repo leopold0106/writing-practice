@@ -1,10 +1,12 @@
 package com.example.writingpractice.ui.settings
 
 import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.writingpractice.data.remote.AppUpdateChecker
 import com.example.writingpractice.data.remote.ClaudeApiClient
+import com.example.writingpractice.data.repository.BackupRepository
 import com.example.writingpractice.data.repository.SettingsRepository
 import com.example.writingpractice.util.NotificationHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -40,6 +42,15 @@ sealed class UpdateState {
     data class Error(val message: String) : UpdateState()
 }
 
+sealed class BackupState {
+    object Idle : BackupState()
+    object Exporting : BackupState()
+    data class ExportDone(val uri: Uri) : BackupState()
+    object Importing : BackupState()
+    data class ImportDone(val count: Int) : BackupState()
+    data class Error(val message: String) : BackupState()
+}
+
 data class SettingsUiState(
     val dailyGoal: Int = 5,
     val notificationEnabled: Boolean = true,
@@ -55,7 +66,8 @@ class SettingsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val settingsRepository: SettingsRepository,
     private val claudeApiClient: ClaudeApiClient,
-    private val appUpdateChecker: AppUpdateChecker
+    private val appUpdateChecker: AppUpdateChecker,
+    private val backupRepository: BackupRepository
 ) : ViewModel() {
 
     private val _apiKeyVisible = MutableStateFlow(false)
@@ -64,6 +76,9 @@ class SettingsViewModel @Inject constructor(
 
     private val _updateState = MutableStateFlow<UpdateState>(UpdateState.Idle)
     val updateState: StateFlow<UpdateState> = _updateState.asStateFlow()
+
+    private val _backupState = MutableStateFlow<BackupState>(BackupState.Idle)
+    val backupState: StateFlow<BackupState> = _backupState.asStateFlow()
 
     val uiState: StateFlow<SettingsUiState> = combine(
         combine(settingsRepository.dailyGoal, settingsRepository.notificationEnabled) { g, e -> g to e },
@@ -178,6 +193,22 @@ class SettingsViewModel @Inject constructor(
     fun setSelectedModel(model: String) = viewModelScope.launch {
         settingsRepository.setSelectedModel(model)
     }
+
+    fun exportBackup() = viewModelScope.launch {
+        _backupState.value = BackupState.Exporting
+        backupRepository.exportBackup()
+            .onSuccess { uri -> _backupState.value = BackupState.ExportDone(uri) }
+            .onFailure { e -> _backupState.value = BackupState.Error(e.message ?: "내보내기 실패") }
+    }
+
+    fun importBackup(uri: Uri) = viewModelScope.launch {
+        _backupState.value = BackupState.Importing
+        backupRepository.importBackup(uri)
+            .onSuccess { count -> _backupState.value = BackupState.ImportDone(count) }
+            .onFailure { e -> _backupState.value = BackupState.Error(e.message ?: "가져오기 실패") }
+    }
+
+    fun resetBackupState() { _backupState.value = BackupState.Idle }
 
     companion object {
         val MODELS = listOf(

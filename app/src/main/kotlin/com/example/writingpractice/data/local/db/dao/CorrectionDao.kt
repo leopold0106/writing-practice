@@ -62,4 +62,7 @@ interface CorrectionDao {
 
     @Query("SELECT COUNT(*) FROM corrections WHERE created_at >= :startMs AND created_at < :endMs")
     suspend fun countCorrectionsInRange(startMs: Long, endMs: Long): Int
+
+    @Query("SELECT * FROM corrections ORDER BY created_at DESC")
+    suspend fun getAll(): List<CorrectionEntity>
 }
