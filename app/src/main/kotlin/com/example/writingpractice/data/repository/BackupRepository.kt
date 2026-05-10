@@ -134,15 +134,22 @@ class BackupRepository @Inject constructor(
         Result.failure(e)
     }
 
-    suspend fun importBackup(uri: Uri): Result<Int> = try {
+    suspend fun importBackup(uri: Uri): Result<Int> {
         val jsonStr = context.contentResolver.openInputStream(uri)
             ?.bufferedReader()?.readText()
             ?: return Result.failure(Exception("파일을 읽을 수 없습니다"))
 
-        val backup = json.decodeFromString<BackupFile>(jsonStr)
+        val backup = try {
+            json.decodeFromString<BackupFile>(jsonStr)
+        } catch (e: Exception) {
+            return Result.failure(Exception("백업 파일 형식이 올바르지 않습니다: ${e.message}"))
+        }
+
         if (backup.version > SUPPORTED_VERSION) {
             return Result.failure(Exception("지원하지 않는 백업 형식입니다 (버전 ${backup.version})"))
         }
+
+        return try {
 
         var imported = 0
         backup.answers.forEach { ab ->
@@ -224,8 +231,9 @@ class BackupRepository @Inject constructor(
             )
         }
 
-        Result.success(imported)
-    } catch (e: Exception) {
-        Result.failure(e)
+            Result.success(imported)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }
