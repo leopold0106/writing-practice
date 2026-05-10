@@ -14,4 +14,7 @@ interface MonthlySnapshotDao {
 
     @Query("SELECT * FROM monthly_snapshots ORDER BY yearMonth DESC")
     fun observeAll(): Flow<List<MonthlySnapshotEntity>>
+
+    @Query("SELECT * FROM monthly_snapshots ORDER BY yearMonth DESC")
+    suspend fun getAll(): List<MonthlySnapshotEntity>
 }

@@ -4,16 +4,22 @@ import android.content.Context
 import android.net.Uri
 import androidx.core.content.FileProvider
 import com.example.writingpractice.data.local.db.dao.CorrectionDao
+import com.example.writingpractice.data.local.db.dao.MonthlySnapshotDao
 import com.example.writingpractice.data.local.db.dao.ProblemDao
 import com.example.writingpractice.data.local.db.dao.UserAnswerDao
+import com.example.writingpractice.data.local.db.dao.WeaknessAnalysisDao
 import com.example.writingpractice.data.local.db.entity.CorrectionEntity
 import com.example.writingpractice.data.local.db.entity.ErrorType
 import com.example.writingpractice.data.local.db.entity.GradingStatus
+import com.example.writingpractice.data.local.db.entity.MonthlySnapshotEntity
 import com.example.writingpractice.data.local.db.entity.ProblemEntity
 import com.example.writingpractice.data.local.db.entity.UserAnswerEntity
+import com.example.writingpractice.data.local.db.entity.WeaknessAnalysisEntity
 import com.example.writingpractice.data.model.AnswerBackup
 import com.example.writingpractice.data.model.BackupFile
 import com.example.writingpractice.data.model.CorrectionBackup
+import com.example.writingpractice.data.model.MonthlySnapshotBackup
+import com.example.writingpractice.data.model.WeaknessAnalysisBackup
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -30,6 +36,8 @@ class BackupRepository @Inject constructor(
     private val correctionDao: CorrectionDao,
     private val userAnswerDao: UserAnswerDao,
     private val problemDao: ProblemDao,
+    private val weaknessAnalysisDao: WeaknessAnalysisDao,
+    private val monthlySnapshotDao: MonthlySnapshotDao,
     private val json: Json
 ) {
     companion object {
@@ -79,7 +87,43 @@ class BackupRepository @Inject constructor(
                 )
             }
 
-        val backupFile = BackupFile(exportedAt = System.currentTimeMillis(), answers = answers)
+        val weaknessAnalyses = weaknessAnalysisDao.getAll().map { e ->
+            WeaknessAnalysisBackup(
+                period = e.period,
+                analyzedAt = e.analyzedAt,
+                summary = e.summary,
+                overallLevel = e.overallLevel,
+                weaknessPointsJson = e.weaknessPointsJson,
+                suggestionsJson = e.suggestionsJson,
+                recommendedPatternsJson = e.recommendedPatternsJson,
+                recommendedLevel = e.recommendedLevel,
+                totalCorrections = e.totalCorrections,
+                avgScore = e.avgScore
+            )
+        }
+
+        val monthlySnapshots = monthlySnapshotDao.getAll().map { e ->
+            MonthlySnapshotBackup(
+                yearMonth = e.yearMonth,
+                analyzedAt = e.analyzedAt,
+                comparisonSummary = e.comparisonSummary,
+                overallTrend = e.overallTrend,
+                errorChangesJson = e.errorChangesJson,
+                keyImprovementsJson = e.keyImprovementsJson,
+                areasToFocusJson = e.areasToFocusJson,
+                currentMonthCorrections = e.currentMonthCorrections,
+                previousMonthCorrections = e.previousMonthCorrections,
+                currentMonthAvgScore = e.currentMonthAvgScore,
+                previousMonthAvgScore = e.previousMonthAvgScore
+            )
+        }
+
+        val backupFile = BackupFile(
+            exportedAt = System.currentTimeMillis(),
+            answers = answers,
+            weaknessAnalyses = weaknessAnalyses,
+            monthlySnapshots = monthlySnapshots
+        )
         val dateStr = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val dir = File(context.getExternalFilesDir(null), "backup").also { it.mkdirs() }
         val file = File(dir, "writing_practice_backup_$dateStr.json")
@@ -143,6 +187,41 @@ class BackupRepository @Inject constructor(
                 )
             })
             imported++
+        }
+
+        backup.weaknessAnalyses.forEach { wa ->
+            weaknessAnalysisDao.insert(
+                WeaknessAnalysisEntity(
+                    period = wa.period,
+                    analyzedAt = wa.analyzedAt,
+                    summary = wa.summary,
+                    overallLevel = wa.overallLevel,
+                    weaknessPointsJson = wa.weaknessPointsJson,
+                    suggestionsJson = wa.suggestionsJson,
+                    recommendedPatternsJson = wa.recommendedPatternsJson,
+                    recommendedLevel = wa.recommendedLevel,
+                    totalCorrections = wa.totalCorrections,
+                    avgScore = wa.avgScore
+                )
+            )
+        }
+
+        backup.monthlySnapshots.forEach { ms ->
+            monthlySnapshotDao.insert(
+                MonthlySnapshotEntity(
+                    yearMonth = ms.yearMonth,
+                    analyzedAt = ms.analyzedAt,
+                    comparisonSummary = ms.comparisonSummary,
+                    overallTrend = ms.overallTrend,
+                    errorChangesJson = ms.errorChangesJson,
+                    keyImprovementsJson = ms.keyImprovementsJson,
+                    areasToFocusJson = ms.areasToFocusJson,
+                    currentMonthCorrections = ms.currentMonthCorrections,
+                    previousMonthCorrections = ms.previousMonthCorrections,
+                    currentMonthAvgScore = ms.currentMonthAvgScore,
+                    previousMonthAvgScore = ms.previousMonthAvgScore
+                )
+            )
         }
 
         Result.success(imported)

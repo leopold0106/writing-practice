@@ -20,4 +20,7 @@ interface WeaknessAnalysisDao {
 
     @Query("SELECT * FROM weakness_analyses WHERE id = :id")
     suspend fun getById(id: Long): WeaknessAnalysisEntity?
+
+    @Query("SELECT * FROM weakness_analyses ORDER BY analyzedAt DESC")
+    suspend fun getAll(): List<WeaknessAnalysisEntity>
 }
