@@ -1,0 +1,33 @@
+# Android build outputs
+.gradle/
+build/
+app/build/
+*.apk
+*.aab
+*.ap_
+
+# Local configuration (never commit these)
+local.properties
+*.env
+.env.*
+secrets.properties
+keystore.properties
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+*.iws
+*.ipr
+.DS_Store
+
+# Kotlin / Java
+*.class
+*.jar
+*.war
+
+# Gradle wrapper (keep jar, ignore downloads)
+gradle/wrapper/gradle-wrapper.jar.bak
+
+# Test results
+app/build/reports/
+app/build/test-results/

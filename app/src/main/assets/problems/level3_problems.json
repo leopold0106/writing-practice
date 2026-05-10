@@ -1,0 +1,142 @@
+[
+  {
+    "uuid": "l3-001",
+    "level": 3,
+    "korean_text": "오늘 날씨가 정말 맑습니다.\n밖에 나가서 산책하기 좋은 날이에요.",
+    "reference_answer": "The weather is really clear today.\nIt's a great day to go outside for a walk.",
+    "topic_tag": "weather"
+  },
+  {
+    "uuid": "l3-002",
+    "level": 3,
+    "korean_text": "저는 어제 서울 여행을 다녀왔습니다.\n경복궁이 정말 아름다웠어요.",
+    "reference_answer": "I went on a trip to Seoul yesterday.\nGyeongbokgung Palace was really beautiful.",
+    "topic_tag": "travel"
+  },
+  {
+    "uuid": "l3-003",
+    "level": 3,
+    "korean_text": "이 카페는 분위기가 아늑합니다.\n조용하게 공부하기 딱 좋은 곳이에요.",
+    "reference_answer": "This cafe has a cozy atmosphere.\nIt's the perfect place to study quietly.",
+    "topic_tag": "daily_life"
+  },
+  {
+    "uuid": "l3-004",
+    "level": 3,
+    "korean_text": "저는 오늘 헬스장에 처음 등록했습니다.\n앞으로 꾸준히 운동할 계획입니다.",
+    "reference_answer": "I signed up for a gym for the first time today.\nI plan to exercise consistently from now on.",
+    "topic_tag": "health"
+  },
+  {
+    "uuid": "l3-005",
+    "level": 3,
+    "korean_text": "그 책은 정말 감동적이었습니다.\n눈물을 참기가 힘들 정도였어요.",
+    "reference_answer": "That book was really moving.\nIt was hard to hold back tears.",
+    "topic_tag": "entertainment"
+  },
+  {
+    "uuid": "l3-006",
+    "level": 3,
+    "korean_text": "오늘 면접을 보러 갑니다.\n긴장이 되지만 최선을 다할 것입니다.",
+    "reference_answer": "I am going to a job interview today.\nI am nervous, but I will do my best.",
+    "topic_tag": "career"
+  },
+  {
+    "uuid": "l3-007",
+    "level": 3,
+    "korean_text": "저는 요즘 온라인으로 영어를 배우고 있습니다.\n매일 30분씩 공부하려고 노력 중이에요.",
+    "reference_answer": "I am learning English online these days.\nI am trying to study for 30 minutes every day.",
+    "topic_tag": "language"
+  },
+  {
+    "uuid": "l3-008",
+    "level": 3,
+    "korean_text": "주말에 가족과 함께 바비큐 파티를 했습니다.\n오랜만에 정말 즐거운 시간을 보냈어요.",
+    "reference_answer": "I had a barbecue party with my family on the weekend.\nI had a really enjoyable time after a long while.",
+    "topic_tag": "family"
+  },
+  {
+    "uuid": "l3-009",
+    "level": 3,
+    "korean_text": "이번에 새 스마트폰을 구입했습니다.\n기능이 정말 다양하고 편리해요.",
+    "reference_answer": "I purchased a new smartphone this time.\nIt has so many features and is really convenient.",
+    "topic_tag": "technology"
+  },
+  {
+    "uuid": "l3-010",
+    "level": 3,
+    "korean_text": "오늘 회사에서 프레젠테이션을 했습니다.\n생각보다 반응이 좋았습니다.",
+    "reference_answer": "I gave a presentation at work today.\nThe response was better than I expected.",
+    "topic_tag": "work"
+  },
+  {
+    "uuid": "l3-011",
+    "level": 3,
+    "korean_text": "저는 아침에 일어나면 항상 스트레칭을 합니다.\n하루를 활기차게 시작하는 데 도움이 됩니다.",
+    "reference_answer": "I always stretch when I wake up in the morning.\nIt helps me start the day energetically.",
+    "topic_tag": "health"
+  },
+  {
+    "uuid": "l3-012",
+    "level": 3,
+    "korean_text": "그 식당은 가격이 비싸지 않습니다.\n그런데 음식의 질은 정말 높아요.",
+    "reference_answer": "That restaurant is not expensive.\nHowever, the quality of the food is really high.",
+    "topic_tag": "food"
+  },
+  {
+    "uuid": "l3-013",
+    "level": 3,
+    "korean_text": "저는 지난주에 제주도에 갔습니다.\n바다와 자연 경관이 정말 아름다웠습니다.",
+    "reference_answer": "I went to Jeju Island last week.\nThe sea and natural scenery were truly beautiful.",
+    "topic_tag": "travel"
+  },
+  {
+    "uuid": "l3-014",
+    "level": 3,
+    "korean_text": "오늘 친구와 오랜만에 만났습니다.\n그동안 있었던 일들을 나누며 오래 이야기했습니다.",
+    "reference_answer": "I met a friend today for the first time in a while.\nWe talked for a long time, sharing what had happened.",
+    "topic_tag": "social"
+  },
+  {
+    "uuid": "l3-015",
+    "level": 3,
+    "korean_text": "저는 요리를 배우고 싶습니다.\n특히 이탈리아 요리에 관심이 많습니다.",
+    "reference_answer": "I want to learn how to cook.\nI am especially interested in Italian cuisine.",
+    "topic_tag": "food"
+  },
+  {
+    "uuid": "l3-016",
+    "level": 3,
+    "korean_text": "요즘 일이 너무 바빠서 피곤합니다.\n빨리 휴가를 갔으면 좋겠습니다.",
+    "reference_answer": "I am tired because work has been too busy lately.\nI wish I could go on vacation soon.",
+    "topic_tag": "work"
+  },
+  {
+    "uuid": "l3-017",
+    "level": 3,
+    "korean_text": "그 뮤지컬은 배우들의 노래 실력이 뛰어났습니다.\n다음에 또 보러 가고 싶습니다.",
+    "reference_answer": "The musical featured outstanding singing from the actors.\nI want to go see it again next time.",
+    "topic_tag": "entertainment"
+  },
+  {
+    "uuid": "l3-018",
+    "level": 3,
+    "korean_text": "저는 새벽 수영 강습을 신청했습니다.\n처음엔 힘들었지만 이제는 즐기고 있습니다.",
+    "reference_answer": "I signed up for early morning swimming lessons.\nIt was tough at first, but now I'm enjoying it.",
+    "topic_tag": "hobby"
+  },
+  {
+    "uuid": "l3-019",
+    "level": 3,
+    "korean_text": "이 동네는 대중교통이 편리합니다.\n버스와 지하철 노선이 잘 연결되어 있어요.",
+    "reference_answer": "Public transportation in this neighborhood is convenient.\nThe bus and subway lines are well connected.",
+    "topic_tag": "transportation"
+  },
+  {
+    "uuid": "l3-020",
+    "level": 3,
+    "korean_text": "저는 지난달부터 독서 모임에 참가하고 있습니다.\n다양한 사람들과 생각을 나눌 수 있어서 좋습니다.",
+    "reference_answer": "I have been joining a reading club since last month.\nI enjoy being able to share ideas with various people.",
+    "topic_tag": "hobby"
+  }
+]

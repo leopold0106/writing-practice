@@ -1,0 +1,142 @@
+[
+  {
+    "uuid": "l6-001",
+    "level": 6,
+    "korean_text": "그 연구는 기존의 이론을 반박하는 새로운 증거를 제시했다.\n학계에서는 이 발견의 신뢰성에 대한 논쟁이 여전히 이어지고 있다.",
+    "reference_answer": "The study presented new evidence refuting the existing theory. The academic community continues to debate the reliability of this finding.",
+    "topic_tag": "science"
+  },
+  {
+    "uuid": "l6-002",
+    "level": 6,
+    "korean_text": "글로벌 공급망의 붕괴는 여러 산업에 심각한 영향을 미쳤다.\n특히 반도체 산업은 생산 중단이라는 위기에 직면했으며, 그 여파는 수년간 지속되었다.",
+    "reference_answer": "The collapse of global supply chains had a serious impact on various industries. In particular, the semiconductor industry faced a crisis of production halts, and the repercussions lasted for years.",
+    "topic_tag": "business"
+  },
+  {
+    "uuid": "l6-003",
+    "level": 6,
+    "korean_text": "도시화가 빠르게 진행됨에 따라 농촌 인구는 지속적으로 감소하고 있다.\n이에 따른 지역 경제 침체와 고령화 문제는 정부의 정책적 개입을 요구하고 있다.",
+    "reference_answer": "As urbanization progresses rapidly, the rural population continues to decline. The resulting regional economic depression and aging population problems require government policy intervention.",
+    "topic_tag": "politics"
+  },
+  {
+    "uuid": "l6-004",
+    "level": 6,
+    "korean_text": "인공지능 기술의 발전은 기존 직업 구조에 근본적인 변화를 가져오고 있다.\n일부 전문가들은 이를 새로운 기회로 보는 반면, 다른 이들은 대규모 실업의 위협으로 간주한다.",
+    "reference_answer": "The development of artificial intelligence technology is bringing fundamental changes to the existing job structure. Some experts see this as a new opportunity, while others regard it as a threat of mass unemployment.",
+    "topic_tag": "technology"
+  },
+  {
+    "uuid": "l6-005",
+    "level": 6,
+    "korean_text": "그 정책의 효과는 단기적으로는 긍정적이었으나, 장기적으로는 부작용이 드러나기 시작했다.\n전문가들은 보다 세밀한 분석과 점진적인 정책 수정이 필요하다고 지적한다.",
+    "reference_answer": "The effects of the policy were positive in the short term, but side effects began to emerge in the long run. Experts point out that more detailed analysis and gradual policy revision are necessary.",
+    "topic_tag": "politics"
+  },
+  {
+    "uuid": "l6-006",
+    "level": 6,
+    "korean_text": "그 기업의 급격한 성장은 단순한 기술 혁신의 결과가 아니었다.\n창업자의 강력한 리더십과 전략적 파트너십이 그 성공의 핵심 요인으로 작용했다.",
+    "reference_answer": "The company's rapid growth was not simply the result of technological innovation. The founder's strong leadership and strategic partnerships served as the key factors behind its success.",
+    "topic_tag": "business"
+  },
+  {
+    "uuid": "l6-007",
+    "level": 6,
+    "korean_text": "이번 협약은 두 기관 간의 오랜 갈등을 봉합하는 데 기여했다.\n그러나 근본적인 구조적 문제들이 해결되지 않은 상태에서 지속적인 협력이 가능할지는 미지수다.",
+    "reference_answer": "This agreement contributed to resolving the longstanding conflict between the two institutions. However, it remains to be seen whether sustained cooperation is possible given that fundamental structural issues have not been resolved.",
+    "topic_tag": "politics"
+  },
+  {
+    "uuid": "l6-008",
+    "level": 6,
+    "korean_text": "기후 변화에 따른 자연재해의 빈도와 강도가 점점 높아지고 있다.\n전 세계 정부들은 탄소 배출 감축과 친환경 에너지로의 전환을 더 이상 미룰 수 없는 과제로 인식하게 되었다.",
+    "reference_answer": "The frequency and intensity of natural disasters due to climate change are increasing. Governments around the world have come to recognize reducing carbon emissions and transitioning to clean energy as tasks that can no longer be postponed.",
+    "topic_tag": "environment"
+  },
+  {
+    "uuid": "l6-009",
+    "level": 6,
+    "korean_text": "그 연구자는 수집된 데이터를 면밀히 분석한 결과, 기존의 가설이 특정 조건에서만 유효하다는 사실을 밝혀냈다.\n이 발견은 해당 분야의 연구 방향을 재정립하는 데 중요한 역할을 할 것으로 기대된다.",
+    "reference_answer": "After carefully analyzing the collected data, the researcher found that the existing hypothesis was valid only under certain conditions. This discovery is expected to play an important role in redefining the research direction in the field.",
+    "topic_tag": "science"
+  },
+  {
+    "uuid": "l6-010",
+    "level": 6,
+    "korean_text": "최근 몇 년간 국제 정세의 불안정성이 증가하면서 각국의 에너지 안보 전략이 주목받고 있다.\n일부 국가들은 자국 내 에너지 생산 능력 강화에 적극적으로 투자하기 시작했다.",
+    "reference_answer": "As global geopolitical instability has increased in recent years, energy security strategies of various countries are gaining attention. Some countries have begun actively investing in strengthening their domestic energy production capabilities.",
+    "topic_tag": "politics"
+  },
+  {
+    "uuid": "l6-011",
+    "level": 6,
+    "korean_text": "그 소설은 독자들의 뜨거운 반응을 얻었음에도 불구하고 주요 문학상 수상에는 실패했다.\n비평가들은 그 작품의 상업적 성공이 오히려 문학적 가치 평가에 부정적 영향을 미쳤다고 분석했다.",
+    "reference_answer": "Despite receiving an enthusiastic response from readers, the novel failed to win major literary awards. Critics analyzed that the work's commercial success actually had a negative impact on the evaluation of its literary value.",
+    "topic_tag": "culture"
+  },
+  {
+    "uuid": "l6-012",
+    "level": 6,
+    "korean_text": "그 의원은 회의에서 법안의 타당성을 강력히 주장했으나, 반대 의원들의 설득에는 실패했다.\n결국 해당 법안은 표결에서 근소한 차이로 부결되었다.",
+    "reference_answer": "The lawmaker strongly argued for the validity of the bill at the session, but failed to persuade the opposing members. In the end, the bill was narrowly rejected in the vote.",
+    "topic_tag": "politics"
+  },
+  {
+    "uuid": "l6-013",
+    "level": 6,
+    "korean_text": "선진국과 개발도상국 간의 기술 격차는 단순히 경제적 문제에 국한되지 않는다.\n이는 교육 기회의 불평등과 제도적 취약성이 복합적으로 작용한 결과다.",
+    "reference_answer": "The technology gap between developed and developing countries is not simply limited to economic issues. This is the result of the complex interplay of inequality in educational opportunities and institutional vulnerabilities.",
+    "topic_tag": "education"
+  },
+  {
+    "uuid": "l6-014",
+    "level": 6,
+    "korean_text": "그 과학자의 논문은 처음 발표 당시 학계의 주목을 받지 못했다.\n수십 년이 지난 후에야 그의 연구가 현대 생물학의 중요한 토대가 되었음이 인정되었다.",
+    "reference_answer": "The scientist's paper did not receive attention from the academic community when it was first published. Only decades later was it recognized that his research had become an important foundation for modern biology.",
+    "topic_tag": "science"
+  },
+  {
+    "uuid": "l6-015",
+    "level": 6,
+    "korean_text": "장기적인 경제 침체는 사회 전반에 걸쳐 다양한 문제를 야기하고 있다.\n특히 청년층의 고용 불안정과 중산층의 해체는 사회적 불안을 증폭시키는 주요 요인으로 지목된다.",
+    "reference_answer": "Long-term economic recession is causing various problems throughout society. In particular, employment instability among young people and the dissolution of the middle class are identified as major factors amplifying social unrest.",
+    "topic_tag": "business"
+  },
+  {
+    "uuid": "l6-016",
+    "level": 6,
+    "korean_text": "그 스포츠 선수는 부상 이후 재기를 향한 혹독한 훈련을 이어갔다.\n그의 집념과 의지는 팀 동료들에게도 큰 귀감이 되었으며, 결국 복귀 무대에서 최고의 기량을 선보였다.",
+    "reference_answer": "The athlete continued grueling training in pursuit of a comeback after the injury. His tenacity and determination served as a great example to his teammates, and he ultimately displayed his best performance on the stage of his return.",
+    "topic_tag": "sports"
+  },
+  {
+    "uuid": "l6-017",
+    "level": 6,
+    "korean_text": "환경 규제 강화에 대한 산업계의 반발은 예상보다 거셌다.\n일부 기업들은 해외 이전을 위협 카드로 사용하며 정부의 정책 완화를 요구했다.",
+    "reference_answer": "Industry's backlash against the tightening of environmental regulations was fiercer than expected. Some companies used the threat of relocating abroad as a bargaining chip and demanded the government ease its policies.",
+    "topic_tag": "environment"
+  },
+  {
+    "uuid": "l6-018",
+    "level": 6,
+    "korean_text": "그 작곡가의 교향곡은 초연 당시 혹독한 비판을 받았다.\n그러나 시간이 흐르면서 그 작품은 현대 음악사에서 가장 혁신적인 걸작 중 하나로 재평가되었다.",
+    "reference_answer": "The composer's symphony received harsh criticism when it premiered. However, as time passed, the work was reassessed as one of the most innovative masterpieces in the history of modern music.",
+    "topic_tag": "culture"
+  },
+  {
+    "uuid": "l6-019",
+    "level": 6,
+    "korean_text": "디지털 전환이 가속화되면서 전통 미디어 산업은 구조적 위기에 직면하고 있다.\n인쇄 매체의 쇠퇴와 온라인 콘텐츠의 급성장은 광고 수익 모델의 근본적인 재편을 강제하고 있다.",
+    "reference_answer": "As digital transformation accelerates, the traditional media industry is facing a structural crisis. The decline of print media and the rapid growth of online content are forcing a fundamental restructuring of advertising revenue models.",
+    "topic_tag": "technology"
+  },
+  {
+    "uuid": "l6-020",
+    "level": 6,
+    "korean_text": "그 결정은 단기적 이익을 위해 장기적 지속 가능성을 희생시켰다는 비판을 받았다.\n이사회는 주주들의 압박에 굴복했으며, 그 결과는 기업의 평판 훼손으로 이어졌다.",
+    "reference_answer": "The decision was criticized for sacrificing long-term sustainability in favor of short-term gains. The board of directors yielded to pressure from shareholders, and the result led to damage to the company's reputation.",
+    "topic_tag": "business"
+  }
+]

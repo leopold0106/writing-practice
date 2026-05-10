@@ -1,0 +1,492 @@
+[
+  {
+    "uuid": "l5-001",
+    "level": 5,
+    "korean_text": "그 회의는 예상보다 훨씬 오래 걸렸고, 참석자들은 지칠 대로 지쳐 있었다.",
+    "reference_answer": "The meeting lasted far longer than expected, and the attendees were completely exhausted.",
+    "topic_tag": "business"
+  },
+  {
+    "uuid": "l5-002",
+    "level": 5,
+    "korean_text": "그녀는 어릴 때부터 과학에 소질이 있었지만, 정작 대학에서는 문학을 전공했다.",
+    "reference_answer": "Although she had shown a natural aptitude for science from a young age, she ended up majoring in literature at university.",
+    "topic_tag": "education"
+  },
+  {
+    "uuid": "l5-003",
+    "level": 5,
+    "korean_text": "그는 말을 잘 하는 편이었지만, 정말 중요한 순간에는 항상 말문이 막혔다.",
+    "reference_answer": "He was generally a good speaker, but whenever a truly important moment arrived, he always found himself at a loss for words.",
+    "topic_tag": "character"
+  },
+  {
+    "uuid": "l5-004",
+    "level": 5,
+    "korean_text": "그는 20년간 교육 분야에 종사해 왔지만, 정작 자신의 아이를 가르치는 일은 늘 서툴렀다.",
+    "reference_answer": "Although he had worked in education for twenty years, he was always awkward when it came to teaching his own children.",
+    "topic_tag": "education"
+  },
+  {
+    "uuid": "l5-005",
+    "level": 5,
+    "korean_text": "그 연구자는 수년간 같은 주제에 몰두해 왔지만, 아직까지 뚜렷한 성과를 내지 못하고 있다.",
+    "reference_answer": "The researcher has been devoted to the same subject for years, yet has still failed to produce any notable results.",
+    "topic_tag": "science"
+  },
+  {
+    "uuid": "l5-006",
+    "level": 5,
+    "korean_text": "그 법안은 수개월간의 논의 끝에 마침내 국회를 통과했다.",
+    "reference_answer": "After months of deliberation, the bill finally passed the National Assembly.",
+    "topic_tag": "politics"
+  },
+  {
+    "uuid": "l5-007",
+    "level": 5,
+    "korean_text": "그녀는 어려운 환경에서 자랐음에도 불구하고, 누구보다 낙관적인 사람이 되었다.",
+    "reference_answer": "Despite having grown up in difficult circumstances, she became one of the most optimistic people anyone could know.",
+    "topic_tag": "character"
+  },
+  {
+    "uuid": "l5-008",
+    "level": 5,
+    "korean_text": "그 교수는 강의에서 탁월했지만, 연구 실적은 동료들에 비해 부족했다.",
+    "reference_answer": "The professor excelled as a lecturer, but his research output fell short compared to that of his colleagues.",
+    "topic_tag": "education"
+  },
+  {
+    "uuid": "l5-009",
+    "level": 5,
+    "korean_text": "그는 새로운 언어를 배우는 데 몇 년을 투자했고, 이제는 원어민처럼 말할 수 있다.",
+    "reference_answer": "He invested several years in learning a new language, and can now speak it as fluently as a native speaker.",
+    "topic_tag": "language"
+  },
+  {
+    "uuid": "l5-010",
+    "level": 5,
+    "korean_text": "위원회는 아직까지 그 문제에 대한 합의에 이르지 못하고 있다.",
+    "reference_answer": "The committee has yet to reach a consensus on the matter.",
+    "topic_tag": "politics"
+  },
+  {
+    "uuid": "l5-011",
+    "level": 5,
+    "korean_text": "그 과학자는 수십 년간의 연구 끝에 마침내 획기적인 발견을 이루어냈다.",
+    "reference_answer": "After decades of research, the scientist finally made a groundbreaking discovery.",
+    "topic_tag": "science"
+  },
+  {
+    "uuid": "l5-012",
+    "level": 5,
+    "korean_text": "새로운 제도는 도입 초기에는 환영을 받았지만, 시간이 지나면서 여러 문제점이 드러났다.",
+    "reference_answer": "The new system was initially welcomed, but various shortcomings became apparent as time went on.",
+    "topic_tag": "politics"
+  },
+  {
+    "uuid": "l5-013",
+    "level": 5,
+    "korean_text": "그녀는 어린 시절부터 음악에 재능이 있었고, 결국 세계적인 피아니스트가 되었다.",
+    "reference_answer": "She demonstrated a gift for music from childhood and ultimately became a world-renowned pianist.",
+    "topic_tag": "culture"
+  },
+  {
+    "uuid": "l5-014",
+    "level": 5,
+    "korean_text": "그 보고서는 위원회에 제출되기 전에 여러 차례 수정을 거쳤다.",
+    "reference_answer": "The report underwent several revisions before being submitted to the committee.",
+    "topic_tag": "business"
+  },
+  {
+    "uuid": "l5-015",
+    "level": 5,
+    "korean_text": "그는 동료들의 거센 반대에도 불구하고 자신의 주장을 굽히지 않았다.",
+    "reference_answer": "Despite fierce opposition from his colleagues, he refused to back down from his position.",
+    "topic_tag": "character"
+  },
+  {
+    "uuid": "l5-016",
+    "level": 5,
+    "korean_text": "그 건물은 화재로 인해 심각한 피해를 입었고, 즉시 폐쇄되었다.",
+    "reference_answer": "The building suffered severe damage from the fire and was immediately closed.",
+    "topic_tag": "daily_life"
+  },
+  {
+    "uuid": "l5-017",
+    "level": 5,
+    "korean_text": "그는 오랫동안 그 회사에서 일해 왔기 때문에 내부 사정을 누구보다 잘 알고 있었다.",
+    "reference_answer": "Having worked at the company for so long, he knew its internal workings better than anyone.",
+    "topic_tag": "business"
+  },
+  {
+    "uuid": "l5-018",
+    "level": 5,
+    "korean_text": "새로운 연구 결과는 기존의 이론이 불완전하다는 것을 보여주었다.",
+    "reference_answer": "The new research findings demonstrated that the existing theory was incomplete.",
+    "topic_tag": "science"
+  },
+  {
+    "uuid": "l5-019",
+    "level": 5,
+    "korean_text": "그녀는 면접 전날 밤 한숨도 자지 못했지만, 다음 날 침착하게 면접에 임했다.",
+    "reference_answer": "Although she had not slept a wink the night before her interview, she approached it calmly the following day.",
+    "topic_tag": "career"
+  },
+  {
+    "uuid": "l5-020",
+    "level": 5,
+    "korean_text": "그 법안은 의회에서 격렬한 토론을 거친 끝에 가결되었다.",
+    "reference_answer": "The bill was passed after undergoing fierce debate in parliament.",
+    "topic_tag": "politics"
+  },
+  {
+    "uuid": "l5-021",
+    "level": 5,
+    "korean_text": "그 논문은 심사위원들에게 제출되기 전에 세 차례 수정되었다.",
+    "reference_answer": "The paper was revised three times before being submitted to the reviewers.",
+    "topic_tag": "education"
+  },
+  {
+    "uuid": "l5-022",
+    "level": 5,
+    "korean_text": "그는 10년간 그 분야를 연구해 온 덕분에, 누구도 발견하지 못했던 패턴을 찾아낼 수 있었다.",
+    "reference_answer": "Thanks to ten years of research in the field, he was able to identify patterns that no one else had discovered.",
+    "topic_tag": "science"
+  },
+  {
+    "uuid": "l5-023",
+    "level": 5,
+    "korean_text": "전문가들은 그 실험 결과가 기존의 가설과 일치하지 않는다고 주장했다.",
+    "reference_answer": "Experts argued that the experimental results were inconsistent with the existing hypothesis.",
+    "topic_tag": "science"
+  },
+  {
+    "uuid": "l5-024",
+    "level": 5,
+    "korean_text": "그 회사는 창립된 지 5년 만에 업계에서 가장 영향력 있는 기업 중 하나가 되었다.",
+    "reference_answer": "Within five years of its founding, the company had become one of the most influential in the industry.",
+    "topic_tag": "business"
+  },
+  {
+    "uuid": "l5-025",
+    "level": 5,
+    "korean_text": "그녀는 오랜 준비 끝에 무대에 올랐지만, 긴장한 나머지 대사를 잊어버리고 말았다.",
+    "reference_answer": "After extensive preparation, she took the stage, but her nerves got the better of her and she forgot her lines.",
+    "topic_tag": "culture"
+  },
+  {
+    "uuid": "l5-026",
+    "level": 5,
+    "korean_text": "그 건축물은 100년 전에 지어졌으며, 현재까지도 원형이 잘 보존되어 있다.",
+    "reference_answer": "The structure was built a hundred years ago and remains well preserved in its original form to this day.",
+    "topic_tag": "culture"
+  },
+  {
+    "uuid": "l5-027",
+    "level": 5,
+    "korean_text": "그녀는 수년간 그 프로젝트를 준비해 왔기 때문에, 발표 당일 누구보다 자신감이 넘쳤다.",
+    "reference_answer": "Having prepared for the project over several years, she was more confident than anyone else on the day of the presentation.",
+    "topic_tag": "business"
+  },
+  {
+    "uuid": "l5-028",
+    "level": 5,
+    "korean_text": "연구진은 새로운 물질이 기존 소재보다 훨씬 더 내구성이 강하다는 것을 밝혀냈다.",
+    "reference_answer": "The research team found that the new material was far more durable than conventional materials.",
+    "topic_tag": "science"
+  },
+  {
+    "uuid": "l5-029",
+    "level": 5,
+    "korean_text": "그 결정은 충분한 논의 없이 내려졌고, 결국 심각한 결과를 초래했다.",
+    "reference_answer": "The decision was made without sufficient deliberation, and ultimately led to serious consequences.",
+    "topic_tag": "business"
+  },
+  {
+    "uuid": "l5-030",
+    "level": 5,
+    "korean_text": "그는 어린 시절부터 천문학에 깊은 관심을 가져왔고, 마침내 저명한 천문학자가 되었다.",
+    "reference_answer": "He had harbored a deep interest in astronomy since childhood and eventually became a distinguished astronomer.",
+    "topic_tag": "science"
+  },
+  {
+    "uuid": "l5-031",
+    "level": 5,
+    "korean_text": "그 협약은 두 나라 간의 오랜 긴장을 완화하는 데 중요한 역할을 했다.",
+    "reference_answer": "The agreement played a significant role in easing the longstanding tensions between the two countries.",
+    "topic_tag": "politics"
+  },
+  {
+    "uuid": "l5-032",
+    "level": 5,
+    "korean_text": "그 작가는 첫 번째 소설이 출판된 직후부터 문단의 주목을 받기 시작했다.",
+    "reference_answer": "The author began attracting attention from the literary world immediately after his first novel was published.",
+    "topic_tag": "culture"
+  },
+  {
+    "uuid": "l5-033",
+    "level": 5,
+    "korean_text": "새로운 교육 정책은 학생들의 창의성을 억누른다는 이유로 거센 비판을 받았다.",
+    "reference_answer": "The new education policy drew fierce criticism on the grounds that it stifled students' creativity.",
+    "topic_tag": "education"
+  },
+  {
+    "uuid": "l5-034",
+    "level": 5,
+    "korean_text": "그는 수술을 받은 뒤 수개월간의 재활 끝에 완전히 회복했다.",
+    "reference_answer": "After months of rehabilitation following his surgery, he made a full recovery.",
+    "topic_tag": "health"
+  },
+  {
+    "uuid": "l5-035",
+    "level": 5,
+    "korean_text": "위원회는 제출된 모든 증거를 검토한 후에야 최종 결정을 내렸다.",
+    "reference_answer": "The committee did not make its final decision until it had reviewed all the submitted evidence.",
+    "topic_tag": "law"
+  },
+  {
+    "uuid": "l5-036",
+    "level": 5,
+    "korean_text": "그 연구는 스트레스가 장기적으로 신체 건강에 해롭다는 증거를 제시했다.",
+    "reference_answer": "The study presented evidence that stress is detrimental to physical health in the long term.",
+    "topic_tag": "health"
+  },
+  {
+    "uuid": "l5-037",
+    "level": 5,
+    "korean_text": "그 회사는 창업자가 떠난 이후로 급격히 쇠퇴하기 시작했다.",
+    "reference_answer": "The company began to decline sharply after its founder departed.",
+    "topic_tag": "business"
+  },
+  {
+    "uuid": "l5-038",
+    "level": 5,
+    "korean_text": "그녀는 수년간 쌓아온 전문 지식 덕분에 업계에서 신뢰받는 인물이 되었다.",
+    "reference_answer": "Thanks to the expertise she had accumulated over many years, she became a trusted figure in the industry.",
+    "topic_tag": "career"
+  },
+  {
+    "uuid": "l5-039",
+    "level": 5,
+    "korean_text": "그 보고서는 환경 문제에 대한 정부의 대응이 불충분하다고 주장했다.",
+    "reference_answer": "The report argued that the government's response to environmental issues was insufficient.",
+    "topic_tag": "environment"
+  },
+  {
+    "uuid": "l5-040",
+    "level": 5,
+    "korean_text": "그는 수차례 실패했음에도 불구하고 자신의 목표를 포기하지 않았다.",
+    "reference_answer": "Despite failing on numerous occasions, he never abandoned his goal.",
+    "topic_tag": "character"
+  },
+  {
+    "uuid": "l5-041",
+    "level": 5,
+    "korean_text": "그 약은 부작용이 있다는 정보가 공개된 이후 판매가 급격히 감소했다.",
+    "reference_answer": "Sales of the medication fell sharply after information about its side effects was made public.",
+    "topic_tag": "health"
+  },
+  {
+    "uuid": "l5-042",
+    "level": 5,
+    "korean_text": "그 교수는 학생들에게 비판적으로 사고하는 능력을 기르도록 독려했다.",
+    "reference_answer": "The professor encouraged students to develop the ability to think critically.",
+    "topic_tag": "education"
+  },
+  {
+    "uuid": "l5-043",
+    "level": 5,
+    "korean_text": "그 사건은 해당 기업의 명성에 돌이킬 수 없는 피해를 입혔다.",
+    "reference_answer": "The incident inflicted irreparable damage on the company's reputation.",
+    "topic_tag": "business"
+  },
+  {
+    "uuid": "l5-044",
+    "level": 5,
+    "korean_text": "그녀는 어릴 때부터 그림에 뛰어난 재능을 보였으며, 결국 유명한 화가가 되었다.",
+    "reference_answer": "She showed exceptional talent for painting from an early age and eventually became a renowned artist.",
+    "topic_tag": "culture"
+  },
+  {
+    "uuid": "l5-045",
+    "level": 5,
+    "korean_text": "위원회는 새로운 규정이 기존 법률과 충돌한다는 이유로 그것을 거부했다.",
+    "reference_answer": "The committee rejected the new regulation on the grounds that it conflicted with existing legislation.",
+    "topic_tag": "law"
+  },
+  {
+    "uuid": "l5-046",
+    "level": 5,
+    "korean_text": "그 건물은 수십 년간 방치된 끝에 결국 철거되었다.",
+    "reference_answer": "After decades of neglect, the building was finally demolished.",
+    "topic_tag": "daily_life"
+  },
+  {
+    "uuid": "l5-047",
+    "level": 5,
+    "korean_text": "그 선수는 부상을 당하기 전까지 팀 내에서 가장 뛰어난 활약을 보여왔다.",
+    "reference_answer": "Until his injury, the athlete had been the standout performer on the team.",
+    "topic_tag": "sports"
+  },
+  {
+    "uuid": "l5-048",
+    "level": 5,
+    "korean_text": "이 연구는 수면 부족이 판단력에 심각한 영향을 미친다는 것을 보여준다.",
+    "reference_answer": "This study demonstrates that sleep deprivation has a serious impact on judgment.",
+    "topic_tag": "health"
+  },
+  {
+    "uuid": "l5-049",
+    "level": 5,
+    "korean_text": "그녀는 오랜 협상 끝에 마침내 양측이 동의할 수 있는 해결책을 찾아냈다.",
+    "reference_answer": "After lengthy negotiations, she finally found a solution that both sides could agree to.",
+    "topic_tag": "business"
+  },
+  {
+    "uuid": "l5-050",
+    "level": 5,
+    "korean_text": "그 정책은 도입된 지 1년 만에 전면 재검토가 요구되었다.",
+    "reference_answer": "Just one year after the policy was introduced, a complete review was called for.",
+    "topic_tag": "politics"
+  },
+  {
+    "uuid": "l5-051",
+    "level": 5,
+    "korean_text": "그 조약은 수십 년간 지속된 분쟁을 종식시키는 데 결정적인 역할을 했다.",
+    "reference_answer": "The treaty played a decisive role in bringing an end to a conflict that had persisted for decades.",
+    "topic_tag": "politics"
+  },
+  {
+    "uuid": "l5-052",
+    "level": 5,
+    "korean_text": "그 의사는 환자를 치료하기 전에 이미 같은 증상을 수백 번 접한 경험이 있었다.",
+    "reference_answer": "Before treating the patient, the doctor had already encountered the same symptoms hundreds of times.",
+    "topic_tag": "health"
+  },
+  {
+    "uuid": "l5-053",
+    "level": 5,
+    "korean_text": "최근 연구에 따르면, 규칙적인 운동이 우울증 완화에 효과적이라는 증거가 늘고 있다.",
+    "reference_answer": "According to recent research, there is growing evidence that regular exercise is effective in alleviating depression.",
+    "topic_tag": "health"
+  },
+  {
+    "uuid": "l5-054",
+    "level": 5,
+    "korean_text": "그 기업은 내부 고발자의 증언이 공개된 직후 주가가 급락했다.",
+    "reference_answer": "The company's stock price plummeted immediately after the whistleblower's testimony was made public.",
+    "topic_tag": "business"
+  },
+  {
+    "uuid": "l5-055",
+    "level": 5,
+    "korean_text": "위원회는 제안된 예산안이 현행 재정 지침과 부합하지 않는다고 판단했다.",
+    "reference_answer": "The committee determined that the proposed budget did not comply with current fiscal guidelines.",
+    "topic_tag": "politics"
+  },
+  {
+    "uuid": "l5-056",
+    "level": 5,
+    "korean_text": "그 협상가는 양측의 입장을 면밀히 검토한 끝에 타협안을 제시했다.",
+    "reference_answer": "After carefully examining the positions of both sides, the negotiator put forward a compromise proposal.",
+    "topic_tag": "politics"
+  },
+  {
+    "uuid": "l5-057",
+    "level": 5,
+    "korean_text": "그 스타트업은 설립된 지 3년 만에 업계에서 가장 혁신적인 기업 중 하나로 인정받았다.",
+    "reference_answer": "Just three years after its establishment, the startup was recognized as one of the most innovative companies in the industry.",
+    "topic_tag": "business"
+  },
+  {
+    "uuid": "l5-058",
+    "level": 5,
+    "korean_text": "그 연구자는 수년간 축적해 온 데이터를 바탕으로 기존 이론의 오류를 입증했다.",
+    "reference_answer": "Drawing on data accumulated over many years, the researcher demonstrated the flaws in the existing theory.",
+    "topic_tag": "science"
+  },
+  {
+    "uuid": "l5-059",
+    "level": 5,
+    "korean_text": "새로운 복지 정책은 저소득층의 생활 수준을 향상시키는 데 효과적이라고 평가받았다.",
+    "reference_answer": "The new welfare policy was assessed as effective in improving the living standards of low-income groups.",
+    "topic_tag": "politics"
+  },
+  {
+    "uuid": "l5-060",
+    "level": 5,
+    "korean_text": "그는 동료들의 반대에도 불구하고 자신의 연구 결과를 학술지에 발표하기로 결심했다.",
+    "reference_answer": "Despite opposition from his colleagues, he decided to publish his research findings in an academic journal.",
+    "topic_tag": "science"
+  },
+  {
+    "uuid": "l5-061",
+    "level": 5,
+    "korean_text": "그 과학자는 동료들이 불가능하다고 여겼던 실험을 마침내 성공시켰다.",
+    "reference_answer": "The scientist finally succeeded in an experiment that her colleagues had deemed impossible.",
+    "topic_tag": "science"
+  },
+  {
+    "uuid": "l5-062",
+    "level": 5,
+    "korean_text": "그 회사의 매출은 신제품 출시 이후 꾸준히 증가해 왔다.",
+    "reference_answer": "The company's revenue has been rising steadily since the launch of its new product.",
+    "topic_tag": "business"
+  },
+  {
+    "uuid": "l5-063",
+    "level": 5,
+    "korean_text": "그 법안은 여러 차례 수정을 거친 뒤 마침내 상원을 통과했다.",
+    "reference_answer": "The bill finally passed the Senate after undergoing multiple revisions.",
+    "topic_tag": "politics"
+  },
+  {
+    "uuid": "l5-064",
+    "level": 5,
+    "korean_text": "그는 어릴 때부터 쌓아온 경험 덕분에 누구보다 빠르게 문제를 해결할 수 있었다.",
+    "reference_answer": "Thanks to experience he had built up since childhood, he was able to solve problems faster than anyone else.",
+    "topic_tag": "career"
+  },
+  {
+    "uuid": "l5-065",
+    "level": 5,
+    "korean_text": "위원회는 제출된 보고서가 충분한 근거를 갖추지 못했다고 결론지었다.",
+    "reference_answer": "The committee concluded that the submitted report lacked sufficient evidence.",
+    "topic_tag": "law"
+  },
+  {
+    "uuid": "l5-066",
+    "level": 5,
+    "korean_text": "그 탐험가는 수년간의 준비 끝에 아무도 발을 들인 적 없는 지역을 탐험했다.",
+    "reference_answer": "After years of preparation, the explorer ventured into a region where no one had ever set foot.",
+    "topic_tag": "travel"
+  },
+  {
+    "uuid": "l5-067",
+    "level": 5,
+    "korean_text": "그 스타트업의 주가는 창업자의 사임 발표 직후 급락했다.",
+    "reference_answer": "The startup's stock price plunged immediately after the announcement of the founder's resignation.",
+    "topic_tag": "business"
+  },
+  {
+    "uuid": "l5-068",
+    "level": 5,
+    "korean_text": "연구진은 피험자들이 수면 부족 상태에서 내린 결정이 판단력에 심각한 결함을 보인다는 것을 발견했다.",
+    "reference_answer": "The research team found that decisions made by subjects in a sleep-deprived state exhibited serious impairments in judgment.",
+    "topic_tag": "science"
+  },
+  {
+    "uuid": "l5-069",
+    "level": 5,
+    "korean_text": "그 소설가는 10년간 집필해 온 작품이 마침내 출판되자 깊은 안도감을 느꼈다.",
+    "reference_answer": "When the novel she had been writing for ten years was finally published, the novelist felt a profound sense of relief.",
+    "topic_tag": "culture"
+  },
+  {
+    "uuid": "l5-070",
+    "level": 5,
+    "korean_text": "위원회는 해당 기업이 제출한 재무 자료가 현행 회계 기준을 충족하지 못한다고 판단했다.",
+    "reference_answer": "The committee determined that the financial documents submitted by the company did not meet current accounting standards.",
+    "topic_tag": "business"
+  }
+]

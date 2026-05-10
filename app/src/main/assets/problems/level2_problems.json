@@ -1,0 +1,142 @@
+[
+  {
+    "uuid": "l2-001",
+    "level": 2,
+    "korean_text": "저는 피아노를 5년째 배우고 있습니다.",
+    "reference_answer": "I have been learning piano for five years.",
+    "topic_tag": "hobby"
+  },
+  {
+    "uuid": "l2-002",
+    "level": 2,
+    "korean_text": "그 프로젝트는 내일까지 완료해야 합니다.",
+    "reference_answer": "The project must be completed by tomorrow.",
+    "topic_tag": "work"
+  },
+  {
+    "uuid": "l2-003",
+    "level": 2,
+    "korean_text": "저는 버스보다 지하철이 더 편합니다.",
+    "reference_answer": "I find the subway more convenient than the bus.",
+    "topic_tag": "transportation"
+  },
+  {
+    "uuid": "l2-004",
+    "level": 2,
+    "korean_text": "그 소식을 듣고 정말 놀랐습니다.",
+    "reference_answer": "I was really surprised to hear that news.",
+    "topic_tag": "emotion"
+  },
+  {
+    "uuid": "l2-005",
+    "level": 2,
+    "korean_text": "저는 매주 도서관에 갑니다.",
+    "reference_answer": "I go to the library every week.",
+    "topic_tag": "education"
+  },
+  {
+    "uuid": "l2-006",
+    "level": 2,
+    "korean_text": "그녀는 의사가 되고 싶어합니다.",
+    "reference_answer": "She wants to become a doctor.",
+    "topic_tag": "career"
+  },
+  {
+    "uuid": "l2-007",
+    "level": 2,
+    "korean_text": "오늘 점심으로 비빔밥을 먹었습니다.",
+    "reference_answer": "I had bibimbap for lunch today.",
+    "topic_tag": "food"
+  },
+  {
+    "uuid": "l2-008",
+    "level": 2,
+    "korean_text": "저는 바다보다 산을 더 좋아합니다.",
+    "reference_answer": "I prefer mountains to the sea.",
+    "topic_tag": "nature"
+  },
+  {
+    "uuid": "l2-009",
+    "level": 2,
+    "korean_text": "그는 세 가지 외국어를 구사합니다.",
+    "reference_answer": "He speaks three foreign languages.",
+    "topic_tag": "language"
+  },
+  {
+    "uuid": "l2-010",
+    "level": 2,
+    "korean_text": "저는 아직 그 영화를 보지 못했습니다.",
+    "reference_answer": "I haven't watched that movie yet.",
+    "topic_tag": "entertainment"
+  },
+  {
+    "uuid": "l2-011",
+    "level": 2,
+    "korean_text": "오늘 아침 교통이 매우 막혔습니다.",
+    "reference_answer": "Traffic was very heavy this morning.",
+    "topic_tag": "transportation"
+  },
+  {
+    "uuid": "l2-012",
+    "level": 2,
+    "korean_text": "저는 새로운 직장을 찾고 있습니다.",
+    "reference_answer": "I am looking for a new job.",
+    "topic_tag": "career"
+  },
+  {
+    "uuid": "l2-013",
+    "level": 2,
+    "korean_text": "그 공연은 두 시간 동안 계속되었습니다.",
+    "reference_answer": "The performance lasted for two hours.",
+    "topic_tag": "entertainment"
+  },
+  {
+    "uuid": "l2-014",
+    "level": 2,
+    "korean_text": "저는 주로 주말에 청소를 합니다.",
+    "reference_answer": "I usually clean on weekends.",
+    "topic_tag": "daily_life"
+  },
+  {
+    "uuid": "l2-015",
+    "level": 2,
+    "korean_text": "그 식당은 예약이 필요합니다.",
+    "reference_answer": "That restaurant requires a reservation.",
+    "topic_tag": "food"
+  },
+  {
+    "uuid": "l2-016",
+    "level": 2,
+    "korean_text": "저는 빨간색보다 파란색을 더 좋아합니다.",
+    "reference_answer": "I prefer blue to red.",
+    "topic_tag": "daily_life"
+  },
+  {
+    "uuid": "l2-017",
+    "level": 2,
+    "korean_text": "오늘 밤 비가 올 것 같습니다.",
+    "reference_answer": "It looks like it will rain tonight.",
+    "topic_tag": "weather"
+  },
+  {
+    "uuid": "l2-018",
+    "level": 2,
+    "korean_text": "저는 퇴근 후 요가를 합니다.",
+    "reference_answer": "I do yoga after work.",
+    "topic_tag": "health"
+  },
+  {
+    "uuid": "l2-019",
+    "level": 2,
+    "korean_text": "그녀의 발표는 매우 인상적이었습니다.",
+    "reference_answer": "Her presentation was very impressive.",
+    "topic_tag": "work"
+  },
+  {
+    "uuid": "l2-020",
+    "level": 2,
+    "korean_text": "저는 커피보다 차를 더 즐깁니다.",
+    "reference_answer": "I enjoy tea more than coffee.",
+    "topic_tag": "food"
+  }
+]

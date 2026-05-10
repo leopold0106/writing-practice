@@ -1,0 +1,142 @@
+[
+  {
+    "uuid": "l1-001",
+    "level": 1,
+    "korean_text": "오늘 날씨가 정말 좋습니다.",
+    "reference_answer": "The weather is really nice today.",
+    "topic_tag": "weather"
+  },
+  {
+    "uuid": "l1-002",
+    "level": 1,
+    "korean_text": "저는 매일 아침 커피를 마십니다.",
+    "reference_answer": "I drink coffee every morning.",
+    "topic_tag": "daily_life"
+  },
+  {
+    "uuid": "l1-003",
+    "level": 1,
+    "korean_text": "그 영화는 정말 재미있었습니다.",
+    "reference_answer": "That movie was really interesting.",
+    "topic_tag": "entertainment"
+  },
+  {
+    "uuid": "l1-004",
+    "level": 1,
+    "korean_text": "저는 지하철을 타고 출근합니다.",
+    "reference_answer": "I commute to work by subway.",
+    "topic_tag": "transportation"
+  },
+  {
+    "uuid": "l1-005",
+    "level": 1,
+    "korean_text": "그녀는 영어를 매우 잘 합니다.",
+    "reference_answer": "She speaks English very well.",
+    "topic_tag": "language"
+  },
+  {
+    "uuid": "l1-006",
+    "level": 1,
+    "korean_text": "이 식당 음식이 정말 맛있어요.",
+    "reference_answer": "The food at this restaurant is really delicious.",
+    "topic_tag": "food"
+  },
+  {
+    "uuid": "l1-007",
+    "level": 1,
+    "korean_text": "저는 주말마다 등산을 합니다.",
+    "reference_answer": "I go hiking every weekend.",
+    "topic_tag": "hobby"
+  },
+  {
+    "uuid": "l1-008",
+    "level": 1,
+    "korean_text": "내일 친구를 만날 예정입니다.",
+    "reference_answer": "I am planning to meet a friend tomorrow.",
+    "topic_tag": "social"
+  },
+  {
+    "uuid": "l1-009",
+    "level": 1,
+    "korean_text": "이 책은 매우 유익합니다.",
+    "reference_answer": "This book is very informative.",
+    "topic_tag": "education"
+  },
+  {
+    "uuid": "l1-010",
+    "level": 1,
+    "korean_text": "저는 음악 듣는 것을 좋아합니다.",
+    "reference_answer": "I enjoy listening to music.",
+    "topic_tag": "hobby"
+  },
+  {
+    "uuid": "l1-011",
+    "level": 1,
+    "korean_text": "그는 매일 운동을 합니다.",
+    "reference_answer": "He exercises every day.",
+    "topic_tag": "health"
+  },
+  {
+    "uuid": "l1-012",
+    "level": 1,
+    "korean_text": "저는 사과를 좋아하지 않습니다.",
+    "reference_answer": "I don't like apples.",
+    "topic_tag": "food"
+  },
+  {
+    "uuid": "l1-013",
+    "level": 1,
+    "korean_text": "오늘 회의가 세 시에 있습니다.",
+    "reference_answer": "There is a meeting at three o'clock today.",
+    "topic_tag": "work"
+  },
+  {
+    "uuid": "l1-014",
+    "level": 1,
+    "korean_text": "저는 한국어를 공부하고 있습니다.",
+    "reference_answer": "I am studying Korean.",
+    "topic_tag": "education"
+  },
+  {
+    "uuid": "l1-015",
+    "level": 1,
+    "korean_text": "그 가게는 항상 사람이 많습니다.",
+    "reference_answer": "That store is always crowded.",
+    "topic_tag": "shopping"
+  },
+  {
+    "uuid": "l1-016",
+    "level": 1,
+    "korean_text": "제 생일은 다음 달입니다.",
+    "reference_answer": "My birthday is next month.",
+    "topic_tag": "daily_life"
+  },
+  {
+    "uuid": "l1-017",
+    "level": 1,
+    "korean_text": "저는 파스타를 만드는 방법을 알고 있습니다.",
+    "reference_answer": "I know how to make pasta.",
+    "topic_tag": "food"
+  },
+  {
+    "uuid": "l1-018",
+    "level": 1,
+    "korean_text": "그녀는 어제 늦게 잠들었습니다.",
+    "reference_answer": "She went to bed late yesterday.",
+    "topic_tag": "daily_life"
+  },
+  {
+    "uuid": "l1-019",
+    "level": 1,
+    "korean_text": "저는 강아지를 두 마리 키우고 있습니다.",
+    "reference_answer": "I have two dogs.",
+    "topic_tag": "daily_life"
+  },
+  {
+    "uuid": "l1-020",
+    "level": 1,
+    "korean_text": "이번 여름은 특히 덥습니다.",
+    "reference_answer": "This summer is especially hot.",
+    "topic_tag": "weather"
+  }
+]

@@ -1,0 +1,3 @@
+-keep class com.example.writingpractice.data.** { *; }
+-keepattributes Signature
+-keepattributes *Annotation*

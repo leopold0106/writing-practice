@@ -1,0 +1,142 @@
+[
+  {
+    "uuid": "l4-001",
+    "level": 4,
+    "korean_text": "저는 오늘 아침 일찍 일어났습니다.\n운동을 하러 공원에 갔습니다.\n돌아오는 길에 아침 식사를 사 왔습니다.",
+    "reference_answer": "I woke up early this morning.\nI went to the park to exercise.\nOn the way back, I bought breakfast.",
+    "topic_tag": "daily_life"
+  },
+  {
+    "uuid": "l4-002",
+    "level": 4,
+    "korean_text": "그 영화는 정말 감동적이었습니다.\n특히 마지막 장면이 기억에 남습니다.\n다음에 가족들과 다시 보고 싶습니다.",
+    "reference_answer": "That movie was truly moving.\nThe final scene especially sticks in my memory.\nI want to watch it again with my family next time.",
+    "topic_tag": "entertainment"
+  },
+  {
+    "uuid": "l4-003",
+    "level": 4,
+    "korean_text": "저는 이번 주 내내 시험 준비를 했습니다.\n매일 밤늦게까지 공부했습니다.\n드디어 오늘 시험이 끝났습니다.",
+    "reference_answer": "I prepared for exams all this week.\nI studied late into the night every day.\nThe exam finally ended today.",
+    "topic_tag": "education"
+  },
+  {
+    "uuid": "l4-004",
+    "level": 4,
+    "korean_text": "그녀는 3년 전에 처음 요리를 배웠습니다.\n처음에는 간단한 요리부터 시작했습니다.\n지금은 다양한 음식을 능숙하게 만들 수 있습니다.",
+    "reference_answer": "She first learned to cook three years ago.\nShe started with simple dishes at first.\nNow she can skillfully prepare a wide variety of food.",
+    "topic_tag": "food"
+  },
+  {
+    "uuid": "l4-005",
+    "level": 4,
+    "korean_text": "저는 어제 자전거 여행을 떠났습니다.\n강변을 따라 두 시간 동안 달렸습니다.\n경치가 아름다워서 피로를 잊을 수 있었습니다.",
+    "reference_answer": "I went on a bicycle trip yesterday.\nI rode along the riverbank for two hours.\nThe scenery was so beautiful that I forgot my tiredness.",
+    "topic_tag": "travel"
+  },
+  {
+    "uuid": "l4-006",
+    "level": 4,
+    "korean_text": "오늘 직장에서 팀 프로젝트가 시작되었습니다.\n각 팀원이 역할을 분담했습니다.\n모두 열심히 협력해서 좋은 결과를 만들 것입니다.",
+    "reference_answer": "A team project started at work today.\nEach team member divided up the roles.\nEveryone will work hard together to produce a good result.",
+    "topic_tag": "work"
+  },
+  {
+    "uuid": "l4-007",
+    "level": 4,
+    "korean_text": "저는 환경 보호에 관심이 많습니다.\n일회용품을 최대한 사용하지 않으려고 합니다.\n작은 실천이 큰 변화를 만든다고 믿습니다.",
+    "reference_answer": "I have a strong interest in environmental protection.\nI try to avoid using disposable products as much as possible.\nI believe small actions can create big changes.",
+    "topic_tag": "environment"
+  },
+  {
+    "uuid": "l4-008",
+    "level": 4,
+    "korean_text": "그는 10년째 같은 회사에서 일하고 있습니다.\n그동안 세 번 승진을 했습니다.\n회사에 대한 충성도가 매우 높습니다.",
+    "reference_answer": "He has been working at the same company for ten years.\nDuring that time, he has been promoted three times.\nHis loyalty to the company is very high.",
+    "topic_tag": "career"
+  },
+  {
+    "uuid": "l4-009",
+    "level": 4,
+    "korean_text": "저는 지난주에 새 아파트로 이사했습니다.\n짐을 옮기는 데 하루가 꼬박 걸렸습니다.\n이제 새 집에서의 생활이 기대됩니다.",
+    "reference_answer": "I moved into a new apartment last week.\nIt took a full day to move all my belongings.\nNow I look forward to living in my new home.",
+    "topic_tag": "daily_life"
+  },
+  {
+    "uuid": "l4-010",
+    "level": 4,
+    "korean_text": "오늘 아침 버스를 놓쳤습니다.\n다음 버스를 기다리다가 결국 택시를 탔습니다.\n회의 시간에 겨우 맞춰 도착했습니다.",
+    "reference_answer": "I missed the bus this morning.\nAfter waiting for the next bus, I eventually took a taxi.\nI barely arrived in time for the meeting.",
+    "topic_tag": "transportation"
+  },
+  {
+    "uuid": "l4-011",
+    "level": 4,
+    "korean_text": "저는 요즘 건강 관리에 더 집중하고 있습니다.\n식단을 바꾸고 운동도 시작했습니다.\n한 달 만에 체중이 3킬로그램 빠졌습니다.",
+    "reference_answer": "I have been focusing more on managing my health lately.\nI changed my diet and started exercising.\nI lost three kilograms in just one month.",
+    "topic_tag": "health"
+  },
+  {
+    "uuid": "l4-012",
+    "level": 4,
+    "korean_text": "그 콘서트는 정말 열기가 넘쳤습니다.\n관객들이 모두 함께 노래를 불렀습니다.\n평생 잊지 못할 추억이 될 것 같습니다.",
+    "reference_answer": "That concert was truly full of energy.\nAll the audience sang along together.\nIt seems like it will be a memory I'll never forget.",
+    "topic_tag": "entertainment"
+  },
+  {
+    "uuid": "l4-013",
+    "level": 4,
+    "korean_text": "저는 처음 해외여행을 갔을 때 많이 긴장했습니다.\n언어가 달라서 의사소통이 힘들었습니다.\n하지만 현지인들이 친절하게 도와주었습니다.",
+    "reference_answer": "I was very nervous when I traveled abroad for the first time.\nCommunication was difficult because the language was different.\nHowever, the locals helped me kindly.",
+    "topic_tag": "travel"
+  },
+  {
+    "uuid": "l4-014",
+    "level": 4,
+    "korean_text": "그는 아이들에게 무료로 수학을 가르치고 있습니다.\n어려운 환경의 학생들을 위한 봉사입니다.\n교육의 기회는 모두에게 평등해야 한다고 믿습니다.",
+    "reference_answer": "He teaches mathematics to children for free.\nIt is a volunteer service for students in difficult circumstances.\nHe believes that the opportunity for education should be equal for everyone.",
+    "topic_tag": "social"
+  },
+  {
+    "uuid": "l4-015",
+    "level": 4,
+    "korean_text": "저는 새로운 기술을 배우는 것이 두렵지 않습니다.\n항상 변화에 유연하게 적응하려고 노력합니다.\n그것이 현대 사회에서 성공의 열쇠라고 생각합니다.",
+    "reference_answer": "I am not afraid to learn new technology.\nI always try to adapt flexibly to change.\nI think that is the key to success in modern society.",
+    "topic_tag": "technology"
+  },
+  {
+    "uuid": "l4-016",
+    "level": 4,
+    "korean_text": "오늘 친구의 결혼식에 참석했습니다.\n행복해 보이는 두 사람을 보며 마음이 따뜻해졌습니다.\n두 사람의 앞날이 행복하기를 바랍니다.",
+    "reference_answer": "I attended a friend's wedding today.\nMy heart felt warm seeing the two of them looking so happy.\nI hope their future together is filled with happiness.",
+    "topic_tag": "social"
+  },
+  {
+    "uuid": "l4-017",
+    "level": 4,
+    "korean_text": "저는 주말마다 공원에서 달리기를 합니다.\n처음에는 1킬로미터도 힘들었습니다.\n지금은 5킬로미터를 쉽게 달릴 수 있습니다.",
+    "reference_answer": "I run in the park every weekend.\nAt first, even 1 kilometer was tough.\nNow I can easily run 5 kilometers.",
+    "topic_tag": "health"
+  },
+  {
+    "uuid": "l4-018",
+    "level": 4,
+    "korean_text": "그 도서관에는 오래된 희귀 도서가 많습니다.\n사서가 매우 친절하게 안내해 주었습니다.\n시간이 없어서 다 못 봤지만 꼭 다시 가고 싶습니다.",
+    "reference_answer": "That library has many rare old books.\nThe librarian gave me very kind guidance.\nI didn't have time to see everything, but I definitely want to go back.",
+    "topic_tag": "education"
+  },
+  {
+    "uuid": "l4-019",
+    "level": 4,
+    "korean_text": "저는 올해 처음으로 세금 신고를 직접 했습니다.\n처음에는 절차가 복잡해서 당황했습니다.\n몇 번 시도 끝에 성공적으로 마칠 수 있었습니다.",
+    "reference_answer": "I filed my taxes on my own for the first time this year.\nAt first, I was flustered because the process was complicated.\nAfter a few attempts, I was able to complete it successfully.",
+    "topic_tag": "daily_life"
+  },
+  {
+    "uuid": "l4-020",
+    "level": 4,
+    "korean_text": "그 회사의 제품 품질이 지속적으로 향상되고 있습니다.\n고객 만족도도 매년 높아지고 있습니다.\n성공의 비결은 꾸준한 혁신이라고 생각합니다.",
+    "reference_answer": "The quality of that company's products is continuously improving.\nCustomer satisfaction is also rising every year.\nI think the secret to success is consistent innovation.",
+    "topic_tag": "work"
+  }
+]
