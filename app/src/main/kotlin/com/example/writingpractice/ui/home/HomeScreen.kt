@@ -103,6 +103,8 @@ fun HomeScreen(
 
             ApiStatusCard(apiStatus = state.apiStatus)
 
+            StreakCard(streak = state.currentStreak)
+
             DailyProgressCard(solved = state.todaySolved, goal = state.dailyGoal)
 
             Text(
@@ -202,6 +204,51 @@ private fun ApiStatusCard(apiStatus: ApiStatus) {
             style = MaterialTheme.typography.bodySmall,
             color = Color(0xFF212121)
         )
+    }
+}
+
+@Composable
+private fun StreakCard(streak: Int) {
+    val (bgColor, message) = when {
+        streak >= 30 -> Color(0xFFFFF3E0) to "전설의 학습자!"
+        streak >= 14 -> Color(0xFFFFF3E0) to "2주 연속 달성!"
+        streak >= 7 -> Color(0xFFFFF9C4) to "한 주를 완주했어요!"
+        streak >= 3 -> Color(0xFFFFF9C4) to "연속 학습 중!"
+        streak == 1 -> Color(0xFFF3F3F3) to "첫 걸음을 내딛었어요!"
+        else -> Color(0xFFF3F3F3) to "오늘 첫 문제를 풀어보세요"
+    }
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        color = bgColor
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = if (streak > 0) "🔥" else "💤",
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Column {
+                    Text(
+                        text = if (streak > 0) "${streak}일 연속" else "0일",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = message,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color(0xFF555555)
+                    )
+                }
+            }
+        }
     }
 }
 
