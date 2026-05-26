@@ -1,11 +1,15 @@
 name: Android Build
 
 on:
-  push:
-    branches: [ "claude/english-practice-app-Vp0h6", "claude/android-streak-widget-6FBVi", "main" ]
-  pull_request:
-    branches: [ "main" ]
   workflow_dispatch:
+  push:
+    branches:
+      - main
+      - "claude/android-streak-widget-6FBVi"
+      - "claude/english-practice-app-Vp0h6"
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
@@ -29,20 +33,22 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build Debug APK
-        run: ./gradlew assembleDebug --stacktrace --no-daemon 2>&1 | tee /tmp/build.log; exit ${PIPESTATUS[0]}
-
-      - name: Upload build log on failure
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-log-${{ github.sha }}
-          path: /tmp/build.log
-          retention-days: 3
+        shell: bash
+        run: ./gradlew assembleDebug --no-daemon
 
       - name: Upload Debug APK
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug-${{ github.sha }}
+          name: app-debug
           path: app/build/outputs/apk/debug/app-debug.apk
           retention-days: 7
+
+      - name: Upload build log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: |
+            ~/.gradle/daemon
+          retention-days: 3
