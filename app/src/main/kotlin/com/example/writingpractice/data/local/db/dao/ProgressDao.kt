@@ -21,4 +21,7 @@ interface ProgressDao {
 
     @Query("SELECT * FROM daily_progress ORDER BY date DESC LIMIT 30")
     fun observeRecent(): Flow<List<DailyProgressEntity>>
+
+    @Query("SELECT date FROM daily_progress WHERE problems_solved >= 1 ORDER BY date DESC")
+    fun observeAllActiveDates(): Flow<List<String>>
 }

@@ -34,6 +34,7 @@ data class HomeUiState(
     val dailyGoal: Int = 5,
     val unreviewedCorrections: Int = 0,
     val apiStatus: ApiStatus = ApiStatus.UNKNOWN,
+    val currentStreak: Int = 0,
     val isLoading: Boolean = true
 )
 
@@ -108,13 +109,15 @@ class HomeViewModel @Inject constructor(
                 validated == false -> ApiStatus.INVALID
                 else -> ApiStatus.UNKNOWN
             }
-        }
-    ) { solved, goal, unreviewed, apiStatus ->
+        },
+        practiceRepository.observeCurrentStreak()
+    ) { solved, goal, unreviewed, apiStatus, streak ->
         HomeUiState(
             todaySolved = solved,
             dailyGoal = goal,
             unreviewedCorrections = unreviewed,
             apiStatus = apiStatus,
+            currentStreak = streak,
             isLoading = false
         )
     }.stateIn(

@@ -1,10 +1,15 @@
 name: Android Build
 
 on:
+  workflow_dispatch:
   push:
-    branches: [ "claude/english-practice-app-Vp0h6", "main" ]
+    branches:
+      - main
+      - "claude/android-streak-widget-6FBVi"
+      - "claude/english-practice-app-Vp0h6"
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
   build:
@@ -21,12 +26,6 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      - name: Verify Android SDK
-        run: |
-          echo "ANDROID_HOME=$ANDROID_HOME"
-          ls "$ANDROID_HOME/platforms/" 2>/dev/null || echo "No platforms dir"
-          ls "$ANDROID_HOME/build-tools/" 2>/dev/null || echo "No build-tools dir"
-
       - name: Create local.properties
         run: echo "sdk.dir=$ANDROID_HOME" > local.properties
 
@@ -34,19 +33,21 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build Debug APK
-        run: ./gradlew assembleDebug --stacktrace --no-daemon 2>&1 | tee /tmp/build.log; exit ${PIPESTATUS[0]}
+        shell: bash
+        run: ./gradlew assembleDebug --no-daemon
+
+      - name: Upload Debug APK
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug-${{ github.run_number }}
+          path: app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 7
 
       - name: Upload build log on failure
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: build-log-${{ github.sha }}
-          path: /tmp/build.log
+          name: build-log-${{ github.run_number }}
+          path: ~/.gradle/daemon
           retention-days: 3
-
-      - name: Upload Debug APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-debug-${{ github.sha }}
-          path: app/build/outputs/apk/debug/app-debug.apk
-          retention-days: 7

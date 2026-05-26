@@ -1,5 +1,8 @@
 package com.example.writingpractice.data.repository
 
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
+import android.content.Context
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy
@@ -20,10 +23,13 @@ import com.example.writingpractice.data.model.toDomain
 import com.example.writingpractice.data.model.toEntity
 import com.example.writingpractice.data.remote.ClaudeApiClient
 import com.example.writingpractice.util.DateTimeUtil
+import com.example.writingpractice.widget.StreakWidgetProvider
 import com.example.writingpractice.worker.GradeAnswerWorker
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -36,7 +42,8 @@ class PracticeRepository @Inject constructor(
     private val problemDao: ProblemDao,
     private val claudeApiClient: ClaudeApiClient,
     private val workManager: WorkManager,
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    @ApplicationContext private val context: Context
 ) {
     // In-memory draft storage; survives navigation within the same app session
     private val drafts = mutableMapOf<Long, String>()
@@ -120,6 +127,18 @@ class PracticeRepository @Inject constructor(
                 levelBreakdown = current?.levelBreakdown ?: "{}"
             )
         )
+        notifyStreakWidget()
+    }
+
+    private fun notifyStreakWidget() {
+        val manager = AppWidgetManager.getInstance(context)
+        val ids = manager.getAppWidgetIds(
+            ComponentName(context, StreakWidgetProvider::class.java)
+        )
+        if (ids.isNotEmpty()) {
+            val provider = StreakWidgetProvider()
+            provider.onUpdate(context, manager, ids)
+        }
     }
 
     suspend fun getGradingStatus(answerId: Long): GradingStatus? =
@@ -135,4 +154,27 @@ class PracticeRepository @Inject constructor(
 
     fun observeTodaySolvedCount(): Flow<Int> =
         userAnswerDao.observeCountForDate(DateTimeUtil.todayIso())
+
+    fun observeCurrentStreak(): Flow<Int> =
+        progressDao.observeAllActiveDates().map { dates -> computeStreak(dates) }
+
+    private fun computeStreak(dates: List<String>): Int {
+        if (dates.isEmpty()) return 0
+        val today = LocalDate.now()
+        val sorted = dates.map { LocalDate.parse(it) }.sortedDescending()
+        val mostRecent = sorted.first()
+        // If the most recent active day is older than yesterday, streak is broken
+        if (mostRecent.isBefore(today.minusDays(1))) return 0
+        var streak = 0
+        var expected = if (mostRecent == today) today else today.minusDays(1)
+        for (date in sorted) {
+            if (date == expected) {
+                streak++
+                expected = expected.minusDays(1)
+            } else if (date.isBefore(expected)) {
+                break
+            }
+        }
+        return streak
+    }
 }

@@ -26,6 +26,7 @@ sealed class AutoAnalysisState {
     object Idle : AutoAnalysisState()
     object Running : AutoAnalysisState()
     object Done : AutoAnalysisState()
+    object Failed : AutoAnalysisState()
 }
 
 data class ResultUiState(
@@ -105,13 +106,13 @@ class ResultViewModel @Inject constructor(
     private suspend fun checkAndAutoAnalyze() {
         val total = correctionDao.countCorrectionsAfter(0L)
         val lastCount = settingsRepository.getLastAutoAnalyzedCount()
-        if (total / 30 > lastCount / 30) {
+        if (total - lastCount >= 30) {
+            // 성공/실패와 무관하게 먼저 카운트를 올려서, 다음 Result 화면에서 재트리거되지 않게 막는다.
+            settingsRepository.setLastAutoAnalyzedCount(total)
             _autoAnalysisState.value = AutoAnalysisState.Running
             val result = weaknessAnalysisRepository.analyze(Period.ALL)
-            if (result.isSuccess) {
-                settingsRepository.setLastAutoAnalyzedCount(total)
-            }
-            _autoAnalysisState.value = AutoAnalysisState.Done
+            _autoAnalysisState.value =
+                if (result.isSuccess) AutoAnalysisState.Done else AutoAnalysisState.Failed
         }
     }
 }
