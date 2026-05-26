@@ -340,10 +340,27 @@ fun SettingsScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    "현재 버전: ${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})",
-                    style = MaterialTheme.typography.bodyMedium
-                )
+                val lastUpdateDate = remember {
+                    try {
+                        val info = context.packageManager.getPackageInfo(context.packageName, 0)
+                        val instant = java.time.Instant.ofEpochMilli(info.lastUpdateTime)
+                        java.time.format.DateTimeFormatter.ofPattern("yyyy.MM.dd")
+                            .withZone(java.time.ZoneId.systemDefault())
+                            .format(instant)
+                    } catch (e: Exception) { "-" }
+                }
+                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Text(
+                        "버전 ${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Text(
+                        "업데이트: $lastUpdateDate",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
                 OutlinedButton(
                     onClick = { viewModel.checkForUpdate() },
                     enabled = updateState !is UpdateState.Checking &&
