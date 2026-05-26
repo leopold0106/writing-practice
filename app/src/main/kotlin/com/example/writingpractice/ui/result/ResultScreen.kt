@@ -153,29 +153,36 @@ fun ResultScreen(
 
 @Composable
 private fun AutoAnalysisBanner(state: AutoAnalysisState) {
-    val isRunning = state is AutoAnalysisState.Running
+    val (bgColor, textColor, message) = when (state) {
+        AutoAnalysisState.Running ->
+            Triple(Color(0xFFE3F2FD), Color(0xFF1565C0), "오답 30개 달성! 약점 분석 자동 실행 중...")
+        AutoAnalysisState.Done ->
+            Triple(Color(0xFFE8F5E9), Color(0xFF1B5E20), "약점 분석이 완료되었습니다 ✓")
+        AutoAnalysisState.Failed ->
+            Triple(Color(0xFFFFF3E0), Color(0xFFE65100), "자동 약점 분석 실패 — 설정에서 API 키를 확인하세요")
+        AutoAnalysisState.Idle -> return
+    }
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        color = Color(0xFFE3F2FD)
+        color = bgColor
     ) {
         Row(
             modifier = Modifier.padding(12.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (isRunning) {
+            if (state is AutoAnalysisState.Running) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(16.dp),
                     strokeWidth = 2.dp,
-                    color = Color(0xFF1565C0)
+                    color = textColor
                 )
             }
             Text(
-                text = if (isRunning) "30문제 달성! 약점 분석 자동 업데이트 중..."
-                       else "약점 분석이 업데이트되었습니다",
+                text = message,
                 style = MaterialTheme.typography.bodySmall,
-                color = Color(0xFF1565C0)
+                color = textColor
             )
         }
     }
