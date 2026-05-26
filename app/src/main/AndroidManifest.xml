@@ -49,6 +49,17 @@
                 tools:node="remove" />
         </provider>
 
+        <receiver
+            android:name=".widget.StreakWidgetProvider"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/streak_widget_info" />
+        </receiver>
+
     </application>
 
 </manifest>

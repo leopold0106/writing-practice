@@ -2,7 +2,7 @@ name: Android Build
 
 on:
   push:
-    branches: [ "claude/english-practice-app-Vp0h6", "main" ]
+    branches: [ "claude/english-practice-app-Vp0h6", "claude/android-streak-widget-6FBVi", "main" ]
   pull_request:
     branches: [ "main" ]
 

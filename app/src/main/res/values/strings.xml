@@ -4,4 +4,5 @@
     <string name="notification_channel_name">일일 연습 알림</string>
     <string name="notification_channel_description">매일 영작 연습 목표를 달성하도록 알림을 보냅니다</string>
     <string name="notification_title">영작 연습 시간이에요!</string>
+    <string name="widget_description">연속 학습 일수를 바탕화면에서 확인하세요</string>
 </resources>
