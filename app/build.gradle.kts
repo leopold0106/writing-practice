@@ -6,6 +6,14 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
+fun getVersionName(): String = try {
+    providers.exec {
+        commandLine("git", "describe", "--tags", "--exact-match")
+    }.standardOutput.asText.get().trim().removePrefix("v")
+} catch (e: Exception) {
+    "dev"
+}
+
 android {
     namespace = "com.example.writingpractice"
     compileSdk = 34
@@ -15,7 +23,7 @@ android {
         minSdk = 26
         targetSdk = 34
         versionCode = 4
-        versionName = "1.3.2"
+        versionName = getVersionName()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
