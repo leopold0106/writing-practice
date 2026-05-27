@@ -30,8 +30,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -505,9 +507,9 @@ fun SettingsScreen(
                     Text("복원 중...", style = MaterialTheme.typography.bodySmall)
                 }
 
-                is BackupState.ImportDone -> androidx.compose.material3.Surface(
+                is BackupState.ImportDone -> Surface(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp),
+                    shape = RoundedCornerShape(8.dp),
                     color = Color(0xFFE8F5E9)
                 ) {
                     Row(
@@ -528,9 +530,9 @@ fun SettingsScreen(
                     }
                 }
 
-                is BackupState.Error -> androidx.compose.material3.Surface(
+                is BackupState.Error -> Surface(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp),
+                    shape = RoundedCornerShape(8.dp),
                     color = Color(0xFFFFEBEE)
                 ) {
                     Row(

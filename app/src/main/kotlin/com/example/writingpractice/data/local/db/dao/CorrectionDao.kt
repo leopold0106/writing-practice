@@ -68,6 +68,9 @@ interface CorrectionDao {
     @Query("SELECT error_type as errorType, COUNT(*) as count FROM corrections WHERE created_at >= :startMs AND created_at < :endMs GROUP BY error_type")
     suspend fun countByTypeInRange(startMs: Long, endMs: Long): List<ErrorTypeCount>
 
+    @Query("SELECT error_type as errorType, COUNT(*) as count FROM corrections WHERE created_at >= :sinceMs GROUP BY error_type")
+    suspend fun countByTypeAfter(sinceMs: Long): List<ErrorTypeCount>
+
     @Query("SELECT * FROM corrections ORDER BY created_at DESC")
     suspend fun getAll(): List<CorrectionEntity>
 }

@@ -82,8 +82,9 @@ class WeaknessAnalysisRepository @Inject constructor(
         }
 
         val sample = correctionDao.getRecentCorrections(sinceMs, limit = 30)
+        val rawCounts = correctionDao.countByTypeAfter(sinceMs).associate { it.errorType to it.count }
         val countsByType: Map<String, Int> = ErrorType.entries.associate { type ->
-            type.name to sample.count { it.errorType == type }
+            type.name to (rawCounts[type.name] ?: 0)
         }
         val avgScore = userAnswerDao.avgScoreAfter(sinceMs)?.toInt()
 
