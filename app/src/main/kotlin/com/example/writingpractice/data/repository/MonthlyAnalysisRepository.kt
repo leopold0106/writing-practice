@@ -24,6 +24,8 @@ import java.time.ZoneId
 import javax.inject.Inject
 import javax.inject.Singleton
 
+class NoPreviousMonthDataException : Exception("지난 달 데이터가 없어 비교할 수 없습니다.")
+
 @Singleton
 class MonthlyAnalysisRepository @Inject constructor(
     private val correctionDao: CorrectionDao,
@@ -39,11 +41,12 @@ class MonthlyAnalysisRepository @Inject constructor(
     fun observeAll(): Flow<List<MonthlySnapshot>> =
         monthlySnapshotDao.observeAll().map { list -> list.map { it.toDomain(json) } }
 
-    fun triggerAnalyzeMonthly(currentYM: String, onSuccess: suspend () -> Unit = {}) {
+    fun triggerAnalyzeMonthly(currentYM: String, onComplete: suspend (Result<MonthlySnapshot>) -> Unit = {}) {
         if (!_isAnalyzing.compareAndSet(expect = false, update = true)) return
         applicationScope.launch {
             try {
-                analyzeMonthly(currentYM).onSuccess { onSuccess() }
+                val result = analyzeMonthly(currentYM)
+                onComplete(result)
             } finally {
                 _isAnalyzing.value = false
             }
@@ -60,7 +63,7 @@ class MonthlyAnalysisRepository @Inject constructor(
 
         val prevTotal = correctionDao.countCorrectionsInRange(prevStart, prevEnd)
         if (prevTotal == 0) {
-            return Result.failure(IllegalStateException("지난 달 데이터가 없어 비교할 수 없습니다."))
+            return Result.failure(NoPreviousMonthDataException())
         }
 
         val currTotal = correctionDao.countCorrectionsInRange(currStart, currEnd)

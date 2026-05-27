@@ -132,7 +132,7 @@ class BackupRepository @Inject constructor(
 
     suspend fun importBackup(uri: Uri): Result<Int> {
         val jsonStr = context.contentResolver.openInputStream(uri)
-            ?.bufferedReader()?.readText()
+            ?.use { it.bufferedReader().readText() }
             ?: return Result.failure(Exception("파일을 읽을 수 없습니다"))
 
         val backup = try {

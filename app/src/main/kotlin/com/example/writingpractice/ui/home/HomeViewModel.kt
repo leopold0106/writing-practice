@@ -6,6 +6,7 @@ import com.example.writingpractice.data.remote.AppUpdateChecker
 import com.example.writingpractice.data.remote.UpdateInfo
 import com.example.writingpractice.data.repository.CorrectionRepository
 import com.example.writingpractice.data.repository.MonthlyAnalysisRepository
+import com.example.writingpractice.data.repository.NoPreviousMonthDataException
 import com.example.writingpractice.data.repository.PracticeRepository
 import com.example.writingpractice.data.repository.ProblemRepository
 import com.example.writingpractice.data.repository.SettingsRepository
@@ -70,8 +71,10 @@ class HomeViewModel @Inject constructor(
                 ?: run { settingsRepository.setInstallYearMonth(currentYM); currentYM }
             val lastAnalyzedYM = settingsRepository.getLastMonthlyAnalyzedYearMonth()
             if (currentYM != installYM && currentYM != lastAnalyzedYM) {
-                monthlyAnalysisRepository.triggerAnalyzeMonthly(currentYM) {
-                    settingsRepository.setLastMonthlyAnalyzedYearMonth(currentYM)
+                monthlyAnalysisRepository.triggerAnalyzeMonthly(currentYM) { result ->
+                    if (result.isSuccess || result.exceptionOrNull() is NoPreviousMonthDataException) {
+                        settingsRepository.setLastMonthlyAnalyzedYearMonth(currentYM)
+                    }
                 }
             }
         }
