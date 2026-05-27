@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class BackupFile(
+    val app: String = "writing-practice",
     val version: Int = 1,
     val exportedAt: Long,
     val answers: List<AnswerBackup>,

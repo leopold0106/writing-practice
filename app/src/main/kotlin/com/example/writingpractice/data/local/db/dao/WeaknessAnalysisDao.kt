@@ -23,4 +23,7 @@ interface WeaknessAnalysisDao {
 
     @Query("SELECT * FROM weakness_analyses ORDER BY analyzedAt DESC")
     suspend fun getAll(): List<WeaknessAnalysisEntity>
+
+    @Query("SELECT COUNT(*) FROM weakness_analyses WHERE period = :period AND analyzedAt = :analyzedAt")
+    suspend fun countByPeriodAndAnalyzedAt(period: String, analyzedAt: Long): Int
 }

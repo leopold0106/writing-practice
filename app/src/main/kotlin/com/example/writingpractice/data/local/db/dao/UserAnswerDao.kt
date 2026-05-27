@@ -63,4 +63,10 @@ interface UserAnswerDao {
         WHERE submitted_at >= :startMs AND submitted_at < :endMs AND grading_status = 'GRADED' AND score IS NOT NULL
     """)
     suspend fun avgScoreInRange(startMs: Long, endMs: Long): Double?
+
+    @Query("SELECT * FROM user_answers ORDER BY submitted_at DESC")
+    suspend fun getAll(): List<UserAnswerEntity>
+
+    @Query("SELECT COUNT(*) FROM user_answers WHERE problem_id = :problemId AND submitted_at = :submittedAt")
+    suspend fun countByProblemIdAndSubmittedAt(problemId: Long, submittedAt: Long): Int
 }
