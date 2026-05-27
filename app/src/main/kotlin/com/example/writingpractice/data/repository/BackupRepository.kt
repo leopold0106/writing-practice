@@ -216,6 +216,7 @@ class BackupRepository @Inject constructor(
             }
 
             backup.monthlySnapshots.forEach { ms ->
+                if (monthlySnapshotDao.countByYearMonth(ms.yearMonth) > 0) return@forEach
                 monthlySnapshotDao.insert(
                     MonthlySnapshotEntity(
                         yearMonth = ms.yearMonth,
