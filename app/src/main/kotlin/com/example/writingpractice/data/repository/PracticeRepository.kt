@@ -3,6 +3,7 @@ package com.example.writingpractice.data.repository
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy
@@ -136,8 +137,11 @@ class PracticeRepository @Inject constructor(
             ComponentName(context, StreakWidgetProvider::class.java)
         )
         if (ids.isNotEmpty()) {
-            val provider = StreakWidgetProvider()
-            provider.onUpdate(context, manager, ids)
+            val intent = Intent(context, StreakWidgetProvider::class.java).apply {
+                action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+                putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+            }
+            context.sendBroadcast(intent)
         }
     }
 
