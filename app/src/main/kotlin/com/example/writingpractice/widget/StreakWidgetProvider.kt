@@ -12,6 +12,7 @@ import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -35,11 +36,16 @@ class StreakWidgetProvider : AppWidgetProvider() {
         )
         val progressDao = entryPoint.progressDao()
 
-        CoroutineScope(Dispatchers.Main).launch {
-            val dates = progressDao.observeAllActiveDates().first()
-            val streak = computeStreak(dates)
-            appWidgetIds.forEach { widgetId ->
-                updateWidgetViews(context, appWidgetManager, widgetId, streak)
+        val pending = goAsync()
+        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+            try {
+                val dates = progressDao.observeAllActiveDates().first()
+                val streak = computeStreak(dates)
+                appWidgetIds.forEach { widgetId ->
+                    updateWidgetViews(context, appWidgetManager, widgetId, streak)
+                }
+            } finally {
+                pending.finish()
             }
         }
     }
