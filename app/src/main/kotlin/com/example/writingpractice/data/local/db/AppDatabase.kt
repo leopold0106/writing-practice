@@ -96,11 +96,13 @@ class Converters {
     fun fromGradingStatus(v: GradingStatus): String = v.name
 
     @TypeConverter
-    fun toGradingStatus(v: String): GradingStatus = GradingStatus.valueOf(v)
+    fun toGradingStatus(v: String): GradingStatus =
+        runCatching { GradingStatus.valueOf(v) }.getOrDefault(GradingStatus.PENDING)
 
     @TypeConverter
     fun fromErrorType(v: ErrorType): String = v.name
 
     @TypeConverter
-    fun toErrorType(v: String): ErrorType = ErrorType.valueOf(v)
+    fun toErrorType(v: String): ErrorType =
+        runCatching { ErrorType.valueOf(v) }.getOrDefault(ErrorType.GRAMMAR)
 }

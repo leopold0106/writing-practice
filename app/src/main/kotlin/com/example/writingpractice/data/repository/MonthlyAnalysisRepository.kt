@@ -64,6 +64,9 @@ class MonthlyAnalysisRepository @Inject constructor(
         }
 
         val currTotal = correctionDao.countCorrectionsInRange(currStart, currEnd)
+        if (currTotal == 0) {
+            return Result.failure(IllegalStateException("이번 달 데이터가 없어 비교할 수 없습니다."))
+        }
         val prevSamples = correctionDao.getCorrectionsInRange(prevStart, prevEnd, 15)
         val currSamples = correctionDao.getCorrectionsInRange(currStart, currEnd, 15)
         val prevAvgScore = userAnswerDao.avgScoreInRange(prevStart, prevEnd)?.toInt()
