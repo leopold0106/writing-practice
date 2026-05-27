@@ -10,8 +10,14 @@ import com.example.writingpractice.data.model.toEntity
 import com.example.writingpractice.data.remote.ClaudeApiClient
 import com.example.writingpractice.data.remote.MonthlyComparisonInput
 import com.example.writingpractice.data.remote.SampleCorrection
+import com.example.writingpractice.di.ApplicationScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import java.time.YearMonth
 import java.time.ZoneId
@@ -24,10 +30,25 @@ class MonthlyAnalysisRepository @Inject constructor(
     private val userAnswerDao: UserAnswerDao,
     private val monthlySnapshotDao: MonthlySnapshotDao,
     private val claudeApiClient: ClaudeApiClient,
-    private val json: Json
+    private val json: Json,
+    @ApplicationScope private val applicationScope: CoroutineScope
 ) {
+    private val _isAnalyzing = MutableStateFlow(false)
+    val isAnalyzing: StateFlow<Boolean> = _isAnalyzing.asStateFlow()
+
     fun observeAll(): Flow<List<MonthlySnapshot>> =
         monthlySnapshotDao.observeAll().map { list -> list.map { it.toDomain(json) } }
+
+    fun triggerAnalyzeMonthly(currentYM: String, onSuccess: suspend () -> Unit = {}) {
+        if (!_isAnalyzing.compareAndSet(expect = false, update = true)) return
+        applicationScope.launch {
+            try {
+                analyzeMonthly(currentYM).onSuccess { onSuccess() }
+            } finally {
+                _isAnalyzing.value = false
+            }
+        }
+    }
 
     suspend fun analyzeMonthly(currentYM: String): Result<MonthlySnapshot> {
         val previousYM = YearMonth.parse(currentYM).minusMonths(1).toString()
@@ -48,11 +69,16 @@ class MonthlyAnalysisRepository @Inject constructor(
         val prevAvgScore = userAnswerDao.avgScoreInRange(prevStart, prevEnd)?.toInt()
         val currAvgScore = userAnswerDao.avgScoreInRange(currStart, currEnd)?.toInt()
 
+        val prevCountsByType = correctionDao.countByTypeInRange(prevStart, prevEnd)
+            .associate { it.errorType to it.count }
+        val currCountsByType = correctionDao.countByTypeInRange(currStart, currEnd)
+            .associate { it.errorType to it.count }
+
         val prevCounts = ErrorType.entries.associate { type ->
-            type.name to prevSamples.count { it.errorType == type }
+            type.name to (prevCountsByType[type.name] ?: 0)
         }
         val currCounts = ErrorType.entries.associate { type ->
-            type.name to currSamples.count { it.errorType == type }
+            type.name to (currCountsByType[type.name] ?: 0)
         }
 
         val input = MonthlyComparisonInput(

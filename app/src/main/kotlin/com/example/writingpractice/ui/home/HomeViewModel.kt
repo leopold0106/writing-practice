@@ -54,8 +54,7 @@ class HomeViewModel @Inject constructor(
     private val _updateInfo = MutableStateFlow<UpdateInfo?>(null)
     val updateInfo: StateFlow<UpdateInfo?> = _updateInfo.asStateFlow()
 
-    private val _isMonthlyAnalysisRunning = MutableStateFlow(false)
-    val isMonthlyAnalysisRunning: StateFlow<Boolean> = _isMonthlyAnalysisRunning.asStateFlow()
+    val isMonthlyAnalysisRunning: StateFlow<Boolean> = monthlyAnalysisRepository.isAnalyzing
 
     init {
         viewModelScope.launch {
@@ -71,10 +70,9 @@ class HomeViewModel @Inject constructor(
                 ?: run { settingsRepository.setInstallYearMonth(currentYM); currentYM }
             val lastAnalyzedYM = settingsRepository.getLastMonthlyAnalyzedYearMonth()
             if (currentYM != installYM && currentYM != lastAnalyzedYM) {
-                _isMonthlyAnalysisRunning.value = true
-                monthlyAnalysisRepository.analyzeMonthly(currentYM)
-                settingsRepository.setLastMonthlyAnalyzedYearMonth(currentYM)
-                _isMonthlyAnalysisRunning.value = false
+                monthlyAnalysisRepository.triggerAnalyzeMonthly(currentYM) {
+                    settingsRepository.setLastMonthlyAnalyzedYearMonth(currentYM)
+                }
             }
         }
     }

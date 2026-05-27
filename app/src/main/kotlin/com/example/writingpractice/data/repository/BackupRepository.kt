@@ -43,49 +43,45 @@ class BackupRepository @Inject constructor(
     companion object {
         private const val AUTHORITY = "com.example.writingpractice.fileprovider"
         private const val SUPPORTED_VERSION = 1
+        private const val APP_ID = "writing-practice"
     }
 
     suspend fun exportBackup(): Result<Uri> = try {
-        val corrections = correctionDao.getAll()
-        val answerCache = mutableMapOf<Long, UserAnswerEntity>()
+        val allAnswers = userAnswerDao.getAll()
         val problemCache = mutableMapOf<Long, ProblemEntity>()
+        val correctionsByAnswer = correctionDao.getAll().groupBy { it.userAnswerId }
 
-        val answers = corrections
-            .groupBy { it.userAnswerId }
-            .mapNotNull { (answerId, corrs) ->
-                val answer = answerCache.getOrPut(answerId) {
-                    userAnswerDao.getById(answerId) ?: return@mapNotNull null
-                }
-                val problem = problemCache.getOrPut(answer.problemId) {
-                    problemDao.getById(answer.problemId) ?: return@mapNotNull null
-                }
-                AnswerBackup(
-                    problemUuid = problem.uuid,
-                    koreanText = problem.koreanText,
-                    referenceAnswer = problem.referenceAnswer,
-                    level = problem.level,
-                    topicTag = problem.topicTag,
-                    isPrebundled = problem.isPrebundled,
-                    problemCreatedAt = problem.createdAt,
-                    answerText = answer.answerText,
-                    score = answer.score,
-                    gradingStatus = answer.gradingStatus.name,
-                    overallFeedback = answer.overallFeedback,
-                    finalCorrectedVersion = answer.finalCorrectedVersion,
-                    submittedAt = answer.submittedAt,
-                    attemptNumber = answer.attemptNumber,
-                    corrections = corrs.map { c ->
-                        CorrectionBackup(
-                            originalSentence = c.originalSentence,
-                            correctedSentence = c.correctedSentence,
-                            explanation = c.explanation,
-                            errorType = c.errorType.name,
-                            isReviewed = c.isReviewed,
-                            createdAt = c.createdAt
-                        )
-                    }
-                )
+        val answers = allAnswers.mapNotNull { answer ->
+            val problem = problemCache.getOrPut(answer.problemId) {
+                problemDao.getById(answer.problemId) ?: return@mapNotNull null
             }
+            AnswerBackup(
+                problemUuid = problem.uuid,
+                koreanText = problem.koreanText,
+                referenceAnswer = problem.referenceAnswer,
+                level = problem.level,
+                topicTag = problem.topicTag,
+                isPrebundled = problem.isPrebundled,
+                problemCreatedAt = problem.createdAt,
+                answerText = answer.answerText,
+                score = answer.score,
+                gradingStatus = answer.gradingStatus.name,
+                overallFeedback = answer.overallFeedback,
+                finalCorrectedVersion = answer.finalCorrectedVersion,
+                submittedAt = answer.submittedAt,
+                attemptNumber = answer.attemptNumber,
+                corrections = (correctionsByAnswer[answer.id] ?: emptyList()).map { c ->
+                    CorrectionBackup(
+                        originalSentence = c.originalSentence,
+                        correctedSentence = c.correctedSentence,
+                        explanation = c.explanation,
+                        errorType = c.errorType.name,
+                        isReviewed = c.isReviewed,
+                        createdAt = c.createdAt
+                    )
+                }
+            )
+        }
 
         val weaknessAnalyses = weaknessAnalysisDao.getAll().map { e ->
             WeaknessAnalysisBackup(
@@ -145,91 +141,98 @@ class BackupRepository @Inject constructor(
             return Result.failure(Exception("백업 파일 형식이 올바르지 않습니다: ${e.message}"))
         }
 
+        if (backup.app != APP_ID) {
+            return Result.failure(Exception("다른 앱의 백업 파일입니다 (app: ${backup.app})"))
+        }
+
         if (backup.version > SUPPORTED_VERSION) {
             return Result.failure(Exception("지원하지 않는 백업 형식입니다 (버전 ${backup.version})"))
         }
 
         return try {
-
-        var imported = 0
-        backup.answers.forEach { ab ->
-            val existingProblem = problemDao.getByUuid(ab.problemUuid)
-            val problemId = existingProblem?.id ?: problemDao.insert(
-                ProblemEntity(
-                    uuid = ab.problemUuid,
-                    level = ab.level,
-                    koreanText = ab.koreanText,
-                    referenceAnswer = ab.referenceAnswer,
-                    topicTag = ab.topicTag,
-                    isPrebundled = ab.isPrebundled,
-                    createdAt = ab.problemCreatedAt
+            var imported = 0
+            backup.answers.forEach { ab ->
+                val existingProblem = problemDao.getByUuid(ab.problemUuid)
+                val problemId = existingProblem?.id ?: problemDao.insert(
+                    ProblemEntity(
+                        uuid = ab.problemUuid,
+                        level = ab.level,
+                        koreanText = ab.koreanText,
+                        referenceAnswer = ab.referenceAnswer,
+                        topicTag = ab.topicTag,
+                        isPrebundled = ab.isPrebundled,
+                        createdAt = ab.problemCreatedAt
+                    )
                 )
-            )
 
-            val answerId = userAnswerDao.insert(
-                UserAnswerEntity(
-                    problemId = problemId,
-                    answerText = ab.answerText,
-                    submittedAt = ab.submittedAt,
-                    gradingStatus = runCatching { GradingStatus.valueOf(ab.gradingStatus) }
-                        .getOrDefault(GradingStatus.GRADED),
-                    score = ab.score,
-                    attemptNumber = ab.attemptNumber,
-                    overallFeedback = ab.overallFeedback,
-                    finalCorrectedVersion = ab.finalCorrectedVersion
-                )
-            )
+                if (userAnswerDao.countByProblemIdAndSubmittedAt(problemId, ab.submittedAt) > 0) return@forEach
 
-            correctionDao.insertAll(ab.corrections.map { c ->
-                CorrectionEntity(
-                    userAnswerId = answerId,
-                    problemId = problemId,
-                    originalSentence = c.originalSentence,
-                    correctedSentence = c.correctedSentence,
-                    explanation = c.explanation,
-                    errorType = runCatching { ErrorType.valueOf(c.errorType) }
-                        .getOrDefault(ErrorType.GRAMMAR),
-                    isReviewed = c.isReviewed,
-                    createdAt = c.createdAt
+                val answerId = userAnswerDao.insert(
+                    UserAnswerEntity(
+                        problemId = problemId,
+                        answerText = ab.answerText,
+                        submittedAt = ab.submittedAt,
+                        gradingStatus = runCatching { GradingStatus.valueOf(ab.gradingStatus) }
+                            .getOrDefault(GradingStatus.GRADED),
+                        score = ab.score,
+                        attemptNumber = ab.attemptNumber,
+                        overallFeedback = ab.overallFeedback,
+                        finalCorrectedVersion = ab.finalCorrectedVersion
+                    )
                 )
-            })
-            imported++
-        }
 
-        backup.weaknessAnalyses.forEach { wa ->
-            weaknessAnalysisDao.insert(
-                WeaknessAnalysisEntity(
-                    period = wa.period,
-                    analyzedAt = wa.analyzedAt,
-                    summary = wa.summary,
-                    overallLevel = wa.overallLevel,
-                    weaknessPointsJson = wa.weaknessPointsJson,
-                    suggestionsJson = wa.suggestionsJson,
-                    recommendedPatternsJson = wa.recommendedPatternsJson,
-                    recommendedLevel = wa.recommendedLevel,
-                    totalCorrections = wa.totalCorrections,
-                    avgScore = wa.avgScore
-                )
-            )
-        }
+                correctionDao.insertAll(ab.corrections.map { c ->
+                    CorrectionEntity(
+                        userAnswerId = answerId,
+                        problemId = problemId,
+                        originalSentence = c.originalSentence,
+                        correctedSentence = c.correctedSentence,
+                        explanation = c.explanation,
+                        errorType = runCatching { ErrorType.valueOf(c.errorType) }
+                            .getOrDefault(ErrorType.GRAMMAR),
+                        isReviewed = c.isReviewed,
+                        createdAt = c.createdAt
+                    )
+                })
+                imported++
+            }
 
-        backup.monthlySnapshots.forEach { ms ->
-            monthlySnapshotDao.insert(
-                MonthlySnapshotEntity(
-                    yearMonth = ms.yearMonth,
-                    analyzedAt = ms.analyzedAt,
-                    comparisonSummary = ms.comparisonSummary,
-                    overallTrend = ms.overallTrend,
-                    errorChangesJson = ms.errorChangesJson,
-                    keyImprovementsJson = ms.keyImprovementsJson,
-                    areasToFocusJson = ms.areasToFocusJson,
-                    currentMonthCorrections = ms.currentMonthCorrections,
-                    previousMonthCorrections = ms.previousMonthCorrections,
-                    currentMonthAvgScore = ms.currentMonthAvgScore,
-                    previousMonthAvgScore = ms.previousMonthAvgScore
+            backup.weaknessAnalyses.forEach { wa ->
+                if (weaknessAnalysisDao.countByPeriodAndAnalyzedAt(wa.period, wa.analyzedAt) > 0) return@forEach
+                weaknessAnalysisDao.insert(
+                    WeaknessAnalysisEntity(
+                        period = wa.period,
+                        analyzedAt = wa.analyzedAt,
+                        summary = wa.summary,
+                        overallLevel = wa.overallLevel,
+                        weaknessPointsJson = wa.weaknessPointsJson,
+                        suggestionsJson = wa.suggestionsJson,
+                        recommendedPatternsJson = wa.recommendedPatternsJson,
+                        recommendedLevel = wa.recommendedLevel,
+                        totalCorrections = wa.totalCorrections,
+                        avgScore = wa.avgScore
+                    )
                 )
-            )
-        }
+            }
+
+            backup.monthlySnapshots.forEach { ms ->
+                if (monthlySnapshotDao.countByYearMonth(ms.yearMonth) > 0) return@forEach
+                monthlySnapshotDao.insert(
+                    MonthlySnapshotEntity(
+                        yearMonth = ms.yearMonth,
+                        analyzedAt = ms.analyzedAt,
+                        comparisonSummary = ms.comparisonSummary,
+                        overallTrend = ms.overallTrend,
+                        errorChangesJson = ms.errorChangesJson,
+                        keyImprovementsJson = ms.keyImprovementsJson,
+                        areasToFocusJson = ms.areasToFocusJson,
+                        currentMonthCorrections = ms.currentMonthCorrections,
+                        previousMonthCorrections = ms.previousMonthCorrections,
+                        currentMonthAvgScore = ms.currentMonthAvgScore,
+                        previousMonthAvgScore = ms.previousMonthAvgScore
+                    )
+                )
+            }
 
             Result.success(imported)
         } catch (e: Exception) {

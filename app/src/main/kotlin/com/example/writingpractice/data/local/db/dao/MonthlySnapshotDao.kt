@@ -17,4 +17,7 @@ interface MonthlySnapshotDao {
 
     @Query("SELECT * FROM monthly_snapshots ORDER BY yearMonth DESC")
     suspend fun getAll(): List<MonthlySnapshotEntity>
+
+    @Query("SELECT COUNT(*) FROM monthly_snapshots WHERE yearMonth = :yearMonth")
+    suspend fun countByYearMonth(yearMonth: String): Int
 }
