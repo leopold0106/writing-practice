@@ -3,6 +3,7 @@ package com.example.writingpractice.widget
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
+import android.graphics.Color
 import android.widget.RemoteViews
 import com.example.writingpractice.R
 import com.example.writingpractice.data.local.db.dao.ProgressDao
@@ -57,16 +58,44 @@ class StreakWidgetProvider : AppWidgetProvider() {
         streak: Int
     ) {
         val views = RemoteViews(context.packageName, R.layout.widget_streak)
-        views.setTextViewText(R.id.widget_streak_count, streak.toString())
-        if (streak == 0) {
-            views.setTextViewText(R.id.widget_fire_icon, "💤")
-            views.setTextViewText(R.id.widget_streak_label, "일 연속")
-        } else {
-            views.setTextViewText(R.id.widget_fire_icon, "🔥")
-            views.setTextViewText(R.id.widget_streak_label, "일 연속")
+
+        val (bgRes, countColor, labelColor, appNameColor) = when {
+            streak >= 100 -> Tier(
+                R.drawable.widget_bg_red,
+                Color.WHITE,
+                Color.parseColor("#FFCDD2"),
+                Color.parseColor("#EF9A9A")
+            )
+            streak >= 10 -> Tier(
+                R.drawable.widget_bg_orange,
+                Color.WHITE,
+                Color.parseColor("#FFE0B2"),
+                Color.parseColor("#FFCC80")
+            )
+            else -> Tier(
+                R.drawable.widget_bg_yellow,
+                Color.parseColor("#F57F17"),
+                Color.parseColor("#F57F17"),
+                Color.parseColor("#FFB300")
+            )
         }
+
+        views.setInt(R.id.widget_root, "setBackgroundResource", bgRes)
+        views.setTextViewText(R.id.widget_streak_count, streak.toString())
+        views.setTextColor(R.id.widget_streak_count, countColor)
+        views.setTextColor(R.id.widget_streak_label, labelColor)
+        views.setTextColor(R.id.widget_app_name, appNameColor)
+        views.setTextViewText(R.id.widget_fire_icon, if (streak == 0) "💤" else "🔥")
+
         appWidgetManager.updateAppWidget(widgetId, views)
     }
+
+    private data class Tier(
+        val bgRes: Int,
+        val countColor: Int,
+        val labelColor: Int,
+        val appNameColor: Int
+    )
 
     private fun computeStreak(dates: List<String>): Int {
         if (dates.isEmpty()) return 0

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/widget_background"
+    android:background="@drawable/widget_bg_yellow"
     android:orientation="vertical"
     android:gravity="center"
     android:padding="12dp">
@@ -12,17 +13,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="🔥"
-        android:textSize="32sp" />
+        android:textSize="34sp"
+        android:includeFontPadding="false" />
 
     <TextView
         android:id="@+id/widget_streak_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="0"
-        android:textSize="28sp"
+        android:textSize="42sp"
         android:textStyle="bold"
-        android:textColor="#FF212121"
-        android:layout_marginTop="2dp" />
+        android:textColor="#F57F17"
+        android:includeFontPadding="false"
+        android:layout_marginTop="0dp" />
 
     <TextView
         android:id="@+id/widget_streak_label"
@@ -30,8 +33,9 @@
         android:layout_height="wrap_content"
         android:text="일 연속"
         android:textSize="12sp"
-        android:textColor="#FF757575"
-        android:layout_marginTop="2dp" />
+        android:textStyle="bold"
+        android:textColor="#F57F17"
+        android:layout_marginTop="1dp" />
 
     <TextView
         android:id="@+id/widget_app_name"
@@ -39,7 +43,7 @@
         android:layout_height="wrap_content"
         android:text="영작 연습"
         android:textSize="10sp"
-        android:textColor="#FFBDBDBD"
-        android:layout_marginTop="4dp" />
+        android:textColor="#FFB300"
+        android:layout_marginTop="6dp" />
 
 </LinearLayout>
