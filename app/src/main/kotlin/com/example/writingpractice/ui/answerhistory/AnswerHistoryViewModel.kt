@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class AnswerHistoryUiState(
@@ -33,15 +34,17 @@ class AnswerHistoryViewModel @Inject constructor(
 
     private val _problem = MutableStateFlow<Problem?>(null)
 
+    init {
+        viewModelScope.launch {
+            _problem.value = problemRepository.getById(problemId)
+        }
+    }
+
     val uiState: StateFlow<AnswerHistoryUiState> = combine(
         userAnswerDao.observeForProblem(problemId),
         _problem
     ) { answers, problem ->
-        if (problem == null) {
-            val p = problemRepository.getById(problemId)
-            _problem.value = p
-            return@combine AnswerHistoryUiState(isLoading = true)
-        }
+        if (problem == null) return@combine AnswerHistoryUiState(isLoading = true)
         AnswerHistoryUiState(problem = problem, answers = answers, isLoading = false)
     }.stateIn(
         scope = viewModelScope,

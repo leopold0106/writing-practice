@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -65,12 +66,7 @@ class ResultViewModel @Inject constructor(
         practiceRepository.observeCorrectionsForAnswer(answerId),
         _problem
     ) { answer, corrections, problem ->
-        if (answer == null) return@combine ResultUiState(isLoading = true)
-        if (problem == null) {
-            val p = problemRepository.getById(answer.problemId)
-            _problem.value = p
-            return@combine ResultUiState(isLoading = true)
-        }
+        if (answer == null || problem == null) return@combine ResultUiState(isLoading = true)
         ResultUiState(
             problem = problem,
             userAnswer = answer.answerText,
@@ -88,6 +84,12 @@ class ResultViewModel @Inject constructor(
     )
 
     init {
+        viewModelScope.launch {
+            val answer = practiceRepository.observeAnswer(answerId).firstOrNull()
+            if (answer != null) {
+                _problem.value = problemRepository.getById(answer.problemId)
+            }
+        }
         viewModelScope.launch {
             uiState.collect { state ->
                 if (!state.isLoading && !hasCheckedAutoAnalysis) {
@@ -110,9 +112,12 @@ class ResultViewModel @Inject constructor(
             // 성공/실패와 무관하게 먼저 카운트를 올려서, 다음 Result 화면에서 재트리거되지 않게 막는다.
             settingsRepository.setLastAutoAnalyzedCount(total)
             _autoAnalysisState.value = AutoAnalysisState.Running
-            val result = weaknessAnalysisRepository.analyze(Period.ALL)
-            _autoAnalysisState.value =
-                if (result.isSuccess) AutoAnalysisState.Done else AutoAnalysisState.Failed
+            val result = weaknessAnalysisRepository.analyzeGuarded(Period.ALL)
+            _autoAnalysisState.value = when {
+                result == null -> AutoAnalysisState.Idle   // 다른 분석이 이미 진행 중
+                result.isSuccess -> AutoAnalysisState.Done
+                else -> AutoAnalysisState.Failed
+            }
         }
     }
 }

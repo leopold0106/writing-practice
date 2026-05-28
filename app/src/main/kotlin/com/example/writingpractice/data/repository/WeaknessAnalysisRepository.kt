@@ -74,6 +74,18 @@ class WeaknessAnalysisRepository @Inject constructor(
         }
     }
 
+    suspend fun analyzeGuarded(period: Period): Result<WeaknessAnalysis>? {
+        if (!_isAnalyzing.compareAndSet(expect = false, update = true)) return null
+        _lastError.value = null
+        return try {
+            analyze(period).also { result ->
+                result.onFailure { e -> _lastError.value = e.message ?: "알 수 없는 오류" }
+            }
+        } finally {
+            _isAnalyzing.value = false
+        }
+    }
+
     suspend fun analyze(period: Period): Result<WeaknessAnalysis> {
         val sinceMs = period.sinceMs
         val total = correctionDao.countCorrectionsAfter(sinceMs)
