@@ -8,7 +8,7 @@ plugins {
 
 fun getVersionName(): String = try {
     providers.exec {
-        commandLine("git", "describe", "--tags", "--exact-match")
+        commandLine("git", "describe", "--tags", "--abbrev=0")
     }.standardOutput.asText.get().trim().removePrefix("v")
 } catch (e: Exception) {
     "dev"
