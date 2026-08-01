@@ -5,15 +5,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.MenuBook
@@ -44,6 +41,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.writingpractice.ui.common.AdaptiveContentColumn
+import com.example.writingpractice.ui.common.isExpandedWidth
 import com.example.writingpractice.ui.theme.WpTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -84,13 +83,10 @@ fun HomeScreen(
             )
         }
     ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+        val expanded = isExpandedWidth
+        AdaptiveContentColumn(
+            contentPadding = padding,
+            maxWidth = if (expanded) 840.dp else 640.dp
         ) {
             updateInfo?.let { info ->
                 UpdateBanner(
@@ -102,9 +98,19 @@ fun HomeScreen(
 
             ApiStatusCard(apiStatus = state.apiStatus)
 
-            StreakCard(streak = state.currentStreak)
-
-            DailyProgressCard(solved = state.todaySolved, goal = state.dailyGoal)
+            if (expanded) {
+                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Box(Modifier.weight(1f)) {
+                        StreakCard(streak = state.currentStreak)
+                    }
+                    Box(Modifier.weight(1f)) {
+                        DailyProgressCard(solved = state.todaySolved, goal = state.dailyGoal)
+                    }
+                }
+            } else {
+                StreakCard(streak = state.currentStreak)
+                DailyProgressCard(solved = state.todaySolved, goal = state.dailyGoal)
+            }
 
             Text(
                 text = "레벨 선택",
@@ -121,14 +127,39 @@ fun HomeScreen(
                 "어려운 2~3문장",
                 "학술 수준 문단"
             )
-            levelDescriptions.forEachIndexed { index, desc ->
-                val level = index + 1
-                LevelButton(
-                    level = level,
-                    description = desc,
-                    color = WpTheme.colors.levelColors[index],
-                    onClick = { onLevelClick(level) }
-                )
+            val levelColors = WpTheme.colors.levelColors
+            if (expanded) {
+                // 태블릿: 2열 그리드 (verticalScroll 안이므로 non-lazy Row 사용)
+                levelDescriptions.withIndex().chunked(2).forEach { rowItems ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        rowItems.forEach { (index, desc) ->
+                            Box(Modifier.weight(1f)) {
+                                LevelButton(
+                                    level = index + 1,
+                                    description = desc,
+                                    color = levelColors[index],
+                                    onClick = { onLevelClick(index + 1) }
+                                )
+                            }
+                        }
+                        if (rowItems.size == 1) {
+                            Spacer(Modifier.weight(1f))
+                        }
+                    }
+                }
+            } else {
+                levelDescriptions.forEachIndexed { index, desc ->
+                    val level = index + 1
+                    LevelButton(
+                        level = level,
+                        description = desc,
+                        color = levelColors[index],
+                        onClick = { onLevelClick(level) }
+                    )
+                }
             }
 
             HorizontalDivider()
