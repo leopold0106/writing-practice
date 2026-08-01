@@ -13,6 +13,17 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
+enum class ThemeMode(val value: String) {
+    SYSTEM("system"),
+    LIGHT("light"),
+    DARK("dark");
+
+    companion object {
+        fun fromValue(v: String?): ThemeMode =
+            entries.firstOrNull { it.value == v } ?: SYSTEM
+    }
+}
+
 @Singleton
 class SettingsRepository @Inject constructor(
     private val dataStore: DataStore<Preferences>
@@ -95,6 +106,13 @@ class SettingsRepository @Inject constructor(
     private fun sanitizeModel(id: String?): String =
         id?.takeIf { it in SUPPORTED_MODEL_IDS } ?: DEFAULT_MODEL
 
+    val themeMode: Flow<ThemeMode> =
+        dataStore.data.map { ThemeMode.fromValue(it[Keys.THEME_MODE]) }
+
+    suspend fun setThemeMode(mode: ThemeMode) {
+        dataStore.edit { it[Keys.THEME_MODE] = mode.value }
+    }
+
     private object Keys {
         val DAILY_GOAL = intPreferencesKey("daily_goal")
         val NOTIF_ENABLED = booleanPreferencesKey("notif_enabled")
@@ -108,6 +126,7 @@ class SettingsRepository @Inject constructor(
         val LAST_MONTHLY_ANALYZED_YM = stringPreferencesKey("last_monthly_analyzed_ym")
         val LAST_UPDATE_CHECK_DATE = longPreferencesKey("last_update_check_date")
         val SELECTED_MODEL = stringPreferencesKey("selected_model")
+        val THEME_MODE = stringPreferencesKey("theme_mode")
     }
 
     companion object {

@@ -8,6 +8,7 @@ import com.example.writingpractice.data.remote.AppUpdateChecker
 import com.example.writingpractice.data.remote.ClaudeApiClient
 import com.example.writingpractice.data.repository.BackupRepository
 import com.example.writingpractice.data.repository.SettingsRepository
+import com.example.writingpractice.data.repository.ThemeMode
 import com.example.writingpractice.util.NotificationHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -58,7 +59,8 @@ data class SettingsUiState(
     val notificationMinute: Int = 0,
     val apiKey: String = "",
     val apiKeyVisible: Boolean = false,
-    val selectedModel: String = SettingsRepository.DEFAULT_MODEL
+    val selectedModel: String = SettingsRepository.DEFAULT_MODEL,
+    val themeMode: ThemeMode = ThemeMode.SYSTEM
 )
 
 @HiltViewModel
@@ -84,8 +86,9 @@ class SettingsViewModel @Inject constructor(
         combine(settingsRepository.dailyGoal, settingsRepository.notificationEnabled) { g, e -> g to e },
         combine(settingsRepository.notificationHour, settingsRepository.notificationMinute) { h, m -> h to m },
         combine(settingsRepository.apiKey, _apiKeyVisible) { k, v -> k to v },
-        settingsRepository.selectedModel
-    ) { goalAndEnabled, hourAndMinute, keyAndVisible, model ->
+        settingsRepository.selectedModel,
+        settingsRepository.themeMode
+    ) { goalAndEnabled, hourAndMinute, keyAndVisible, model, themeMode ->
         val (goal, enabled) = goalAndEnabled
         val (hour, minute) = hourAndMinute
         val (key, visible) = keyAndVisible
@@ -96,7 +99,8 @@ class SettingsViewModel @Inject constructor(
             notificationMinute = minute,
             apiKey = key,
             apiKeyVisible = visible,
-            selectedModel = model
+            selectedModel = model,
+            themeMode = themeMode
         )
     }.stateIn(
         scope = viewModelScope,
@@ -192,6 +196,10 @@ class SettingsViewModel @Inject constructor(
 
     fun setSelectedModel(model: String) = viewModelScope.launch {
         settingsRepository.setSelectedModel(model)
+    }
+
+    fun setThemeMode(mode: ThemeMode) = viewModelScope.launch {
+        settingsRepository.setThemeMode(mode)
     }
 
     fun exportBackup() = viewModelScope.launch {

@@ -2,22 +2,55 @@ package com.example.writingpractice.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Primary = Color(0xFF2196F3)
-val PrimaryDark = Color(0xFF1565C0)
-val Secondary = Color(0xFF4CAF50)
-val Error = Color(0xFFF44336)
-val Warning = Color(0xFFFF9800)
+// ── 잉크 네이비 + 앰버 팔레트 (라이트) ──────────────────────────────
+val InkNavy = Color(0xFF274060)
+val InkNavyLight = Color(0xFFD8E4F2)
+val InkNavyDeep = Color(0xFF0F2440)
+val Amber = Color(0xFFB7791F)
+val AmberLight = Color(0xFFF8E8C8)
+val AmberDeep = Color(0xFF3E2C05)
+val Teal = Color(0xFF4E7D74)
+val TealLight = Color(0xFFD3E7E2)
+val TealDeep = Color(0xFF12332D)
+val Paper = Color(0xFFFAF8F4)
+val PaperSurface = Color(0xFFFFFEFA)
+val PaperVariant = Color(0xFFEAE6DE)
+val InkText = Color(0xFF1E1C18)
+val InkTextSoft = Color(0xFF4C4841)
+val OutlineWarm = Color(0xFF79746B)
+val OutlineWarmSoft = Color(0xFFD3CEC4)
+val Brick = Color(0xFFA63D2F)
+val BrickLight = Color(0xFFF7DDD7)
+val BrickDeep = Color(0xFF3E120B)
 
-val ScoreGreen = Color(0xFF4CAF50)
-val ScoreYellow = Color(0xFFFF9800)
-val ScoreRed = Color(0xFFF44336)
+// ── 다크 변형 ──────────────────────────────────────────────────────
+val InkNavyDark = Color(0xFFA9C6E8)
+val InkNavyContainerDark = Color(0xFF1D3350)
+val AmberDark = Color(0xFFE5BA5F)
+val AmberContainerDark = Color(0xFF4A3A12)
+val TealDark = Color(0xFFA3CCC3)
+val TealContainerDark = Color(0xFF35534C)
+val NightBackground = Color(0xFF15181D)
+val NightSurface = Color(0xFF1B1F26)
+val NightSurfaceVariant = Color(0xFF2A2F38)
+val NightText = Color(0xFFE4E2DC)
+val NightTextSoft = Color(0xFFC0BBB2)
+val OutlineNight = Color(0xFF8A857C)
+val OutlineNightSoft = Color(0xFF3B4049)
+val BrickDark = Color(0xFFE8A79C)
+val BrickContainerDark = Color(0xFF5C2018)
+
+// ── 레거시 별칭 (화면 치환 완료 후 삭제 예정) ──────────────────────
+val ScoreGreen = Color(0xFF2F7D4F)
+val ScoreYellow = Color(0xFF9A6A1B)
+val ScoreRed = Brick
 
 val LevelColors = listOf(
-    Color(0xFF2196F3),
-    Color(0xFF9C27B0),
-    Color(0xFFFF9800),
-    Color(0xFFF44336),
-    Color(0xFF009688),
-    Color(0xFF3F51B5),
-    Color(0xFF673AB7)
+    Color(0xFF6E8DAD),
+    Color(0xFF56779B),
+    Color(0xFF41658D),
+    Color(0xFF3B5B80),
+    Color(0xFF7A6A55),
+    Color(0xFF9C7E3A),
+    Color(0xFFB7791F)
 )

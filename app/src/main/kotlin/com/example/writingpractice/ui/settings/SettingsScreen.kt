@@ -42,6 +42,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -69,6 +72,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.writingpractice.data.repository.ThemeMode
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -178,6 +182,30 @@ fun SettingsScreen(
                     valueRange = 1f..30f,
                     steps = 28
                 )
+            }
+
+            HorizontalDivider()
+
+            // Theme
+            SectionHeader("화면 테마")
+            SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+                val themeOptions = listOf(
+                    ThemeMode.SYSTEM to "시스템",
+                    ThemeMode.LIGHT to "라이트",
+                    ThemeMode.DARK to "다크"
+                )
+                themeOptions.forEachIndexed { index, (mode, label) ->
+                    SegmentedButton(
+                        selected = state.themeMode == mode,
+                        onClick = { viewModel.setThemeMode(mode) },
+                        shape = SegmentedButtonDefaults.itemShape(
+                            index = index,
+                            count = themeOptions.size
+                        )
+                    ) {
+                        Text(label)
+                    }
+                }
             }
 
             HorizontalDivider()
