@@ -9,7 +9,10 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
@@ -17,6 +20,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.writingpractice.data.repository.SettingsRepository
 import com.example.writingpractice.data.repository.ThemeMode
+import com.example.writingpractice.ui.common.LocalWindowWidthSizeClass
 import com.example.writingpractice.ui.navigation.AppNavigation
 import com.example.writingpractice.ui.theme.WritingPracticeTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,15 +32,21 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var settingsRepository: SettingsRepository
 
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             val themeMode by settingsRepository.themeMode
                 .collectAsStateWithLifecycle(initialValue = ThemeMode.SYSTEM)
+            val windowSizeClass = calculateWindowSizeClass(this)
             WritingPracticeTheme(themeMode = themeMode) {
-                RequestNotificationPermission()
-                AppNavigation()
+                CompositionLocalProvider(
+                    LocalWindowWidthSizeClass provides windowSizeClass.widthSizeClass
+                ) {
+                    RequestNotificationPermission()
+                    AppNavigation()
+                }
             }
         }
     }
