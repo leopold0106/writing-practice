@@ -83,14 +83,17 @@ class SettingsRepository @Inject constructor(
     }
 
     val selectedModel: Flow<String> =
-        dataStore.data.map { it[Keys.SELECTED_MODEL] ?: DEFAULT_MODEL }
+        dataStore.data.map { sanitizeModel(it[Keys.SELECTED_MODEL]) }
 
     suspend fun getSelectedModel(): String =
-        dataStore.data.first()[Keys.SELECTED_MODEL] ?: DEFAULT_MODEL
+        sanitizeModel(dataStore.data.first()[Keys.SELECTED_MODEL])
 
     suspend fun setSelectedModel(model: String) {
         dataStore.edit { it[Keys.SELECTED_MODEL] = model }
     }
+
+    private fun sanitizeModel(id: String?): String =
+        id?.takeIf { it in SUPPORTED_MODEL_IDS } ?: DEFAULT_MODEL
 
     private object Keys {
         val DAILY_GOAL = intPreferencesKey("daily_goal")
@@ -108,6 +111,9 @@ class SettingsRepository @Inject constructor(
     }
 
     companion object {
-        const val DEFAULT_MODEL = "claude-sonnet-4-6"
+        const val MODEL_SONNET_5 = "claude-sonnet-5"
+        const val MODEL_OPUS_5 = "claude-opus-5"
+        const val DEFAULT_MODEL = MODEL_SONNET_5
+        val SUPPORTED_MODEL_IDS = setOf(MODEL_SONNET_5, MODEL_OPUS_5)
     }
 }

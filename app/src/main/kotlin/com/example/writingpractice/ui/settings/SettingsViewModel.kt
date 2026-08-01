@@ -212,9 +212,8 @@ class SettingsViewModel @Inject constructor(
 
     companion object {
         val MODELS = listOf(
-            ModelOption("claude-haiku-4-5-20251001", "Haiku 4.5", "빠름 · 저비용"),
-            ModelOption("claude-sonnet-4-6", "Sonnet 4.6", "균형 · 권장"),
-            ModelOption("claude-opus-4-7", "Opus 4.7", "강력 · 고비용")
+            ModelOption(SettingsRepository.MODEL_SONNET_5, "Sonnet 5", "빠르고 균형적 · 권장"),
+            ModelOption(SettingsRepository.MODEL_OPUS_5, "Opus 5", "최고 품질 · 고비용")
         )
     }
 }
