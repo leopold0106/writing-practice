@@ -3,6 +3,7 @@ package com.example.writingpractice.ui.monthlytrend
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -39,6 +40,7 @@ import com.example.writingpractice.data.model.ErrorTrend
 import com.example.writingpractice.data.model.ErrorTypeChange
 import com.example.writingpractice.data.model.MonthlySnapshot
 import com.example.writingpractice.data.model.MonthlyTrend
+import com.example.writingpractice.ui.common.AdaptiveLazyColumn
 import com.example.writingpractice.ui.common.components.errorTypeLabel
 import com.example.writingpractice.ui.theme.WpTheme
 
@@ -84,8 +86,9 @@ fun MonthlyTrendScreen(
             return@Scaffold
         }
 
-        LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp),
+        AdaptiveLazyColumn(
+            contentPadding = padding,
+            listContentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             items(state.snapshots, key = { it.yearMonth }) { snapshot ->

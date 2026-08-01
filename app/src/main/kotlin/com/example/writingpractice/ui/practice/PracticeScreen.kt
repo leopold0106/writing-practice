@@ -3,13 +3,12 @@ package com.example.writingpractice.ui.practice
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -33,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.writingpractice.ui.common.AdaptiveContentColumn
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -84,12 +84,12 @@ fun PracticeScreen(
                 onAnswerChange = viewModel::onAnswerChange,
                 onSubmit = viewModel::submitAnswer,
                 isSubmitting = false,
-                modifier = Modifier.padding(padding)
+                contentPadding = padding
             )
 
             is PracticeUiState.Submitting -> GradingContent(
                 koreanText = s.problem.koreanText,
-                modifier = Modifier.padding(padding)
+                contentPadding = padding
             )
         }
     }
@@ -102,13 +102,10 @@ private fun WritingContent(
     onAnswerChange: (String) -> Unit,
     onSubmit: () -> Unit,
     isSubmitting: Boolean,
-    modifier: Modifier = Modifier
+    contentPadding: PaddingValues
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp),
+    AdaptiveContentColumn(
+        contentPadding = contentPadding,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Card(
@@ -148,9 +145,10 @@ private fun WritingContent(
 }
 
 @Composable
-private fun GradingContent(koreanText: String, modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier.fillMaxSize().padding(16.dp),
+private fun GradingContent(koreanText: String, contentPadding: PaddingValues) {
+    AdaptiveContentColumn(
+        contentPadding = contentPadding,
+        scrollable = false,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Card(elevation = CardDefaults.cardElevation(2.dp)) {

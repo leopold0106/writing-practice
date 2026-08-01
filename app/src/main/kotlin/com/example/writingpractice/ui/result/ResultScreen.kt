@@ -10,9 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -35,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.writingpractice.data.model.Correction
+import com.example.writingpractice.ui.common.AdaptiveContentColumn
 import com.example.writingpractice.ui.common.components.ErrorTypeChip
 import com.example.writingpractice.ui.common.components.scoreColor
 import com.example.writingpractice.ui.theme.WpTheme
@@ -61,12 +60,8 @@ fun ResultScreen(
             return@Scaffold
         }
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
+        AdaptiveContentColumn(
+            contentPadding = padding,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             // Pending banner — replaces score card while waiting for grading

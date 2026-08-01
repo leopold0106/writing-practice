@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -61,39 +62,46 @@ fun ProblemListScreen(
             )
         }
     ) { padding ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            Button(
-                onClick = onStartRandom,
+            Column(
                 modifier = Modifier
+                    .widthIn(max = 720.dp)
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .align(Alignment.TopCenter)
             ) {
-                Icon(Icons.Default.PlayArrow, contentDescription = null)
-                Text(" 랜덤 문제 풀기", modifier = Modifier.padding(start = 4.dp))
-            }
-
-            if (state.isLoading) {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
+                Button(
+                    onClick = onStartRandom,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                ) {
+                    Icon(Icons.Default.PlayArrow, contentDescription = null)
+                    Text(" 랜덤 문제 풀기", modifier = Modifier.padding(start = 4.dp))
                 }
-            } else {
-                LazyColumn {
-                    items(state.problems, key = { it.problem.id }) { item ->
-                        ProblemRow(
-                            item = item,
-                            onClick = {
-                                if (item.isNew) {
-                                    onProblemClick(item.problem.id)
-                                } else {
-                                    onAnswerClick(item.problem.id)
+
+                if (state.isLoading) {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                } else {
+                    LazyColumn {
+                        items(state.problems, key = { it.problem.id }) { item ->
+                            ProblemRow(
+                                item = item,
+                                onClick = {
+                                    if (item.isNew) {
+                                        onProblemClick(item.problem.id)
+                                    } else {
+                                        onAnswerClick(item.problem.id)
+                                    }
                                 }
-                            }
-                        )
-                        HorizontalDivider()
+                            )
+                            HorizontalDivider()
+                        }
                     }
                 }
             }

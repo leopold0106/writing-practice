@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -51,6 +50,7 @@ import com.example.writingpractice.data.model.RecommendedPattern
 import com.example.writingpractice.data.model.Severity
 import com.example.writingpractice.data.model.WeaknessAnalysis
 import com.example.writingpractice.data.model.WeaknessPoint
+import com.example.writingpractice.ui.common.AdaptiveLazyColumn
 import com.example.writingpractice.ui.common.components.SectionHeader
 import com.example.writingpractice.ui.common.components.errorTypeColor
 import com.example.writingpractice.ui.home.ApiStatus
@@ -81,9 +81,9 @@ fun WeaknessAnalysisScreen(
             )
         }
     ) { padding ->
-        LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(padding),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+        AdaptiveLazyColumn(
+            contentPadding = padding,
+            listContentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             if (state.apiStatus != ApiStatus.VALID) {

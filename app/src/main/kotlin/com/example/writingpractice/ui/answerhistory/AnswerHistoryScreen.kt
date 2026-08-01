@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -75,54 +76,61 @@ fun AnswerHistoryScreen(
             return@Scaffold
         }
 
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            state.problem?.let { problem ->
-                Surface(
-                    modifier = Modifier.fillMaxWidth(),
-                    color = MaterialTheme.colorScheme.surfaceVariant
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(
-                            text = "문제",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        Spacer(Modifier.height(4.dp))
-                        Text(problem.koreanText, style = MaterialTheme.typography.bodyMedium)
-                        Spacer(Modifier.height(12.dp))
-                        Button(
-                            onClick = { onRePractice(problem.level) },
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Icon(Icons.Default.Replay, contentDescription = null)
-                            Text(" 다시 풀기", modifier = Modifier.padding(start = 4.dp))
+            Column(
+                modifier = Modifier
+                    .widthIn(max = 720.dp)
+                    .fillMaxWidth()
+                    .align(Alignment.TopCenter)
+            ) {
+                state.problem?.let { problem ->
+                    Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        color = MaterialTheme.colorScheme.surfaceVariant
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text(
+                                text = "문제",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(Modifier.height(4.dp))
+                            Text(problem.koreanText, style = MaterialTheme.typography.bodyMedium)
+                            Spacer(Modifier.height(12.dp))
+                            Button(
+                                onClick = { onRePractice(problem.level) },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Icon(Icons.Default.Replay, contentDescription = null)
+                                Text(" 다시 풀기", modifier = Modifier.padding(start = 4.dp))
+                            }
                         }
                     }
+
+                    HorizontalDivider()
                 }
 
-                HorizontalDivider()
-            }
-
-            if (state.answers.isEmpty()) {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("아직 답변이 없습니다.", color = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
-            } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    reverseLayout = true,
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp)
-                ) {
-                    items(state.answers, key = { it.id }) { answer ->
-                        AnswerItem(
-                            answer = answer,
-                            onClick = { onAnswerClick(answer.id) }
-                        )
+                if (state.answers.isEmpty()) {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text("아직 답변이 없습니다.", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        reverseLayout = true,
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp)
+                    ) {
+                        items(state.answers, key = { it.id }) { answer ->
+                            AnswerItem(
+                                answer = answer,
+                                onClick = { onAnswerClick(answer.id) }
+                            )
+                        }
                     }
                 }
             }

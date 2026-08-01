@@ -16,16 +16,13 @@ import com.example.writingpractice.BuildConfig
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Visibility
@@ -72,6 +69,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.writingpractice.data.repository.ThemeMode
+import com.example.writingpractice.ui.common.AdaptiveContentColumn
 import com.example.writingpractice.ui.common.components.SectionHeader
 import com.example.writingpractice.ui.theme.WpTheme
 import kotlinx.coroutines.launch
@@ -152,14 +150,11 @@ fun SettingsScreen(
             )
         }
     ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                // imePadding BEFORE verticalScroll so the scroll area shrinks when keyboard appears
-                .imePadding()
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
+        AdaptiveContentColumn(
+            contentPadding = padding,
+            // imePadding on the outer Box so the scroll area shrinks when keyboard appears
+            modifier = Modifier.imePadding(),
+            maxWidth = 640.dp,
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             // Daily goal
