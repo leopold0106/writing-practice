@@ -9,6 +9,7 @@ import androidx.work.WorkManager
 import com.example.writingpractice.data.local.db.AppDatabase
 import com.example.writingpractice.data.remote.AuthInterceptor
 import com.example.writingpractice.data.remote.ClaudeApiService
+import com.example.writingpractice.data.remote.apiJson
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -47,7 +48,11 @@ object AppModule {
     @Singleton
     fun provideDatabase(@ApplicationContext ctx: Context): AppDatabase =
         Room.databaseBuilder(ctx, AppDatabase::class.java, AppDatabase.DATABASE_NAME)
-            .addMigrations(AppDatabase.MIGRATION_1_2, AppDatabase.MIGRATION_2_3)
+            .addMigrations(
+                AppDatabase.MIGRATION_1_2,
+                AppDatabase.MIGRATION_2_3,
+                AppDatabase.MIGRATION_3_4
+            )
             .build()
 
     @Provides fun provideProblemDao(db: AppDatabase) = db.problemDao()
@@ -63,12 +68,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideJson(): Json = Json {
-        ignoreUnknownKeys = true
-        isLenient = true
-        explicitNulls = false
-        encodeDefaults = true
-    }
+    fun provideJson(): Json = apiJson
 
     @Provides
     @Singleton

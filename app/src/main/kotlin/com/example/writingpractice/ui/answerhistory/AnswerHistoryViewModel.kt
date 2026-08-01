@@ -7,6 +7,7 @@ import com.example.writingpractice.data.local.db.dao.UserAnswerDao
 import com.example.writingpractice.data.local.db.entity.GradingStatus
 import com.example.writingpractice.data.local.db.entity.UserAnswerEntity
 import com.example.writingpractice.data.model.Problem
+import com.example.writingpractice.data.repository.PracticeRepository
 import com.example.writingpractice.data.repository.ProblemRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,6 +28,7 @@ data class AnswerHistoryUiState(
 class AnswerHistoryViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val problemRepository: ProblemRepository,
+    private val practiceRepository: PracticeRepository,
     private val userAnswerDao: UserAnswerDao
 ) : ViewModel() {
 
@@ -37,6 +39,13 @@ class AnswerHistoryViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             _problem.value = problemRepository.getById(problemId)
+        }
+    }
+
+    /** Re-queues grading for a failed or stuck answer; the list updates via the Room Flow. */
+    fun retryGrading(answerId: Long) {
+        viewModelScope.launch {
+            practiceRepository.retryGrading(answerId)
         }
     }
 

@@ -125,4 +125,7 @@ dependencies {
 
     // Startup (needed for WorkManager tools:node="remove" in manifest)
     implementation("androidx.startup:startup-runtime:1.1.1")
+
+    // Unit tests
+    testImplementation(libs.junit)
 }

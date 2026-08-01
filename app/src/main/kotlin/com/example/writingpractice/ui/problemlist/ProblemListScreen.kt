@@ -155,6 +155,14 @@ private fun StatusChip(item: ProblemWithStatus) {
                 labelColor = WpTheme.colors.warning
             )
         )
+        item.isFailed -> SuggestionChip(
+            onClick = {},
+            label = { Text("채점 실패") },
+            colors = SuggestionChipDefaults.suggestionChipColors(
+                containerColor = MaterialTheme.colorScheme.error.copy(alpha = 0.15f),
+                labelColor = MaterialTheme.colorScheme.error
+            )
+        )
         else -> SuggestionChip(
             onClick = {},
             label = { Text("새 문제") }

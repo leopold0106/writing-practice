@@ -68,6 +68,7 @@ class BackupRepository @Inject constructor(
                 gradingStatus = answer.gradingStatus.name,
                 overallFeedback = answer.overallFeedback,
                 finalCorrectedVersion = answer.finalCorrectedVersion,
+                gradingError = answer.gradingError,
                 submittedAt = answer.submittedAt,
                 attemptNumber = answer.attemptNumber,
                 corrections = (correctionsByAnswer[answer.id] ?: emptyList()).map { c ->
@@ -177,7 +178,8 @@ class BackupRepository @Inject constructor(
                         score = ab.score,
                         attemptNumber = ab.attemptNumber,
                         overallFeedback = ab.overallFeedback,
-                        finalCorrectedVersion = ab.finalCorrectedVersion
+                        finalCorrectedVersion = ab.finalCorrectedVersion,
+                        gradingError = ab.gradingError
                     )
                 )
 

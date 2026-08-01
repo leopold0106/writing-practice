@@ -6,6 +6,7 @@ import com.example.writingpractice.data.model.Problem
 import com.example.writingpractice.data.repository.PracticeRepository
 import com.example.writingpractice.data.repository.ProblemRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -62,9 +63,16 @@ class PracticeViewModel @Inject constructor(
         if (current.answer.isBlank()) return
         viewModelScope.launch {
             _uiState.value = PracticeUiState.Submitting(current.problem)
-            val answerId = practiceRepository.submitAnswer(current.problem.id, current.answer)
-            practiceRepository.clearDraft(current.problem.id)
-            _navigateToResult.send(answerId)
+            try {
+                val answerId = practiceRepository.submitAnswer(current.problem.id, current.answer)
+                practiceRepository.clearDraft(current.problem.id)
+                _navigateToResult.send(answerId)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                // Without this the coroutine dies and the UI is pinned on the Submitting spinner.
+                _uiState.value = PracticeUiState.Error(e.message ?: "답안을 제출하지 못했습니다.")
+            }
         }
     }
 }

@@ -12,4 +12,5 @@ data class ProblemWithStatus(
     val isNew: Boolean get() = latestAnswerId == null
     val isPending: Boolean get() = latestStatus == GradingStatus.PENDING
     val isGraded: Boolean get() = latestStatus == GradingStatus.GRADED
+    val isFailed: Boolean get() = latestStatus == GradingStatus.FAILED
 }

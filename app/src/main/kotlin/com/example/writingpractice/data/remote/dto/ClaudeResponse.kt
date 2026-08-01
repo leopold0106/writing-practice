@@ -25,17 +25,17 @@ data class Usage(
 @Serializable
 data class GradingResultDto(
     val score: Int,
-    @SerialName("overall_feedback") val overallFeedback: String,
-    val corrections: List<CorrectionDto>,
-    @SerialName("final_corrected_version") val finalCorrectedVersion: String
+    @SerialName("overall_feedback") val overallFeedback: String = "",
+    val corrections: List<CorrectionDto> = emptyList(),
+    @SerialName("final_corrected_version") val finalCorrectedVersion: String = ""
 )
 
 @Serializable
 data class CorrectionDto(
-    @SerialName("original_sentence") val originalSentence: String,
-    @SerialName("corrected_sentence") val correctedSentence: String,
-    val explanation: String,
-    @SerialName("error_type") val errorType: String
+    @SerialName("original_sentence") val originalSentence: String = "",
+    @SerialName("corrected_sentence") val correctedSentence: String = "",
+    val explanation: String = "",
+    @SerialName("error_type") val errorType: String = "GRAMMAR"
 )
 
 @Serializable

@@ -128,7 +128,8 @@ fun AnswerHistoryScreen(
                         items(state.answers, key = { it.id }) { answer ->
                             AnswerItem(
                                 answer = answer,
-                                onClick = { onAnswerClick(answer.id) }
+                                onClick = { onAnswerClick(answer.id) },
+                                onRetryGrading = { viewModel.retryGrading(answer.id) }
                             )
                         }
                     }
@@ -141,7 +142,11 @@ fun AnswerHistoryScreen(
 private val dateFormat = SimpleDateFormat("yyyy.M.d a h:mm", Locale.KOREAN)
 
 @Composable
-private fun AnswerItem(answer: UserAnswerEntity, onClick: () -> Unit) {
+private fun AnswerItem(
+    answer: UserAnswerEntity,
+    onClick: () -> Unit,
+    onRetryGrading: () -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -173,13 +178,13 @@ private fun AnswerItem(answer: UserAnswerEntity, onClick: () -> Unit) {
                     overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                 )
             }
-            ScoreChip(answer)
+            ScoreChip(answer, onRetryGrading)
         }
     }
 }
 
 @Composable
-private fun ScoreChip(answer: UserAnswerEntity) {
+private fun ScoreChip(answer: UserAnswerEntity, onRetryGrading: () -> Unit) {
     when (answer.gradingStatus) {
         GradingStatus.GRADED -> {
             val score = answer.score ?: 0
@@ -193,16 +198,25 @@ private fun ScoreChip(answer: UserAnswerEntity) {
                 )
             )
         }
+        // Tapping re-queues grading, so a stuck answer is never a dead end.
         GradingStatus.PENDING -> SuggestionChip(
-            onClick = {},
+            onClick = onRetryGrading,
             label = { Text("채점중") },
             colors = SuggestionChipDefaults.suggestionChipColors(
                 containerColor = WpTheme.colors.warning.copy(alpha = 0.15f),
                 labelColor = WpTheme.colors.warning
             )
         )
+        GradingStatus.FAILED -> SuggestionChip(
+            onClick = onRetryGrading,
+            label = { Text("채점 실패") },
+            colors = SuggestionChipDefaults.suggestionChipColors(
+                containerColor = MaterialTheme.colorScheme.error.copy(alpha = 0.15f),
+                labelColor = MaterialTheme.colorScheme.error
+            )
+        )
         GradingStatus.OFFLINE_SKIPPED -> SuggestionChip(
-            onClick = {},
+            onClick = onRetryGrading,
             label = { Text("오프라인") },
             colors = SuggestionChipDefaults.suggestionChipColors(
                 containerColor = MaterialTheme.colorScheme.surfaceVariant

@@ -19,9 +19,9 @@ import com.example.writingpractice.data.local.db.entity.DailyProgressEntity
 import com.example.writingpractice.data.local.db.entity.GradingStatus
 import com.example.writingpractice.data.local.db.entity.UserAnswerEntity
 import com.example.writingpractice.data.model.Correction
-import com.example.writingpractice.data.model.GradingResult
 import com.example.writingpractice.data.model.toDomain
 import com.example.writingpractice.data.model.toEntity
+import com.example.writingpractice.data.remote.ApiFailure
 import com.example.writingpractice.data.remote.ClaudeApiClient
 import com.example.writingpractice.util.DateTimeUtil
 import com.example.writingpractice.widget.StreakWidgetProvider
@@ -63,16 +63,27 @@ class PracticeRepository @Inject constructor(
             attemptNumber = attemptNumber
         )
         val answerId = userAnswerDao.insert(entity)
-        // Try direct grading immediately; fall back to WorkManager on failure (offline/error)
+        // Register the fallback worker *before* the inline attempt. If this coroutine is cancelled
+        // (the user leaves the screen) or the process dies mid-call, the answer would otherwise be
+        // stranded at PENDING with nothing scheduled to ever finish it. The delay keeps the worker
+        // from racing the inline call; gradeAnswer() is idempotent in any case.
+        enqueueGrading(answerId, delaySeconds = INLINE_GRADING_GRACE_SECONDS)
         val result = gradeAnswer(answerId)
-        if (result.isFailure) {
-            enqueueGrading(answerId)
+        // Success and permanent failure are both terminal; only a retryable failure needs the worker.
+        if ((result.exceptionOrNull() as? ApiFailure)?.retryable != true) {
+            workManager.cancelUniqueWork(workName(answerId))
         }
         return answerId
     }
 
-    private fun enqueueGrading(answerId: Long) {
-        val request = OneTimeWorkRequestBuilder<GradeAnswerWorker>()
+    private fun workName(answerId: Long) = "grade_answer_$answerId"
+
+    private fun enqueueGrading(
+        answerId: Long,
+        policy: ExistingWorkPolicy = ExistingWorkPolicy.KEEP,
+        delaySeconds: Long = 0
+    ) {
+        val builder = OneTimeWorkRequestBuilder<GradeAnswerWorker>()
             .setInputData(workDataOf(GradeAnswerWorker.KEY_ANSWER_ID to answerId))
             .setConstraints(
                 Constraints.Builder()
@@ -80,38 +91,98 @@ class PracticeRepository @Inject constructor(
                     .build()
             )
             .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 30, TimeUnit.SECONDS)
-            .build()
-        workManager.enqueueUniqueWork(
-            "grade_answer_$answerId",
-            ExistingWorkPolicy.KEEP,
-            request
+        if (delaySeconds > 0) {
+            builder.setInitialDelay(delaySeconds, TimeUnit.SECONDS)
+        }
+        workManager.enqueueUniqueWork(workName(answerId), policy, builder.build())
+    }
+
+    /**
+     * Grades one answer and records the outcome on its row.
+     *
+     * Idempotent: an already-graded answer returns success without calling the API, so the inline
+     * attempt and the fallback worker can never double-grade or insert duplicate corrections.
+     * A permanent failure marks the answer FAILED; a retryable one leaves it PENDING for the
+     * worker or the next app start to pick up.
+     */
+    suspend fun gradeAnswer(answerId: Long): Result<Unit> {
+        val answer = userAnswerDao.getById(answerId)
+            ?: return Result.failure(ApiFailure("답안을 찾을 수 없습니다", retryable = false))
+        if (answer.gradingStatus == GradingStatus.GRADED) return Result.success(Unit)
+        val problem = problemDao.getById(answer.problemId)
+            ?: return Result.failure(ApiFailure("문제를 찾을 수 없습니다", retryable = false))
+
+        val result = claudeApiClient.gradeAnswer(problem.koreanText, answer.answerText)
+
+        result.onSuccess { graded ->
+            userAnswerDao.update(
+                answer.copy(
+                    gradingStatus = GradingStatus.GRADED,
+                    score = graded.score,
+                    overallFeedback = graded.overallFeedback,
+                    finalCorrectedVersion = graded.finalCorrectedVersion,
+                    gradingError = null
+                )
+            )
+            if (graded.corrections.isNotEmpty()) {
+                correctionDao.insertAll(
+                    graded.corrections.map { c ->
+                        c.toEntity(userAnswerId = answerId, problemId = problem.id)
+                    }
+                )
+            }
+        }.onFailure { e ->
+            if ((e as? ApiFailure)?.retryable != true) {
+                markFailed(answerId, e.message)
+            }
+        }
+
+        // Deliberately outside onSuccess: Result.onSuccess does not catch, so a throw in here used
+        // to escape gradeAnswer entirely — after the answer had already been graded.
+        if (result.isSuccess) {
+            runCatching { updateDailyProgress() }
+        }
+        return result.map { }
+    }
+
+    /** Marks an answer as permanently failed so the UI can stop showing "채점중". */
+    suspend fun markFailed(answerId: Long, reason: String?) {
+        val answer = userAnswerDao.getById(answerId) ?: return
+        if (answer.gradingStatus == GradingStatus.GRADED) return
+        userAnswerDao.update(
+            answer.copy(
+                gradingStatus = GradingStatus.FAILED,
+                gradingError = reason?.takeIf { it.isNotBlank() }
+                    ?: "알 수 없는 오류로 채점에 실패했습니다"
+            )
         )
     }
 
-    suspend fun gradeAnswer(answerId: Long): Result<GradingResult> {
-        val answer = userAnswerDao.getById(answerId)
-            ?: return Result.failure(IllegalStateException("Answer not found"))
-        val problem = problemDao.getById(answer.problemId)
-            ?: return Result.failure(IllegalStateException("Problem not found"))
+    /** Puts a failed or stuck answer back in the queue. Entry point for the 재채점 button. */
+    suspend fun retryGrading(answerId: Long) {
+        val answer = userAnswerDao.getById(answerId) ?: return
+        if (answer.gradingStatus == GradingStatus.GRADED) return
+        userAnswerDao.update(
+            answer.copy(gradingStatus = GradingStatus.PENDING, gradingError = null)
+        )
+        // REPLACE, not KEEP: a stale work item for this answer would otherwise silently swallow
+        // the request and nothing would happen.
+        enqueueGrading(answerId, policy = ExistingWorkPolicy.REPLACE)
+    }
 
-        return claudeApiClient.gradeAnswer(problem.koreanText, answer.answerText)
-            .onSuccess { result ->
-                userAnswerDao.update(
-                    answer.copy(
-                        gradingStatus = GradingStatus.GRADED,
-                        score = result.score,
-                        overallFeedback = result.overallFeedback,
-                        finalCorrectedVersion = result.finalCorrectedVersion
-                    )
-                )
-                if (result.corrections.isNotEmpty()) {
-                    correctionDao.insertAll(
-                        result.corrections.map { c ->
-                            c.toEntity(userAnswerId = answerId, problemId = problem.id)
-                        }
-                    )
-                }
-                updateDailyProgress()
+    /**
+     * Re-queues every answer left at PENDING by a previous session — a crash, a process kill during
+     * grading, or a submit whose fallback worker never got registered. Without this, such an answer
+     * shows "채점중" forever because nothing is scheduled to finish it.
+     */
+    suspend fun resumePendingGrading() {
+        // Answers submitted within the grace window are still owned by an in-flight submitAnswer
+        // and already have a worker scheduled; re-queuing them here would race that attempt.
+        val cutoff = System.currentTimeMillis() - INLINE_GRADING_GRACE_SECONDS * 1000
+        userAnswerDao.getPending()
+            .filter { it.submittedAt < cutoff }
+            .forEach { answer ->
+                enqueueGrading(answer.id, policy = ExistingWorkPolicy.REPLACE)
             }
     }
 
@@ -180,5 +251,10 @@ class PracticeRepository @Inject constructor(
             }
         }
         return streak
+    }
+
+    private companion object {
+        /** Long enough to outlast the inline attempt (30s connect + 90s read OkHttp timeouts). */
+        const val INLINE_GRADING_GRACE_SECONDS = 150L
     }
 }

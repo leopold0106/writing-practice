@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -21,6 +22,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -64,11 +66,14 @@ fun ResultScreen(
             contentPadding = padding,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Pending banner — replaces score card while waiting for grading
-            if (state.isPending) {
-                PendingBanner()
-            } else {
-                state.score?.let { score ->
+            // Pending / failed banner — replaces the score card until grading actually finishes
+            when {
+                state.isPending -> PendingBanner(onRetry = viewModel::retryGrading)
+                state.isFailed -> FailedBanner(
+                    reason = state.gradingError,
+                    onRetry = viewModel::retryGrading
+                )
+                else -> state.score?.let { score ->
                     ScoreCard(score = score, feedback = state.overallFeedback)
                 }
             }
@@ -83,7 +88,7 @@ fun ResultScreen(
                 Text(state.userAnswer, style = MaterialTheme.typography.bodyMedium)
             }
 
-            if (!state.isPending) {
+            if (!state.isPending && !state.isFailed) {
                 if (state.corrections.isNotEmpty()) {
                     InfoCard(title = "수정 사항 (${state.corrections.size}개)") {
                         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -180,7 +185,7 @@ private fun AutoAnalysisBanner(state: AutoAnalysisState) {
 }
 
 @Composable
-private fun PendingBanner() {
+private fun PendingBanner(onRetry: () -> Unit) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
@@ -196,7 +201,7 @@ private fun PendingBanner() {
                 strokeWidth = 2.dp,
                 color = WpTheme.colors.warning
             )
-            Column {
+            Column(Modifier.weight(1f)) {
                 Text(
                     "채점 대기 중",
                     style = MaterialTheme.typography.titleSmall,
@@ -208,6 +213,43 @@ private fun PendingBanner() {
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+            }
+            TextButton(onClick = onRetry) { Text("재채점") }
+        }
+    }
+}
+
+@Composable
+private fun FailedBanner(reason: String?, onRetry: () -> Unit) {
+    val errorColor = MaterialTheme.colorScheme.error
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        color = errorColor.copy(alpha = 0.12f)
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(Modifier.weight(1f)) {
+                Text(
+                    "채점 실패",
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.SemiBold,
+                    color = errorColor
+                )
+                Text(
+                    reason ?: "알 수 없는 오류로 채점에 실패했습니다",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            Button(
+                onClick = onRetry,
+                colors = ButtonDefaults.buttonColors(containerColor = errorColor)
+            ) {
+                Text("재채점")
             }
         }
     }

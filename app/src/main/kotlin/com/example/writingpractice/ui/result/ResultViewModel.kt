@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.writingpractice.data.local.db.dao.CorrectionDao
 import com.example.writingpractice.data.local.db.dao.UserAnswerDao
+import com.example.writingpractice.data.local.db.entity.GradingStatus
 import com.example.writingpractice.data.model.Correction
 import com.example.writingpractice.data.model.Problem
 import com.example.writingpractice.data.repository.PracticeRepository
@@ -38,7 +39,9 @@ data class ResultUiState(
     val corrections: List<Correction> = emptyList(),
     val finalCorrectedVersion: String = "",
     val isLoading: Boolean = true,
-    val isPending: Boolean = false
+    val isPending: Boolean = false,
+    val isFailed: Boolean = false,
+    val gradingError: String? = null
 )
 
 @HiltViewModel
@@ -75,7 +78,11 @@ class ResultViewModel @Inject constructor(
             corrections = corrections,
             finalCorrectedVersion = answer.finalCorrectedVersion ?: "",
             isLoading = false,
-            isPending = answer.score == null
+            // Read the status rather than deriving it from score: a FAILED answer also has a null
+            // score, and used to render as "채점 대기 중" forever.
+            isPending = answer.gradingStatus == GradingStatus.PENDING,
+            isFailed = answer.gradingStatus == GradingStatus.FAILED,
+            gradingError = answer.gradingError
         )
     }.stateIn(
         scope = viewModelScope,
@@ -102,6 +109,13 @@ class ResultViewModel @Inject constructor(
                     }
                 }
             }
+        }
+    }
+
+    /** Re-queues grading for a failed or stuck answer; the UI updates via the Room Flow. */
+    fun retryGrading() {
+        viewModelScope.launch {
+            practiceRepository.retryGrading(answerId)
         }
     }
 

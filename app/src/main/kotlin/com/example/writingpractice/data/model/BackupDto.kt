@@ -55,6 +55,7 @@ data class AnswerBackup(
     val gradingStatus: String,
     val overallFeedback: String? = null,
     val finalCorrectedVersion: String? = null,
+    val gradingError: String? = null,
     val submittedAt: Long,
     val attemptNumber: Int = 1,
     val corrections: List<CorrectionBackup>

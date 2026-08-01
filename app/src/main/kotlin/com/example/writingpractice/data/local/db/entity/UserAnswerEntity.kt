@@ -6,7 +6,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
-enum class GradingStatus { PENDING, GRADED, OFFLINE_SKIPPED }
+enum class GradingStatus { PENDING, GRADED, OFFLINE_SKIPPED, FAILED }
 
 @Entity(
     tableName = "user_answers",
@@ -27,5 +27,7 @@ data class UserAnswerEntity(
     @ColumnInfo(name = "score") val score: Int? = null,
     @ColumnInfo(name = "attempt_number") val attemptNumber: Int = 1,
     @ColumnInfo(name = "overall_feedback") val overallFeedback: String? = null,
-    @ColumnInfo(name = "final_corrected_version") val finalCorrectedVersion: String? = null
+    @ColumnInfo(name = "final_corrected_version") val finalCorrectedVersion: String? = null,
+    /** Why grading failed, shown to the user next to the FAILED status. Null unless FAILED. */
+    @ColumnInfo(name = "grading_error") val gradingError: String? = null
 )

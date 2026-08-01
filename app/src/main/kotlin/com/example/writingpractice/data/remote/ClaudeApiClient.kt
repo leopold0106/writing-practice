@@ -6,17 +6,68 @@ import com.example.writingpractice.data.model.Correction
 import com.example.writingpractice.data.model.GradingResult
 import com.example.writingpractice.data.remote.dto.ClaudeMessage
 import com.example.writingpractice.data.remote.dto.ClaudeRequest
+import com.example.writingpractice.data.remote.dto.ClaudeResponse
 import com.example.writingpractice.data.remote.dto.GeneratedProblemDto
 import com.example.writingpractice.data.remote.dto.GradingResultDto
 import com.example.writingpractice.data.remote.dto.MonthlyComparisonDto
 import com.example.writingpractice.data.remote.dto.WeaknessAnalysisDto
+import kotlinx.coroutines.CancellationException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonObject
 import retrofit2.HttpException
+import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
+
+/**
+ * Failure returned by every [ClaudeApiClient] call.
+ *
+ * [retryable] separates transient problems (no network, timeout, 429, 5xx) from permanent ones
+ * (bad API key, malformed request, unparseable response). Permanent failures must not be retried
+ * forever — they are terminal and get surfaced to the user instead.
+ */
+class ApiFailure(
+    message: String,
+    val retryable: Boolean,
+    cause: Throwable? = null
+) : Exception(message, cause)
+
+/**
+ * Concatenates the text blocks of a response. Tolerates non-text blocks and an empty content list,
+ * both of which used to throw out of `content.first()`.
+ */
+internal fun textOf(response: ClaudeResponse): String {
+    val text = response.content
+        .filter { it.type == "text" }
+        .joinToString("") { it.text }
+    if (text.isBlank()) {
+        throw ApiFailure("응답이 비어 있습니다", retryable = true)
+    }
+    return text
+}
+
+/**
+ * Strips markdown fences and any prose the model wrapped around the JSON body by taking the span
+ * from the first opening brace/bracket to the last matching closing one.
+ */
+internal fun extractJson(text: String): String {
+    val trimmed = text.trim()
+        .removePrefix("```json").removePrefix("```")
+        .removeSuffix("```").trim()
+    val objStart = trimmed.indexOf('{')
+    val arrStart = trimmed.indexOf('[')
+    val start = when {
+        objStart == -1 -> arrStart
+        arrStart == -1 -> objStart
+        else -> minOf(objStart, arrStart)
+    }
+    if (start == -1) return trimmed
+    val end = if (trimmed[start] == '{') trimmed.lastIndexOf('}') else trimmed.lastIndexOf(']')
+    if (end <= start) return trimmed
+    return trimmed.substring(start, end + 1)
+}
 
 data class GeneratedProblem(
     val koreanText: String,
@@ -140,12 +191,12 @@ Return ONLY a valid JSON array (no markdown, no extra text) where each element h
         val response = service.complete(
             ClaudeRequest(
                 model = model(),
-                maxTokens = 1024,
+                maxTokens = 2048,
                 system = gradingSystemPrompt,
                 messages = listOf(ClaudeMessage("user", userContent))
             )
         )
-        val raw = extractJson(response.content.first().text)
+        val raw = extractJson(textOf(response))
         val dto = json.decodeFromString<GradingResultDto>(raw)
         dto.toDomain()
     }
@@ -176,7 +227,7 @@ Return ONLY a valid JSON array (no markdown, no extra text) where each element h
                 messages = listOf(ClaudeMessage("user", userMessage))
             )
         )
-        val raw = extractJson(response.content.first().text)
+        val raw = extractJson(textOf(response))
         json.decodeFromString<List<GeneratedProblemDto>>(raw).map { dto ->
             GeneratedProblem(dto.koreanText, dto.referenceAnswer, dto.topicTag)
         }
@@ -192,7 +243,7 @@ Return ONLY a valid JSON array (no markdown, no extra text) where each element h
                 messages = listOf(ClaudeMessage("user", userMessage))
             )
         )
-        val raw = extractJson(response.content.first().text)
+        val raw = extractJson(textOf(response))
         json.decodeFromString<WeaknessAnalysisDto>(raw)
     }
 
@@ -259,7 +310,7 @@ Rules:
                 messages = listOf(ClaudeMessage("user", userMessage))
             )
         )
-        val raw = extractJson(response.content.first().text)
+        val raw = extractJson(textOf(response))
         json.decodeFromString<MonthlyComparisonDto>(raw)
     }
 
@@ -301,6 +352,11 @@ Compare these two months and return the JSON analysis.
 
     private suspend fun <T> apiCall(block: suspend () -> T): Result<T> = try {
         Result.success(block())
+    } catch (e: CancellationException) {
+        // Never swallow cancellation — it must propagate to keep structured concurrency intact.
+        throw e
+    } catch (e: ApiFailure) {
+        Result.failure(e)
     } catch (e: HttpException) {
         val body = try { e.response()?.errorBody()?.string() } catch (_: Exception) { null }
         val message = if (body != null) {
@@ -314,15 +370,15 @@ Compare these two months and return the JSON analysis.
         } else {
             "HTTP ${e.code()}"
         }
-        Result.failure(RuntimeException(message))
+        // 429 (rate limited) and 5xx are worth retrying; other 4xx are configuration errors.
+        val retryable = e.code() == 429 || e.code() >= 500
+        Result.failure(ApiFailure(message, retryable, e))
+    } catch (e: IOException) {
+        Result.failure(ApiFailure(e.message ?: "네트워크 연결에 실패했습니다", retryable = true, cause = e))
     } catch (e: Exception) {
-        Result.failure(e)
+        // Serialization errors and anything else unexpected: retrying reproduces them verbatim.
+        Result.failure(ApiFailure(e.message ?: e::class.simpleName.orEmpty(), retryable = false, cause = e))
     }
-
-    private fun extractJson(text: String): String =
-        text.trim()
-            .removePrefix("```json").removePrefix("```")
-            .removeSuffix("```").trim()
 
     private fun GradingResultDto.toDomain() = GradingResult(
         score = score,
