@@ -61,7 +61,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
@@ -73,6 +72,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.writingpractice.data.repository.ThemeMode
+import com.example.writingpractice.ui.common.components.SectionHeader
+import com.example.writingpractice.ui.theme.WpTheme
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -318,7 +319,7 @@ fun SettingsScreen(
             when (val status = apiKeyStatus) {
                 is ApiKeyStatus.Valid -> Text(
                     "API 키가 유효합니다.",
-                    color = Color(0xFF388E3C),
+                    color = WpTheme.colors.success,
                     style = MaterialTheme.typography.bodySmall
                 )
                 is ApiKeyStatus.Invalid -> Text(
@@ -411,7 +412,7 @@ fun SettingsScreen(
 
                 UpdateState.UpToDate -> Text(
                     "최신 버전입니다.",
-                    color = Color(0xFF388E3C),
+                    color = WpTheme.colors.success,
                     style = MaterialTheme.typography.bodySmall
                 )
 
@@ -457,7 +458,7 @@ fun SettingsScreen(
                     Text(
                         "다운로드 완료. 설치 창이 열립니다.",
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color(0xFF388E3C)
+                        color = WpTheme.colors.success
                     )
                     OutlinedButton(
                         onClick = { viewModel.retryInstall(us.apkPath) },
@@ -538,7 +539,7 @@ fun SettingsScreen(
                 is BackupState.ImportDone -> Surface(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(8.dp),
-                    color = Color(0xFFE8F5E9)
+                    color = WpTheme.colors.successContainer
                 ) {
                     Row(
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
@@ -548,7 +549,7 @@ fun SettingsScreen(
                         Text(
                             "${bs.count}개 답변을 복원했습니다.",
                             style = MaterialTheme.typography.bodySmall,
-                            color = Color(0xFF1B5E20),
+                            color = WpTheme.colors.onSuccessContainer,
                             modifier = Modifier.weight(1f)
                         )
                         OutlinedButton(
@@ -561,7 +562,7 @@ fun SettingsScreen(
                 is BackupState.Error -> Surface(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(8.dp),
-                    color = Color(0xFFFFEBEE)
+                    color = MaterialTheme.colorScheme.errorContainer
                 ) {
                     Row(
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
@@ -587,12 +588,3 @@ fun SettingsScreen(
     }
 }
 
-@Composable
-private fun SectionHeader(title: String) {
-    Text(
-        title,
-        style = MaterialTheme.typography.titleSmall,
-        fontWeight = FontWeight.Bold,
-        color = MaterialTheme.colorScheme.primary
-    )
-}

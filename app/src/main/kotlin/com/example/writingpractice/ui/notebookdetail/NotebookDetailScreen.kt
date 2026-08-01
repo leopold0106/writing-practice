@@ -34,8 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.writingpractice.data.model.Correction
-import com.example.writingpractice.ui.theme.ScoreGreen
-import com.example.writingpractice.ui.theme.ScoreRed
+import com.example.writingpractice.ui.theme.WpTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -131,12 +130,12 @@ private fun CorrectionDetailCard(index: Int, correction: Correction) {
                 correction.originalSentence,
                 style = MaterialTheme.typography.bodySmall,
                 textDecoration = TextDecoration.LineThrough,
-                color = ScoreRed
+                color = MaterialTheme.colorScheme.error
             )
             Text(
                 correction.correctedSentence,
                 style = MaterialTheme.typography.bodySmall,
-                color = ScoreGreen,
+                color = WpTheme.colors.success,
                 fontWeight = FontWeight.SemiBold
             )
             Text(

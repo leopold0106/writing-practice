@@ -40,12 +40,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.writingpractice.ui.theme.LevelColors
+import com.example.writingpractice.ui.theme.WpTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -127,7 +126,7 @@ fun HomeScreen(
                 LevelButton(
                     level = level,
                     description = desc,
-                    color = LevelColors[index],
+                    color = WpTheme.colors.levelColors[index],
                     onClick = { onLevelClick(level) }
                 )
             }
@@ -155,7 +154,7 @@ private fun UpdateBanner(version: String, onUpdate: () -> Unit, onDismiss: () ->
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),
-        color = Color(0xFFE3F2FD)
+        color = WpTheme.colors.infoContainer
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
@@ -164,7 +163,7 @@ private fun UpdateBanner(version: String, onUpdate: () -> Unit, onDismiss: () ->
             Text(
                 text = "새 버전 $version 사용 가능",
                 style = MaterialTheme.typography.bodySmall,
-                color = Color(0xFF1565C0),
+                color = WpTheme.colors.onInfoContainer,
                 modifier = Modifier.weight(1f)
             )
             OutlinedButton(
@@ -178,7 +177,7 @@ private fun UpdateBanner(version: String, onUpdate: () -> Unit, onDismiss: () ->
                 Icon(
                     Icons.Default.Close,
                     contentDescription = "닫기",
-                    tint = Color(0xFF1565C0),
+                    tint = WpTheme.colors.onInfoContainer,
                     modifier = Modifier.size(16.dp)
                 )
             }
@@ -188,10 +187,22 @@ private fun UpdateBanner(version: String, onUpdate: () -> Unit, onDismiss: () ->
 
 @Composable
 private fun ApiStatusCard(apiStatus: ApiStatus) {
-    val (backgroundColor, message) = when (apiStatus) {
-        ApiStatus.VALID -> Color(0xFFE8F5E9) to "API 연결됨 ✓"
-        ApiStatus.INVALID -> Color(0xFFFFEBEE) to "API 키 오류 — 설정에서 확인해주세요"
-        ApiStatus.UNKNOWN -> Color(0xFFFFFDE7) to "API 키가 설정되지 않았습니다"
+    val (backgroundColor, contentColor, message) = when (apiStatus) {
+        ApiStatus.VALID -> Triple(
+            WpTheme.colors.successContainer,
+            WpTheme.colors.onSuccessContainer,
+            "API 연결됨 ✓"
+        )
+        ApiStatus.INVALID -> Triple(
+            MaterialTheme.colorScheme.errorContainer,
+            MaterialTheme.colorScheme.onErrorContainer,
+            "API 키 오류 — 설정에서 확인해주세요"
+        )
+        ApiStatus.UNKNOWN -> Triple(
+            WpTheme.colors.infoContainer,
+            WpTheme.colors.onInfoContainer,
+            "API 키가 설정되지 않았습니다"
+        )
     }
     Surface(
         modifier = Modifier.fillMaxWidth(),
@@ -202,7 +213,7 @@ private fun ApiStatusCard(apiStatus: ApiStatus) {
             text = message,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
             style = MaterialTheme.typography.bodySmall,
-            color = Color(0xFF212121)
+            color = contentColor
         )
     }
 }
@@ -210,12 +221,12 @@ private fun ApiStatusCard(apiStatus: ApiStatus) {
 @Composable
 private fun StreakCard(streak: Int) {
     val (bgColor, message) = when {
-        streak >= 30 -> Color(0xFFFFF3E0) to "전설의 학습자!"
-        streak >= 14 -> Color(0xFFFFF3E0) to "2주 연속 달성!"
-        streak >= 7 -> Color(0xFFFFF9C4) to "한 주를 완주했어요!"
-        streak >= 3 -> Color(0xFFFFF9C4) to "연속 학습 중!"
-        streak == 1 -> Color(0xFFF3F3F3) to "첫 걸음을 내딛었어요!"
-        else -> Color(0xFFF3F3F3) to "오늘 첫 문제를 풀어보세요"
+        streak >= 30 -> MaterialTheme.colorScheme.secondaryContainer to "전설의 학습자!"
+        streak >= 14 -> MaterialTheme.colorScheme.secondaryContainer to "2주 연속 달성!"
+        streak >= 7 -> WpTheme.colors.warningContainer to "한 주를 완주했어요!"
+        streak >= 3 -> WpTheme.colors.warningContainer to "연속 학습 중!"
+        streak == 1 -> MaterialTheme.colorScheme.surfaceVariant to "첫 걸음을 내딛었어요!"
+        else -> MaterialTheme.colorScheme.surfaceVariant to "오늘 첫 문제를 풀어보세요"
     }
     Surface(
         modifier = Modifier.fillMaxWidth(),
@@ -244,7 +255,7 @@ private fun StreakCard(streak: Int) {
                     Text(
                         text = message,
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color(0xFF555555)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -436,7 +447,7 @@ private fun GenerateSection(
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(8.dp),
-                    color = Color(0xFFE8F5E9)
+                    color = WpTheme.colors.successContainer
                 ) {
                     Row(
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
@@ -446,7 +457,7 @@ private fun GenerateSection(
                         Text(
                             "레벨 ${generateState.level} 문제 ${generateState.count}개가 추가되었습니다!",
                             style = MaterialTheme.typography.bodySmall,
-                            color = Color(0xFF1B5E20)
+                            color = WpTheme.colors.onSuccessContainer
                         )
                         OutlinedButton(onClick = onReset, modifier = Modifier.height(32.dp)) {
                             Text("닫기", style = MaterialTheme.typography.labelSmall)
@@ -458,7 +469,7 @@ private fun GenerateSection(
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(8.dp),
-                    color = Color(0xFFFFEBEE)
+                    color = MaterialTheme.colorScheme.errorContainer
                 ) {
                     Row(
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),

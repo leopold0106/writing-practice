@@ -29,15 +29,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.writingpractice.data.model.ProblemWithStatus
-import com.example.writingpractice.ui.theme.ScoreGreen
-import com.example.writingpractice.ui.theme.ScoreRed
-import com.example.writingpractice.ui.theme.ScoreYellow
+import com.example.writingpractice.ui.common.components.scoreColor
+import com.example.writingpractice.ui.theme.WpTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -131,11 +129,7 @@ private fun StatusChip(item: ProblemWithStatus) {
     when {
         item.isGraded -> {
             val score = item.latestScore ?: 0
-            val color = when {
-                score >= 80 -> ScoreGreen
-                score >= 50 -> ScoreYellow
-                else -> ScoreRed
-            }
+            val color = scoreColor(score)
             SuggestionChip(
                 onClick = {},
                 label = { Text("${score}점") },
@@ -149,8 +143,8 @@ private fun StatusChip(item: ProblemWithStatus) {
             onClick = {},
             label = { Text("채점중") },
             colors = SuggestionChipDefaults.suggestionChipColors(
-                containerColor = ScoreYellow.copy(alpha = 0.15f),
-                labelColor = Color(0xFFE65100)
+                containerColor = WpTheme.colors.warning.copy(alpha = 0.15f),
+                labelColor = WpTheme.colors.warning
             )
         )
         else -> SuggestionChip(

@@ -34,16 +34,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.writingpractice.data.local.db.entity.GradingStatus
 import com.example.writingpractice.data.local.db.entity.UserAnswerEntity
-import com.example.writingpractice.ui.theme.ScoreGreen
-import com.example.writingpractice.ui.theme.ScoreRed
-import com.example.writingpractice.ui.theme.ScoreYellow
+import com.example.writingpractice.ui.common.components.scoreColor
+import com.example.writingpractice.ui.theme.WpTheme
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -177,11 +175,7 @@ private fun ScoreChip(answer: UserAnswerEntity) {
     when (answer.gradingStatus) {
         GradingStatus.GRADED -> {
             val score = answer.score ?: 0
-            val color = when {
-                score >= 80 -> ScoreGreen
-                score >= 50 -> ScoreYellow
-                else -> ScoreRed
-            }
+            val color = scoreColor(score)
             SuggestionChip(
                 onClick = {},
                 label = { Text("${score}점", fontWeight = FontWeight.SemiBold) },
@@ -195,8 +189,8 @@ private fun ScoreChip(answer: UserAnswerEntity) {
             onClick = {},
             label = { Text("채점중") },
             colors = SuggestionChipDefaults.suggestionChipColors(
-                containerColor = ScoreYellow.copy(alpha = 0.15f),
-                labelColor = Color(0xFFE65100)
+                containerColor = WpTheme.colors.warning.copy(alpha = 0.15f),
+                labelColor = WpTheme.colors.warning
             )
         )
         GradingStatus.OFFLINE_SKIPPED -> SuggestionChip(
