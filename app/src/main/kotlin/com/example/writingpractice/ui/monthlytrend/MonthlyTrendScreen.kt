@@ -31,7 +31,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -40,6 +39,8 @@ import com.example.writingpractice.data.model.ErrorTrend
 import com.example.writingpractice.data.model.ErrorTypeChange
 import com.example.writingpractice.data.model.MonthlySnapshot
 import com.example.writingpractice.data.model.MonthlyTrend
+import com.example.writingpractice.ui.common.components.errorTypeLabel
+import com.example.writingpractice.ui.theme.WpTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -145,7 +146,7 @@ private fun MonthlySnapshotCard(snapshot: MonthlySnapshot) {
 
             if (snapshot.keyImprovements.isNotEmpty()) {
                 HorizontalDivider()
-                Text("잘한 점", style = MaterialTheme.typography.labelMedium, color = Color(0xFF2E7D32))
+                Text("잘한 점", style = MaterialTheme.typography.labelMedium, color = WpTheme.colors.success)
                 snapshot.keyImprovements.forEach { item ->
                     Text("✓ $item", style = MaterialTheme.typography.bodySmall)
                 }
@@ -153,7 +154,7 @@ private fun MonthlySnapshotCard(snapshot: MonthlySnapshot) {
 
             if (snapshot.areasToFocus.isNotEmpty()) {
                 HorizontalDivider()
-                Text("집중 필요", style = MaterialTheme.typography.labelMedium, color = Color(0xFFC62828))
+                Text("집중 필요", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.error)
                 snapshot.areasToFocus.forEach { item ->
                     Text("• $item", style = MaterialTheme.typography.bodySmall)
                 }
@@ -165,10 +166,10 @@ private fun MonthlySnapshotCard(snapshot: MonthlySnapshot) {
 @Composable
 private fun TrendChip(trend: MonthlyTrend) {
     val (label, color) = when (trend) {
-        MonthlyTrend.IMPROVING -> "개선 중" to Color(0xFF2E7D32)
-        MonthlyTrend.DECLINING -> "주의 필요" to Color(0xFFC62828)
-        MonthlyTrend.STABLE -> "유지 중" to Color(0xFF546E7A)
-        MonthlyTrend.MIXED -> "혼합" to Color(0xFFE65100)
+        MonthlyTrend.IMPROVING -> "개선 중" to WpTheme.colors.success
+        MonthlyTrend.DECLINING -> "주의 필요" to MaterialTheme.colorScheme.error
+        MonthlyTrend.STABLE -> "유지 중" to MaterialTheme.colorScheme.onSurfaceVariant
+        MonthlyTrend.MIXED -> "혼합" to WpTheme.colors.warning
     }
     Surface(
         shape = RoundedCornerShape(12.dp),
@@ -187,24 +188,16 @@ private fun TrendChip(trend: MonthlyTrend) {
 @Composable
 private fun ErrorChangeRow(change: ErrorTypeChange) {
     val (arrow, arrowColor) = when (change.trend) {
-        ErrorTrend.IMPROVED -> "↓" to Color(0xFF2E7D32)
-        ErrorTrend.WORSENED -> "↑" to Color(0xFFC62828)
-        ErrorTrend.STABLE -> "→" to Color(0xFF546E7A)
-    }
-    val errorTypeLabel = when (change.errorType.name) {
-        "GRAMMAR" -> "문법"
-        "VOCABULARY" -> "어휘"
-        "STRUCTURE" -> "구조"
-        "PUNCTUATION" -> "구두점"
-        "SPELLING" -> "철자"
-        else -> change.errorType.name
+        ErrorTrend.IMPROVED -> "↓" to WpTheme.colors.success
+        ErrorTrend.WORSENED -> "↑" to MaterialTheme.colorScheme.error
+        ErrorTrend.STABLE -> "→" to MaterialTheme.colorScheme.onSurfaceVariant
     }
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.Top
     ) {
         Text(
-            errorTypeLabel,
+            errorTypeLabel(change.errorType),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.width(48.dp)

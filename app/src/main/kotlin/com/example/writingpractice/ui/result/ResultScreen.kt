@@ -22,26 +22,22 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.SuggestionChip
-import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.writingpractice.data.local.db.entity.ErrorType
 import com.example.writingpractice.data.model.Correction
-import com.example.writingpractice.ui.theme.ScoreGreen
-import com.example.writingpractice.ui.theme.ScoreRed
-import com.example.writingpractice.ui.theme.ScoreYellow
+import com.example.writingpractice.ui.common.components.ErrorTypeChip
+import com.example.writingpractice.ui.common.components.scoreColor
+import com.example.writingpractice.ui.theme.WpTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -104,13 +100,13 @@ fun ResultScreen(
                 } else {
                     Card(
                         colors = CardDefaults.cardColors(
-                            containerColor = ScoreGreen.copy(alpha = 0.1f)
+                            containerColor = WpTheme.colors.success.copy(alpha = 0.1f)
                         )
                     ) {
                         Text(
                             "완벽한 답변입니다!",
                             modifier = Modifier.padding(16.dp),
-                            color = ScoreGreen,
+                            color = WpTheme.colors.success,
                             fontWeight = FontWeight.SemiBold
                         )
                     }
@@ -155,11 +151,11 @@ fun ResultScreen(
 private fun AutoAnalysisBanner(state: AutoAnalysisState) {
     val (bgColor, textColor, message) = when (state) {
         AutoAnalysisState.Running ->
-            Triple(Color(0xFFE3F2FD), Color(0xFF1565C0), "오답 30개 달성! 약점 분석 자동 실행 중...")
+            Triple(WpTheme.colors.infoContainer, WpTheme.colors.info, "오답 30개 달성! 약점 분석 자동 실행 중...")
         AutoAnalysisState.Done ->
-            Triple(Color(0xFFE8F5E9), Color(0xFF1B5E20), "약점 분석이 완료되었습니다 ✓")
+            Triple(WpTheme.colors.successContainer, WpTheme.colors.success, "약점 분석이 완료되었습니다 ✓")
         AutoAnalysisState.Failed ->
-            Triple(Color(0xFFFFF3E0), Color(0xFFE65100), "자동 약점 분석 실패 — 설정에서 API 키를 확인하세요")
+            Triple(WpTheme.colors.warningContainer, WpTheme.colors.warning, "자동 약점 분석 실패 — 설정에서 API 키를 확인하세요")
         AutoAnalysisState.Idle -> return
     }
     Surface(
@@ -193,7 +189,7 @@ private fun PendingBanner() {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        color = ScoreYellow.copy(alpha = 0.12f)
+        color = WpTheme.colors.warning.copy(alpha = 0.12f)
     ) {
         Row(
             modifier = Modifier.padding(16.dp),
@@ -203,14 +199,14 @@ private fun PendingBanner() {
             CircularProgressIndicator(
                 modifier = Modifier.size(20.dp),
                 strokeWidth = 2.dp,
-                color = ScoreYellow
+                color = WpTheme.colors.warning
             )
             Column {
                 Text(
                     "채점 대기 중",
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFFE65100)
+                    color = WpTheme.colors.warning
                 )
                 Text(
                     "인터넷 연결 시 자동으로 채점됩니다",
@@ -224,11 +220,7 @@ private fun PendingBanner() {
 
 @Composable
 private fun ScoreCard(score: Int, feedback: String) {
-    val color = when {
-        score >= 80 -> ScoreGreen
-        score >= 50 -> ScoreYellow
-        else -> ScoreRed
-    }
+    val color = scoreColor(score)
     Card(
         colors = CardDefaults.cardColors(containerColor = color.copy(alpha = 0.1f)),
         modifier = Modifier.fillMaxWidth()
@@ -277,12 +269,12 @@ private fun CorrectionItem(correction: Correction) {
             correction.originalSentence,
             style = MaterialTheme.typography.bodySmall,
             textDecoration = TextDecoration.LineThrough,
-            color = ScoreRed
+            color = MaterialTheme.colorScheme.error
         )
         Text(
             correction.correctedSentence,
             style = MaterialTheme.typography.bodySmall,
-            color = ScoreGreen,
+            color = WpTheme.colors.success,
             fontWeight = FontWeight.SemiBold
         )
         Text(
@@ -292,22 +284,4 @@ private fun CorrectionItem(correction: Correction) {
         )
         ErrorTypeChip(correction.errorType)
     }
-}
-
-@Composable
-private fun ErrorTypeChip(errorType: ErrorType) {
-    val (label, color) = when (errorType) {
-        ErrorType.GRAMMAR -> "문법" to Color(0xFF9C27B0)
-        ErrorType.VOCABULARY -> "어휘" to Color(0xFF2196F3)
-        ErrorType.STRUCTURE -> "구조" to Color(0xFFFF9800)
-        ErrorType.PUNCTUATION -> "구두점" to Color(0xFF607D8B)
-        ErrorType.SPELLING -> "철자" to ScoreRed
-    }
-    SuggestionChip(
-        onClick = {},
-        label = { Text(label, style = MaterialTheme.typography.labelSmall) },
-        colors = SuggestionChipDefaults.suggestionChipColors(
-            containerColor = color.copy(alpha = 0.15f)
-        )
-    )
 }

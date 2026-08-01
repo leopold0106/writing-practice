@@ -42,19 +42,20 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.writingpractice.data.local.db.entity.ErrorType
 import com.example.writingpractice.data.model.OverallLevel
 import com.example.writingpractice.data.model.RecommendedPattern
 import com.example.writingpractice.data.model.Severity
 import com.example.writingpractice.data.model.WeaknessAnalysis
 import com.example.writingpractice.data.model.WeaknessPoint
+import com.example.writingpractice.ui.common.components.SectionHeader
+import com.example.writingpractice.ui.common.components.errorTypeColor
 import com.example.writingpractice.ui.home.ApiStatus
 import com.example.writingpractice.ui.home.GenerateState
+import com.example.writingpractice.ui.theme.WpTheme
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -165,8 +166,8 @@ fun WeaknessAnalysisScreen(
 @Composable
 private fun ApiStatusBanner(status: ApiStatus) {
     val (bg, msg) = when (status) {
-        ApiStatus.INVALID -> Color(0xFFFFEBEE) to "API 키 오류 — 설정에서 확인해주세요"
-        ApiStatus.UNKNOWN -> Color(0xFFFFFDE7) to "API 키가 설정되지 않았습니다"
+        ApiStatus.INVALID -> MaterialTheme.colorScheme.errorContainer to "API 키 오류 — 설정에서 확인해주세요"
+        ApiStatus.UNKNOWN -> WpTheme.colors.warningContainer to "API 키가 설정되지 않았습니다"
         ApiStatus.VALID -> return
     }
     Surface(
@@ -178,7 +179,7 @@ private fun ApiStatusBanner(status: ApiStatus) {
             text = msg,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
             style = MaterialTheme.typography.bodySmall,
-            color = Color(0xFF212121)
+            color = MaterialTheme.colorScheme.onSurface
         )
     }
 }
@@ -265,7 +266,7 @@ private fun ErrorSurface(message: String, onDismiss: () -> Unit) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),
-        color = Color(0xFFFFEBEE)
+        color = MaterialTheme.colorScheme.errorContainer
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
@@ -411,21 +412,11 @@ private fun AnalysisHistoryCard(
 }
 
 @Composable
-private fun SectionHeader(text: String) {
-    Text(
-        text,
-        style = MaterialTheme.typography.titleSmall,
-        fontWeight = FontWeight.Bold,
-        color = MaterialTheme.colorScheme.primary
-    )
-}
-
-@Composable
 private fun OverallLevelChip(level: OverallLevel) {
     val (bg, fg, label) = when (level) {
-        OverallLevel.BEGINNER -> Triple(Color(0xFFFFF3E0), Color(0xFFE65100), "초급")
-        OverallLevel.INTERMEDIATE -> Triple(Color(0xFFE3F2FD), Color(0xFF0D47A1), "중급")
-        OverallLevel.ADVANCED -> Triple(Color(0xFFE8F5E9), Color(0xFF1B5E20), "고급")
+        OverallLevel.BEGINNER -> Triple(WpTheme.colors.warningContainer, WpTheme.colors.warning, "초급")
+        OverallLevel.INTERMEDIATE -> Triple(WpTheme.colors.infoContainer, WpTheme.colors.info, "중급")
+        OverallLevel.ADVANCED -> Triple(WpTheme.colors.successContainer, WpTheme.colors.success, "고급")
     }
     Surface(shape = RoundedCornerShape(12.dp), color = bg) {
         Text(
@@ -445,7 +436,7 @@ private fun WeaknessPointItem(point: WeaknessPoint) {
             Box(
                 modifier = Modifier
                     .size(8.dp)
-                    .background(point.errorType.barColor(), RoundedCornerShape(4.dp))
+                    .background(errorTypeColor(point.errorType), RoundedCornerShape(4.dp))
             )
             Text(
                 point.title,
@@ -475,9 +466,9 @@ private fun WeaknessPointItem(point: WeaknessPoint) {
 @Composable
 private fun SeverityBadge(severity: Severity) {
     val (bg, label) = when (severity) {
-        Severity.HIGH -> Color(0xFFFFCDD2) to "높음"
-        Severity.MEDIUM -> Color(0xFFFFE0B2) to "중간"
-        Severity.LOW -> Color(0xFFC8E6C9) to "낮음"
+        Severity.HIGH -> MaterialTheme.colorScheme.errorContainer to "높음"
+        Severity.MEDIUM -> WpTheme.colors.warningContainer to "중간"
+        Severity.LOW -> WpTheme.colors.successContainer to "낮음"
     }
     Surface(shape = RoundedCornerShape(8.dp), color = bg) {
         Text(
@@ -521,7 +512,7 @@ private fun GenerateProblemsSection(
         when (generateState) {
             is GenerateState.Success -> Surface(
                 shape = RoundedCornerShape(8.dp),
-                color = Color(0xFFE8F5E9)
+                color = WpTheme.colors.successContainer
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
@@ -531,7 +522,7 @@ private fun GenerateProblemsSection(
                     Text(
                         "레벨 ${generateState.level} 문제 ${generateState.count}개 추가됨",
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color(0xFF1B5E20)
+                        color = WpTheme.colors.success
                     )
                     OutlinedButton(onClick = onReset, modifier = Modifier.height(28.dp)) {
                         Text("닫기", style = MaterialTheme.typography.labelSmall)
@@ -540,7 +531,7 @@ private fun GenerateProblemsSection(
             }
             is GenerateState.Error -> Surface(
                 shape = RoundedCornerShape(8.dp),
-                color = Color(0xFFFFEBEE)
+                color = MaterialTheme.colorScheme.errorContainer
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
@@ -561,14 +552,6 @@ private fun GenerateProblemsSection(
             else -> Unit
         }
     }
-}
-
-private fun ErrorType.barColor() = when (this) {
-    ErrorType.GRAMMAR -> Color(0xFFEF5350)
-    ErrorType.VOCABULARY -> Color(0xFF42A5F5)
-    ErrorType.STRUCTURE -> Color(0xFF66BB6A)
-    ErrorType.PUNCTUATION -> Color(0xFFFFA726)
-    ErrorType.SPELLING -> Color(0xFFAB47BC)
 }
 
 private fun formatDate(timestamp: Long): String =

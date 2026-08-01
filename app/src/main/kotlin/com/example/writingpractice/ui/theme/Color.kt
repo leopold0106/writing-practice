@@ -39,18 +39,3 @@ val OutlineNight = Color(0xFF8A857C)
 val OutlineNightSoft = Color(0xFF3B4049)
 val BrickDark = Color(0xFFE8A79C)
 val BrickContainerDark = Color(0xFF5C2018)
-
-// ── 레거시 별칭 (화면 치환 완료 후 삭제 예정) ──────────────────────
-val ScoreGreen = Color(0xFF2F7D4F)
-val ScoreYellow = Color(0xFF9A6A1B)
-val ScoreRed = Brick
-
-val LevelColors = listOf(
-    Color(0xFF6E8DAD),
-    Color(0xFF56779B),
-    Color(0xFF41658D),
-    Color(0xFF3B5B80),
-    Color(0xFF7A6A55),
-    Color(0xFF9C7E3A),
-    Color(0xFFB7791F)
-)

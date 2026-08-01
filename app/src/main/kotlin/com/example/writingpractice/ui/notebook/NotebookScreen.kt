@@ -48,6 +48,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.writingpractice.data.local.db.entity.ErrorType
 import com.example.writingpractice.data.model.NotebookEntry
 import com.example.writingpractice.ui.common.Period
+import com.example.writingpractice.ui.common.components.errorTypeColor
+import com.example.writingpractice.ui.common.components.errorTypeLabel
+import com.example.writingpractice.ui.common.components.scoreColor
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -137,7 +140,7 @@ fun NotebookScreen(
                                     if (state.selectedFilter == type) null else type
                                 )
                             },
-                            label = { Text(type.displayName()) }
+                            label = { Text(errorTypeLabel(type)) }
                         )
                     }
                 }
@@ -222,10 +225,10 @@ private fun ErrorCountChart(errorCounts: Map<ErrorType, Int>, period: Period) {
             ) {
                 ErrorType.entries.forEach { type ->
                     BarItem(
-                        label = type.displayName(),
+                        label = errorTypeLabel(type),
                         count = errorCounts[type] ?: 0,
                         maxCount = maxCount,
-                        color = type.barColor()
+                        color = errorTypeColor(type)
                     )
                 }
             }
@@ -321,11 +324,7 @@ private fun NotebookEntryCard(
                         Text(
                             "${score}점",
                             style = MaterialTheme.typography.labelSmall,
-                            color = when {
-                                score >= 80 -> Color(0xFF388E3C)
-                                score >= 60 -> Color(0xFFF57F17)
-                                else -> MaterialTheme.colorScheme.error
-                            },
+                            color = scoreColor(score),
                             fontWeight = FontWeight.SemiBold
                         )
                     }
@@ -372,20 +371,4 @@ private fun NotebookEntryCard(
             }
         }
     }
-}
-
-private fun ErrorType.displayName() = when (this) {
-    ErrorType.GRAMMAR -> "문법"
-    ErrorType.VOCABULARY -> "어휘"
-    ErrorType.STRUCTURE -> "구조"
-    ErrorType.PUNCTUATION -> "구두점"
-    ErrorType.SPELLING -> "철자"
-}
-
-private fun ErrorType.barColor() = when (this) {
-    ErrorType.GRAMMAR -> Color(0xFFEF5350)
-    ErrorType.VOCABULARY -> Color(0xFF42A5F5)
-    ErrorType.STRUCTURE -> Color(0xFF66BB6A)
-    ErrorType.PUNCTUATION -> Color(0xFFFFA726)
-    ErrorType.SPELLING -> Color(0xFFAB47BC)
 }
